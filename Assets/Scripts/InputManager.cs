@@ -4,18 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public enum TouchMode
-{
-    Start,
-    Hold,
-    End,
-}
-
 public class InputManager : MonoBehaviour
 {
-    public Canvas canvas;
-    public GameObject touchCheck;
-
+    public HittingNoteChecker noteChecker;
     // Start is called before the first frame update
     void Start()
     {
@@ -25,17 +16,7 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        foreach (Touch touch in Input.touches)
-        {
-            TouchMode touchMode = TouchPhaseToTouchMode(touch.phase);
-            if (touchMode != TouchMode.Start) continue;
-            Ray ray = Camera.main.ScreenPointToRay(touch.position);
-            RaycastHit hit;
-            Physics.Raycast(ray, out hit);
-            if (hit.collider == null) continue;
-            GameObject g = Instantiate(touchCheck, canvas.transform);
-            g.transform.localPosition = new Vector3(hit.point.x, -4.5f, 0);
-        }
+        MobileInput();
     }
 
     TouchMode TouchPhaseToTouchMode(TouchPhase touch)
@@ -47,4 +28,23 @@ public class InputManager : MonoBehaviour
             TouchPhase.Ended => TouchMode.End,
             _ => throw new ArgumentOutOfRangeException("TouchPhase값이 비정상적입니다.")
         };
+
+    void MobileInput()
+    {
+        foreach (Touch touch in Input.touches)
+        {
+            TouchMode touchMode = TouchPhaseToTouchMode(touch.phase);
+            if (touchMode != TouchMode.Start) continue;
+            Ray ray = Camera.main.ScreenPointToRay(touch.position);
+            RaycastHit hit;
+            Physics.Raycast(ray, out hit);
+            if (hit.collider == null) continue;
+            noteChecker.HitLine(((int)MathF.Floor(hit.point.x + 6)), touchMode);
+        }
+    }
+
+    void PcInput()
+    {
+
+    }
 }
