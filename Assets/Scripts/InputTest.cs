@@ -12,17 +12,19 @@ public class InputTest : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
         string s = "";
-        for(int i = 0; i < Input.touchCount; i++)
+        for (int i = 0; i < Input.touchCount; i++)
         {
             s += Input.GetTouch(i).position;
         }
         text.text = s;
+
+        note.GetComponent<RectTransform>().position = Input.GetTouch(0).position;
     }
 }
