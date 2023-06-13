@@ -34,17 +34,11 @@ public class InputManager : MonoBehaviour
         foreach (Touch touch in Input.touches)
         {
             TouchMode touchMode = TouchPhaseToTouchMode(touch.phase);
-            if (touchMode != TouchMode.Start) continue;
             Ray ray = Camera.main.ScreenPointToRay(touch.position);
             RaycastHit hit;
             Physics.Raycast(ray, out hit);
             if (hit.collider == null) continue;
-            noteChecker.HitLine(((int)MathF.Floor(hit.point.x + 6)), touchMode);
+            noteChecker.HitLine(((int)MathF.Floor(hit.point.x + 6)), touchMode, touch.deltaPosition);
         }
-    }
-
-    void PcInput()
-    {
-
     }
 }
