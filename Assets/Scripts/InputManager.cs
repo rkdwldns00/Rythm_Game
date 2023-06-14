@@ -38,7 +38,7 @@ public class InputManager : MonoBehaviour
             RaycastHit hit;
             Physics.Raycast(ray, out hit);
             if (hit.collider == null) continue;
-            noteChecker.HitLine(((int)MathF.Floor(hit.point.x + 6)), touchMode, touch.deltaPosition);
+            noteChecker.HitLine(((int)MathF.Floor(hit.point.x + 7)), touchMode, touch.deltaPosition);
         }
     }
 }

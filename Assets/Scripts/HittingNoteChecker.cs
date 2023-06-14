@@ -13,15 +13,19 @@ public enum TouchMode
 
 public class HittingNoteChecker : MonoBehaviour
 {
+    public const int TOUCH_LINE_COUNT = 14;
+    public const int SHOW_LINE_START = 1;
+    public const int SHOW_LINE_END = 12;
+
     public Canvas canvas;
     public GameObject touchCheck;
-    public TouchMode[] TouchDatas { get; private set; } = new TouchMode[12];
-    Queue<Vector2>[] flickDatas = new Queue<Vector2>[12];
-    bool[] holdingDatas = new bool[12];
+    public TouchMode[] TouchDatas { get; private set; } = new TouchMode[TOUCH_LINE_COUNT];
+    Queue<Vector2>[] flickDatas = new Queue<Vector2>[TOUCH_LINE_COUNT];
+    bool[] holdingDatas = new bool[TOUCH_LINE_COUNT];
 
     void Start()
     {
-        for(int i=0;i<flickDatas.Length;i++)
+        for (int i = 0; i < flickDatas.Length; i++)
         {
             flickDatas[i] = new Queue<Vector2>();
             flickDatas[i].Enqueue(Vector2.zero);
@@ -33,7 +37,20 @@ public class HittingNoteChecker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Log.text = GetFlickPower(0).ToString();
+        Log.text = "";
+        foreach (var data in TouchDatas)
+        {
+            int i = -1;
+            switch (data)
+            {
+                case TouchMode.None:
+                    i = 0; break;
+                case TouchMode.Start: i = 1; break;
+                case TouchMode.End: i = 3; break;
+                case TouchMode.Hold: i = 2; break;
+            }
+            Log.text += i.ToString();
+        }
     }
 
     private void LateUpdate()
@@ -45,7 +62,7 @@ public class HittingNoteChecker : MonoBehaviour
                 TouchDatas[i] = TouchMode.None;
             }
         }
-        holdingDatas = new bool[12];
+        holdingDatas = new bool[TOUCH_LINE_COUNT];
 
         for (int i = 0; i < flickDatas.Length; i++)
         {
@@ -59,10 +76,10 @@ public class HittingNoteChecker : MonoBehaviour
 
     public void HitLine(int lineIndex, TouchMode touchMode, Vector2 moveSpeed)
     {
-        if (TouchDatas[lineIndex] == TouchMode.None)
+        if (TouchDatas[lineIndex] == TouchMode.None && lineIndex >= SHOW_LINE_START && lineIndex <= SHOW_LINE_END)
         {
             GameObject g = Instantiate(touchCheck, canvas.transform);
-            g.transform.localPosition = new Vector3(lineIndex - 5.5f, -5f, 0);
+            g.transform.localPosition = new Vector3(lineIndex - 6.5f, -5f, 0);
         }
 
         if (touchMode == TouchMode.Hold)
@@ -77,7 +94,7 @@ public class HittingNoteChecker : MonoBehaviour
     public Vector2 GetFlickPower(int lineIndex)
     {
         Vector2 sum = Vector2.zero;
-        foreach(Vector2 v in flickDatas[lineIndex])
+        foreach (Vector2 v in flickDatas[lineIndex])
         {
             sum += v;
         }
