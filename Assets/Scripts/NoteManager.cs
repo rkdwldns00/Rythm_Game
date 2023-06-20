@@ -1,20 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public class NoteManager : MonoBehaviour
 {
     const int MAXIMUM_BEAT = 16;
-    const float NOTE_SPAWN_YPOS = 5f;
+    const float NOTE_SPAWN_YPOS = 30f;
     public const float NOTE_Y_SIZE = 1f;
 
     public static NoteManager instance;
 
     public Transform field;
-    [HideInInspector] public float noteDownSpeed = 10.4f;
+    float noteDownSpeed { get; set; } = 30f;
     public GameObject basicNotePrefab;
 
     int currentBit = 0;
@@ -120,9 +118,9 @@ public class NoteManager : MonoBehaviour
         public readonly int afterDelayBeat;
         public readonly Action note;
 
-        public RuntimeNoteData(Action note, int afterDelayBit)
+        public RuntimeNoteData(Action note, int afterDelayBeat)
         {
-            this.afterDelayBeat = afterDelayBit;
+            this.afterDelayBeat = afterDelayBeat;
             this.note = note;
         }
     }
