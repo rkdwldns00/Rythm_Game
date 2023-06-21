@@ -27,7 +27,7 @@ public class NoteManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Application.targetFrameRate = 120;
+        Application.targetFrameRate = 115;
 
         SavedMapData map = new SavedMapData()
         {
