@@ -37,20 +37,7 @@ public class HittingNoteChecker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Log.text = "";
-        foreach (var data in TouchDatas)
-        {
-            int i = -1;
-            switch (data)
-            {
-                case TouchMode.None:
-                    i = 0; break;
-                case TouchMode.Start: i = 1; break;
-                case TouchMode.End: i = 3; break;
-                case TouchMode.Hold: i = 2; break;
-            }
-            Log.text += i.ToString();
-        }
+        
     }
 
     private void LateUpdate()
@@ -85,6 +72,11 @@ public class HittingNoteChecker : MonoBehaviour
         if (touchMode == TouchMode.Hold)
         {
             holdingDatas[lineIndex] = true;
+        }
+
+        if(touchMode == TouchMode.Start)
+        {
+            NoteManager.instance.HitCheck(lineIndex);
         }
 
         flickDatas[lineIndex].Enqueue(moveSpeed);

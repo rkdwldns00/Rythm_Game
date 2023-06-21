@@ -14,9 +14,10 @@ public class NoteManager : MonoBehaviour
     public Transform field;
     float noteDownSpeed { get; set; } = 30f;
     public GameObject basicNotePrefab;
+    public float mapTimer => Time.time - mapStartTime;
 
-    int currentBit = 0;
-    List<Transform> noteDownListeners = new List<Transform>();
+    float mapStartTime;
+    List<Transform> noteListeners = new List<Transform>();
 
     private void Awake()
     {
@@ -26,26 +27,42 @@ public class NoteManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Application.targetFrameRate = 120;
+
         SavedMapData map = new SavedMapData()
         {
             startBpm = 240,
             name = "Å×½ºÆ®°î",
             notes = new SavedNoteData[]
             {
-                new SavedBasicNoteData() {whenSummonBeat = 4, startX = 0, endX = 3},
-                new SavedBasicNoteData() {whenSummonBeat = 8, startX = 0, endX = 3},
-                new SavedBasicNoteData() {whenSummonBeat = 12, startX = 0, endX = 3},
-                new SavedBasicNoteData() {whenSummonBeat = 16, startX = 8, endX = 10},
+                new SavedBasicNoteData() {whenSummonBeat = 54, startX = 1, endX = 3},
+                new SavedBasicNoteData() {whenSummonBeat = 58, startX = 3, endX = 5},
+                new SavedBasicNoteData() {whenSummonBeat = 62, startX = 5, endX = 7},
+                new SavedBasicNoteData() {whenSummonBeat = 66, startX = 7, endX = 9},
             }
         };
+
+        map.notes = new SavedNoteData[1000];
+
+        for (int i = 0; i < map.notes.Length; i++)
+        {
+            int a = UnityEngine.Random.Range(1, 12);
+            int b = -1;
+            do
+            {
+                b = UnityEngine.Random.Range(1, 12);
+            } while (a == b);
+            map.notes[i] = new SavedBasicNoteData() { whenSummonBeat = i * 2, startX = Mathf.Min(a, b), endX = Mathf.Max(a, b) };
+        }
+
         SummmonMap(map);
     }
 
     // Update is called once per frame
     void Update()
     {
-        noteDownListeners.RemoveAll((x) => x == null);
-        foreach (Transform t in noteDownListeners)
+        noteListeners.RemoveAll((x) => x == null);
+        foreach (Transform t in noteListeners)
         {
             t.localPosition += Time.deltaTime * noteDownSpeed * Vector3.down;
         }
@@ -53,15 +70,17 @@ public class NoteManager : MonoBehaviour
 
     void SummmonMap(SavedMapData map)
     {
+        mapStartTime = Time.time;
         float bitToSec = 60f / (float)MAXIMUM_BEAT * 4f / map.startBpm;
 
         foreach (SavedNoteData note in map.notes)
         {
             SavedBasicNoteData basic = note as SavedBasicNoteData;
+            GameObject g = InstantiateNote(basicNotePrefab, (basic.startX + basic.endX) / 2f, basic.whenSummonBeat * bitToSec * noteDownSpeed + NOTE_CHECK_YPOS);
+            g.GetComponent<Note>().SetData(note);
             if (basic != null)
             {
-                GameObject g = InstantiateNote(basicNotePrefab, (basic.startX + basic.endX) / 2f, basic.whenSummonBeat * bitToSec * noteDownSpeed + NOTE_CHECK_YPOS);
-                g.transform.localScale = new Vector3(basic.endX - basic.startX, NOTE_Y_SIZE, 1);
+                g.GetComponent<Note>().executeDelay = bitToSec * note.whenSummonBeat;
             }
         }
     }
@@ -69,14 +88,19 @@ public class NoteManager : MonoBehaviour
     public GameObject InstantiateNote(GameObject prefab, float xPos, float yPos)
     {
         GameObject g = Instantiate(prefab, field);
-        g.transform.localPosition = new Vector3(xPos - 6, yPos, 0);
+        g.transform.localPosition = new Vector3(xPos - 7, yPos, 0);
         AddNoteDownListener(g.transform);
         return g;
     }
 
     public void AddNoteDownListener(Transform listener)
     {
-        noteDownListeners.Add(listener);
+        noteListeners.Add(listener);
+    }
+
+    public void HitCheck(int line)
+    {
+        noteListeners.ForEach(x => x.GetComponent<Note>()?.CheckHit(line));
     }
 }
 
@@ -92,4 +116,12 @@ public abstract class SavedNoteData
     public abstract GameObject NotePrefab { get; }
 
     public int whenSummonBeat;
+}
+
+public abstract class Note : MonoBehaviour
+{
+    public float executeDelay;
+
+    public abstract void SetData(SavedNoteData data);
+    public abstract void CheckHit(int line);
 }
