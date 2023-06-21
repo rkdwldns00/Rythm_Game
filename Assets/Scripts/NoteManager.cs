@@ -27,7 +27,7 @@ public class NoteManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Application.targetFrameRate = 115;
+        Application.targetFrameRate = 120;
 
         SavedMapData map = new SavedMapData()
         {
@@ -80,7 +80,7 @@ public class NoteManager : MonoBehaviour
             g.GetComponent<Note>().SetData(note);
             if (basic != null)
             {
-                g.GetComponent<Note>().executeDelay = bitToSec * note.whenSummonBeat;
+                g.GetComponent<Note>().whenExecuteTime = bitToSec * note.whenSummonBeat;
             }
         }
     }
@@ -100,7 +100,26 @@ public class NoteManager : MonoBehaviour
 
     public void HitCheck(int line)
     {
-        noteListeners.ForEach(x => x.GetComponent<Note>()?.CheckHit(line));
+        Note hittedNote = null;
+
+        noteListeners.RemoveAll((x) => x == null);
+
+        foreach (Transform noteTransform in noteListeners)
+        {
+            Note note = noteTransform.GetComponent<Note>();
+
+            if (note is null)
+            {
+                continue;
+            }
+
+            if (note.CheckHit(line) && (hittedNote is null || note.whenExecuteTime < hittedNote.whenExecuteTime))
+            {
+                hittedNote = note;
+            }
+        }
+
+        hittedNote?.Hit();
     }
 }
 
@@ -120,8 +139,12 @@ public abstract class SavedNoteData
 
 public abstract class Note : MonoBehaviour
 {
-    public float executeDelay;
+    public float whenExecuteTime;
+
+    //판정선에 갈때까지 걸리는 시간
+    public float DistanceToHittingChecker => NoteManager.instance.mapTimer - whenExecuteTime;
 
     public abstract void SetData(SavedNoteData data);
-    public abstract void CheckHit(int line);
+    public abstract bool CheckHit(int line);
+    public abstract void Hit();
 }

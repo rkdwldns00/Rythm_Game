@@ -49,9 +49,48 @@ MobileInput();
 
     void PcInput()
     {
+        Action<int> hit = (int index) => noteChecker.HitLine(index, TouchMode.Start, Vector2.zero);
+
         if (Input.GetKeyDown(KeyCode.A))
         {
-            noteChecker.HitLine(0, TouchMode.Start, Vector2.zero);
+            hit(1);
         }
+        if (Input.GetKeyUp(KeyCode.S))
+        {
+            hit(2);
+        }
+        if (Input.GetKeyUp(KeyCode.D))
+        {
+            hit(3);
+        }
+        if (Input.GetKeyUp(KeyCode.F))
+        {
+            hit(4);
+        }
+        if (Input.GetKeyUp(KeyCode.G))
+        {
+            hit(5);
+        }
+        if (Input.GetKeyUp(KeyCode.H))
+        {
+            hit(6);
+        }
+        if (Input.GetKeyUp(KeyCode.J))
+        {
+            hit(7);
+        }
+        if (Input.GetKeyUp(KeyCode.K))
+        {
+            hit(8);
+        }
+        if (Input.GetKeyUp(KeyCode.L))
+        {
+            hit(9);
+        }
+        if (Input.GetKeyUp(KeyCode.Semicolon))
+        {
+            hit(10);
+        }
+
     }
 }

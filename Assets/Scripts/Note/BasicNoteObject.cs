@@ -13,23 +13,22 @@ public class BasicNoteObject : Note
 
     }
 
-    public override void CheckHit(int line)
+    public override bool CheckHit(int line)
     {
-        float t = NoteManager.instance.mapTimer - executeDelay;
-        if (Mathf.Abs(t) < 0.1f && line + 1 >= startX && line - 1 <= endX - 1)
-        {
-            Destroy(gameObject);
-        }
-        else
-        {
-            Log.text = line + ", " + startX + ", " + endX;
-        }
+        return Mathf.Abs(DistanceToHittingChecker) < 0.1f && line + 1 >= startX && line - 1 <= endX - 1;
+    }
+
+    public override void Hit()
+    {
+        Destroy(gameObject);
     }
 
     public override void SetData(SavedNoteData data)
     {
         SavedBasicNoteData basic = (SavedBasicNoteData)data;
-        transform.localScale = new Vector3(basic.endX - basic.startX, NoteManager.NOTE_Y_SIZE, 1);
+        RectTransform rect = GetComponent<RectTransform>();
+        rect?.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, (basic.endX - basic.startX) / rect.localScale.x);
+        rect?.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, NoteManager.NOTE_Y_SIZE / rect.localScale.y);
         startX = basic.startX;
         endX = basic.endX;
     }
