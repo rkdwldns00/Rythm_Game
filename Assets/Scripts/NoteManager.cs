@@ -31,7 +31,7 @@ public class NoteManager : MonoBehaviour
 
         SavedMapData map = new SavedMapData()
         {
-            startBpm = 240,
+            startBpm =  60,
             name = "Å×½ºÆ®°î",
             notes = new SavedNoteData[]
             {
@@ -52,7 +52,7 @@ public class NoteManager : MonoBehaviour
             {
                 b = UnityEngine.Random.Range(1, 12);
             } while (a == b);
-            map.notes[i] = new SavedBasicNoteData() { whenSummonBeat = i * 2, startX = Mathf.Min(a, b), endX = Mathf.Max(a, b) };
+            map.notes[i] = new SavedBasicNoteData() { whenSummonBeat = i, startX = Mathf.Min(a, b), endX = Mathf.Max(a, b) };
         }
 
         SummmonMap(map);

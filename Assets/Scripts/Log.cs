@@ -14,6 +14,12 @@ public class Log : MonoBehaviour
         set { instance.t.text = value; }
     }
 
+    public static Color color
+    {
+        get { return instance.t.color;}
+        set { instance.t.color = value;}
+    }
+
     void Awake()
     {
         t = GetComponent<Text>();

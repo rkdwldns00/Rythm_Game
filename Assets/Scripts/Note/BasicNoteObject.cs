@@ -15,11 +15,32 @@ public class BasicNoteObject : Note
 
     public override bool CheckHit(int line)
     {
-        return Mathf.Abs(DistanceToHittingChecker) < 0.1f && line + 1 >= startX && line - 1 <= endX - 1;
+        return Mathf.Abs(DistanceToHittingChecker) < 0.13f && line + 1 >= startX && line - 1 <= endX - 1;
     }
 
     public override void Hit()
     {
+        float t = Mathf.Abs(DistanceToHittingChecker);
+        if (t <= 0.04f)
+        {
+            Log.text = "PERFECT";
+            Log.color = Color.cyan;
+        }
+        else if (t <= 0.08f)
+        {
+            Log.text = "GREAT";
+            Log.color = Color.magenta;
+        }
+        else if (t <= 0.1f)
+        {
+            Log.text = "GOOD";
+            Log.color = Color.yellow;
+        }
+        else
+        {
+            Log.text = "BAD";
+            Log.color = Color.grey;
+        }
         Destroy(gameObject);
     }
 
