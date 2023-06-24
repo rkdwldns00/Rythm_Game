@@ -37,11 +37,10 @@ public class HoldNoteObject : Note
             int endLine = Mathf.CeilToInt(end - 1);
 
             bool isTouch = false;
-            for (int i = startLine; i <= endLine; i++)
+            for (int i = Mathf.Max(0, startLine); i <= Mathf.Min(HittingNoteChecker.TOUCH_LINE_COUNT - 1, endLine); i++)
             {
                 if (HittingNoteChecker.instance.TouchDatas[i] == TouchMode.Hold)
                 {
-                    HittingNoteChecker.instance.HitLine(i, TouchMode.Start, Vector2.zero);
                     isTouch = true;
                     break;
                 }

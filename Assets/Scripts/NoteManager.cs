@@ -42,9 +42,8 @@ public class NoteManager : MonoBehaviour
                 new SavedBasicNoteData() {whenSummonBeat = 12, startX = 5, endX = 7},
                 new SavedBasicNoteData() {whenSummonBeat = 16, startX = 7, endX = 9},
                 new SavedHoldNoteData() {whenSummonBeat = 17,curveData = new SavedHoldNoteCurve[]{
-                    new SavedHoldNoteCurve(0,14,0),
-                    new SavedHoldNoteCurve(5,9,5),
-                    new SavedHoldNoteCurve(2,12,10),
+                    new SavedHoldNoteCurve(0,1,0),
+                    new SavedHoldNoteCurve(0,14,50),
                 }},
             }
         };
@@ -98,7 +97,7 @@ public class NoteManager : MonoBehaviour
                 continue;
             }
 
-            if (hitableNote.CheckHit(line) && (hittedNote is null || note.whenExecuteTime < hittedNote.whenExecuteTime))
+            if (hitableNote is not null && hitableNote.CheckHit(line) && (hittedNote is null || note.whenExecuteTime < hittedNote.whenExecuteTime))
             {
                 hittedNote = note;
                 hittedHitableNote = hitableNote;
