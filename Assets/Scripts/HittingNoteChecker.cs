@@ -17,11 +17,18 @@ public class HittingNoteChecker : MonoBehaviour
     public const int SHOW_LINE_START = 1;
     public const int SHOW_LINE_END = 12;
 
+    public static HittingNoteChecker instance;
+
     public Canvas canvas;
     public GameObject touchCheck;
     public TouchMode[] TouchDatas { get; private set; } = new TouchMode[TOUCH_LINE_COUNT];
     Queue<Vector2>[] flickDatas = new Queue<Vector2>[TOUCH_LINE_COUNT];
     bool[] holdingDatas = new bool[TOUCH_LINE_COUNT];
+
+    private void Awake()
+    {
+        instance = this;
+    }
 
     void Start()
     {

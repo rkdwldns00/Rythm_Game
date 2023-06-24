@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
@@ -11,23 +10,60 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
-public class HoldNoteObject : MonoBehaviour
+public class HoldNoteObject : Note
 {
-    public Vector3[] noteMesh;
+    //public Vector3[] noteMesh;
     MeshFilter meshFilter;
+    public RuntimeHoldNoteCurve[] curves;
+    //SavedHoldNoteCurve[] hitCheckData;
+    float[] hitCheckTiming = new float[0];
+
+    int checkIndex = 0;
 
     private void Start()
     {
-
     }
 
     private void Update()
     {
+        if (hitCheckTiming.Length > checkIndex && hitCheckTiming[checkIndex] <= DistanceToHittingChecker)
+        {
+            checkIndex++;
+            float start;
+            float end;
+            (start, end) = FindCanHitArea();
 
+            int startLine = Mathf.FloorToInt(start);
+            int endLine = Mathf.CeilToInt(end - 1);
+
+            bool isTouch = false;
+            for (int i = startLine; i <= endLine; i++)
+            {
+                if (HittingNoteChecker.instance.TouchDatas[i] == TouchMode.Hold)
+                {
+                    HittingNoteChecker.instance.HitLine(i, TouchMode.Start, Vector2.zero);
+                    isTouch = true;
+                    break;
+                }
+            }
+
+            if(isTouch)
+            {
+                Log.text = "PERFECT";
+                Log.color = Color.cyan;
+            }
+            else
+            {
+                Log.text = "BAD";
+                Log.color = Color.grey;
+            }
+        }
     }
 
-    public void Draw(HoldNoteCurve[] noteMesh)
+    public void Draw(RuntimeHoldNoteCurve[] noteMesh)
     {
+        curves = noteMesh;
+
         if (noteMesh == null || noteMesh.Length <= 1)
         {
             return;
@@ -55,11 +91,11 @@ public class HoldNoteObject : MonoBehaviour
         {
             if (i % 2 == 0)
             {
-                vertices[i] = new Vector3(noteMesh[i / 2].endX, noteMesh[i / 2].spawnBeat, 0);
+                vertices[i] = new Vector3(noteMesh[i / 2].endX, noteMesh[i / 2].yPos, 0);
             }
             else
             {
-                vertices[i] = new Vector3(noteMesh[i / 2].endX, noteMesh[i / 2].spawnBeat, 0);
+                vertices[i] = new Vector3(noteMesh[i / 2].startX, noteMesh[i / 2].yPos, 0);
             }
         }
 
@@ -80,26 +116,65 @@ public class HoldNoteObject : MonoBehaviour
         meshFilter.mesh = mesh;
     }
 
-    /*public override void SetData(SavedNoteData data)
+    public void SetHitCheckTiming(float[] times)
     {
-        SavedHoldNoteData holdData = data as SavedHoldNoteData;
-        if (holdData != null)
+        hitCheckTiming = times;
+    }
+
+    (float startX, float endX) FindCanHitArea()
+    {
+        RuntimeHoldNoteCurve beforeCurve = curves[0];
+        RuntimeHoldNoteCurve afterCurve = curves[curves.Length - 1];
+        for (int i = 0; i < curves.Length - 1; i++)
         {
-            Draw(holdData.curveData);
+            if (curves[i].yPos <= NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y)
+            {
+                beforeCurve = curves[i];
+                afterCurve = curves[i + 1];
+            }
         }
-    }*/
+
+        float startX;
+        float endX;
+        startX = Mathf.Lerp(beforeCurve.startX, afterCurve.startX, ((NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y) - beforeCurve.yPos) / (afterCurve.yPos - beforeCurve.yPos));
+        endX = Mathf.Lerp(beforeCurve.endX, afterCurve.endX, ((NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y) - beforeCurve.yPos) / (afterCurve.yPos - beforeCurve.yPos));
+        return (startX - 1, endX + 1);
+    }
 }
 
 public class SavedHoldNoteData : SavedNoteData
 {
     public override GameObject NotePrefab => NoteManager.instance.holdNotePrefab;
-    public HoldNoteCurve[] curveData;
+    public SavedHoldNoteCurve[] curveData;
 }
 
-public struct HoldNoteCurve
+public struct SavedHoldNoteCurve
 {
     public float startX;
     public float endX;
 
     public float spawnBeat;
+
+    public SavedHoldNoteCurve(float startX, float endX, float spawnBeat)
+    {
+        this.startX = startX;
+        this.endX = endX;
+        this.spawnBeat = spawnBeat;
+    }
+}
+
+[Serializable]
+public struct RuntimeHoldNoteCurve
+{
+    public float startX;
+    public float endX;
+
+    public float yPos;
+
+    public RuntimeHoldNoteCurve(float startX, float endX, float yPos)
+    {
+        this.startX = startX;
+        this.endX = endX;
+        this.yPos = yPos;
+    }
 }

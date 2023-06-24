@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicNoteObject : Note
+public class BasicNoteObject : Note, HitableNote
 {
     float startX;
     float endX;
@@ -13,12 +13,12 @@ public class BasicNoteObject : Note
 
     }
 
-    public override bool CheckHit(int line)
+    public bool CheckHit(int line)
     {
         return Mathf.Abs(DistanceToHittingChecker) < 0.13f && line + 1 >= startX && line - 1 <= endX - 1;
     }
 
-    public override void Hit()
+    public void Hit()
     {
         float t = Mathf.Abs(DistanceToHittingChecker);
         if (t <= 0.04f)
@@ -44,7 +44,7 @@ public class BasicNoteObject : Note
         Destroy(gameObject);
     }
 
-    public override void SetData(SavedNoteData data)
+    public void SetData(SavedNoteData data)
     {
         SavedBasicNoteData basic = (SavedBasicNoteData)data;
         RectTransform rect = GetComponent<RectTransform>();
