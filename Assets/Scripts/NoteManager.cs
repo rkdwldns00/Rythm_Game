@@ -14,6 +14,8 @@ public class NoteManager : MonoBehaviour
     public Transform field;
     float noteDownSpeed { get; set; } = 30f;
     public GameObject basicNotePrefab;
+    public GameObject holdNotePrefab;
+
     public float mapTimer => Time.time - mapStartTime;
 
     float mapStartTime;
@@ -88,7 +90,7 @@ public class NoteManager : MonoBehaviour
     public GameObject InstantiateNote(GameObject prefab, float xPos, float yPos)
     {
         GameObject g = Instantiate(prefab, field);
-        g.transform.localPosition = new Vector3(xPos - 7, yPos, 0);
+        g.transform.localPosition = new Vector3(xPos - 7, yPos, 0.01f);
         AddNoteDownListener(g.transform);
         return g;
     }
