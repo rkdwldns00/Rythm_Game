@@ -23,23 +23,19 @@ public class BasicNoteObject : Note, HitableNote
         float t = Mathf.Abs(DistanceToHittingChecker);
         if (t <= 0.04f)
         {
-            Log.text = "PERFECT";
-            Log.color = Color.cyan;
+            HitResultShower.ShowHitResult(HitResult.Perfect);
         }
         else if (t <= 0.08f)
         {
-            Log.text = "GREAT";
-            Log.color = Color.magenta;
+            HitResultShower.ShowHitResult(HitResult.Great);
         }
         else if (t <= 0.1f)
         {
-            Log.text = "GOOD";
-            Log.color = Color.yellow;
+            HitResultShower.ShowHitResult(HitResult.Good);
         }
         else
         {
-            Log.text = "BAD";
-            Log.color = Color.grey;
+            HitResultShower.ShowHitResult(HitResult.Bad);
         }
         Destroy(gameObject);
     }

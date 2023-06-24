@@ -47,15 +47,13 @@ public class HoldNoteObject : Note
                 }
             }
 
-            if(isTouch)
+            if (isTouch)
             {
-                Log.text = "PERFECT";
-                Log.color = Color.cyan;
+                HitResultShower.ShowHitResult(HitResult.Perfect);
             }
             else
             {
-                Log.text = "BAD";
-                Log.color = Color.grey;
+                HitResultShower.ShowHitResult(HitResult.Miss);
             }
         }
     }
