@@ -44,7 +44,7 @@ public class HittingNoteChecker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void LateUpdate()
@@ -81,13 +81,10 @@ public class HittingNoteChecker : MonoBehaviour
             holdingDatas[lineIndex] = true;
         }
 
-        if(touchMode == TouchMode.Start)
-        {
-            NoteManager.instance.HitCheck(lineIndex);
-        }
-
         flickDatas[lineIndex].Enqueue(moveSpeed);
         TouchDatas[lineIndex] = touchMode;
+
+        NoteManager.instance.HitCheck(lineIndex);
     }
 
     public Vector2 GetFlickPower(int lineIndex)

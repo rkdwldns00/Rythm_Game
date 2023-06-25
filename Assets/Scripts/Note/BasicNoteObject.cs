@@ -15,7 +15,9 @@ public class BasicNoteObject : Note, HitableNote
 
     public bool CheckHit(int line)
     {
-        return Mathf.Abs(DistanceToHittingChecker) < 0.13f && line + 1 >= startX && line - 1 <= endX - 1;
+        return Mathf.Abs(DistanceToHittingChecker) < 0.13f
+            && line + 1 >= startX && line - 1 <= endX - 1
+            && HittingNoteChecker.instance.TouchDatas[line] == TouchMode.Start;
     }
 
     public void Hit()

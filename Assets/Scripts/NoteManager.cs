@@ -15,6 +15,7 @@ public class NoteManager : MonoBehaviour
     float noteDownSpeed { get; set; } = 30f;
     public GameObject basicNotePrefab;
     public GameObject holdNotePrefab;
+    public GameObject flickNotePrefab;
 
     public float mapTimer => Time.time - mapStartTime;
 
@@ -37,14 +38,14 @@ public class NoteManager : MonoBehaviour
             name = "테스트곡",
             notes = new SavedNoteData[]
             {
-                new SavedBasicNoteData() {whenSummonBeat = 4, startX = 1, endX = 3},
-                new SavedBasicNoteData() {whenSummonBeat = 8, startX = 3, endX = 5},
-                new SavedBasicNoteData() {whenSummonBeat = 12, startX = 5, endX = 7},
-                new SavedBasicNoteData() {whenSummonBeat = 16, startX = 7, endX = 9},
-                new SavedHoldNoteData() {whenSummonBeat = 17,curveData = new SavedHoldNoteCurve[]{
-                    new SavedHoldNoteCurve(0,1,0),
-                    new SavedHoldNoteCurve(0,14,50),
-                }},
+                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 20},
+                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 24},
+                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 28},
+                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 32},
+                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 36},
+                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 40},
+                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 44},
+                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 48},
             }
         };
 
@@ -132,7 +133,10 @@ public abstract class Note : MonoBehaviour
 
 public interface HitableNote
 {
+    //현재 작동해아되는 상태인지 확인
     public bool CheckHit(int line);
+
+    //이 노트를 작동시키는 함수
     public void Hit();
 }
 
@@ -163,6 +167,15 @@ class NoteSummoner
                 BasicNoteObject n = g.GetComponent<BasicNoteObject>();
                 noteObject = n;
                 n.SetData(note);
+            }
+
+            SavedFlickNoteData flick = note as SavedFlickNoteData;
+            if (flick != null)
+            {
+                GameObject g = InstantiateNote(note.NotePrefab, (flick.startX + flick.endX) / 2f, BeatToYpos(flick.whenSummonBeat));
+                FlickNoteObject n = g.GetComponent<FlickNoteObject>();
+                noteObject = n;
+                n.SetData(flick);
             }
 
             SavedHoldNoteData hold = note as SavedHoldNoteData;
