@@ -17,6 +17,7 @@ public class NoteManager : MonoBehaviour
     public GameObject criticalBasicNotePrefab;
     public GameObject holdNotePrefab;
     public GameObject holdEndNotePrefab;
+    public GameObject criticalHoldEndNotePrefab;
     public GameObject flickNotePrefab;
     public GameObject criticalFlickNotePrefab;
 
@@ -41,10 +42,10 @@ public class NoteManager : MonoBehaviour
             name = "Å×½ºÆ®°î",
             notes = new SavedNoteData[]
             {
-                new SavedFlickNoteData(){ startX=1, endX = 6,whenSummonBeat=12},
-                new SavedCriticalFlickNoteData(){startX=1,endX=6,whenSummonBeat=16},
-                new SavedFlickNoteData(){ startX=1, endX = 6,whenSummonBeat=20},
-                new SavedCriticalFlickNoteData(){startX=1,endX=6,whenSummonBeat=24},
+                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=16},
+                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=20},
+                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=24},
+                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=28},
             }
         };
 
