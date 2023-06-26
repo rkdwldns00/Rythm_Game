@@ -15,6 +15,7 @@ public class NoteManager : MonoBehaviour
     float noteDownSpeed { get; set; } = 30f;
     public GameObject basicNotePrefab;
     public GameObject holdNotePrefab;
+    public GameObject holdEndNotePrefab;
     public GameObject flickNotePrefab;
 
     public float mapTimer => Time.time - mapStartTime;
@@ -38,14 +39,13 @@ public class NoteManager : MonoBehaviour
             name = "Å×½ºÆ®°î",
             notes = new SavedNoteData[]
             {
-                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 20},
-                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 24},
-                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 28},
-                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 32},
-                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 36},
-                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 40},
-                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 44},
-                new SavedFlickNoteData() {startX = 2, endX = 6,rotation = 90,whenSummonBeat = 48},
+                new SavedBasicNoteData() {startX = 4,endX=8,whenSummonBeat=16},
+                new SavedHoldEndNoteData(){startX=4, endX=8,whenSummonBeat=20},
+                new SavedHoldEndNoteData(){startX=4, endX=8,whenSummonBeat=24},
+                new SavedHoldEndNoteData(){startX=4, endX=8,whenSummonBeat=28},
+                new SavedHoldEndNoteData(){startX=4, endX=8,whenSummonBeat=32},
+                new SavedHoldEndNoteData(){startX=4, endX=8,whenSummonBeat=36},
+                new SavedHoldEndNoteData(){startX=4, endX=8,whenSummonBeat=40},
             }
         };
 
