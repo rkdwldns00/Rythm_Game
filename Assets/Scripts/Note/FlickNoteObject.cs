@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class FlickNoteObject : Note, IHitableNoteObject
 {
+    [SerializeField] float perfectTiming = 0.04f;
+    [SerializeField] float greatTiming = 0.08f;
+    [SerializeField] float goodTiming = 0.1f;
+    [SerializeField] float badTiming = 0.13f;
+
     float startX;
     float endX;
 
@@ -28,7 +33,7 @@ public class FlickNoteObject : Note, IHitableNoteObject
     {
         if (
             (!needTochStart || (!isDetectedTouchStart && HittingNoteChecker.instance.TouchDatas[line] == TouchMode.Start))
-            && Mathf.Abs(DistanceToHittingChecker) < 0.13f)
+            && Mathf.Abs(DistanceToHittingChecker) < badTiming)
         {
             isDetectedTouchStart = true;
         }
@@ -37,7 +42,6 @@ public class FlickNoteObject : Note, IHitableNoteObject
         float flickPowerRotation = Mathf.Atan2(flickPower.y, flickPower.x) * Mathf.Rad2Deg;
         return
             isDetectedTouchStart
-            && Mathf.Abs(DistanceToHittingChecker) < 0.13f
             && line + 1 >= startX && line - 1 <= endX - 1
             && HittingNoteChecker.instance.TouchDatas[line] == TouchMode.Hold
             && flickPower.magnitude > 5 && Mathf.Abs(rotation - flickPowerRotation) <= 30f;
@@ -46,15 +50,15 @@ public class FlickNoteObject : Note, IHitableNoteObject
     public void Hit()
     {
         float t = Mathf.Abs(DistanceToHittingChecker);
-        if (t <= 0.04f)
+        if (t <= perfectTiming)
         {
             HitResultShower.ShowHitResult(HitResult.Perfect);
         }
-        else if (t <= 0.08f)
+        else if (t <= greatTiming)
         {
             HitResultShower.ShowHitResult(HitResult.Great);
         }
-        else if (t <= 0.1f)
+        else if (t <= goodTiming)
         {
             HitResultShower.ShowHitResult(HitResult.Good);
         }
@@ -101,4 +105,9 @@ public class SavedFlickNoteData : SavedNoteData, ISummonable
 
         return n;
     }
+}
+
+public class SavedCriticalFlickNoteData : SavedFlickNoteData
+{
+    public override GameObject NotePrefab => NoteManager.instance.criticalFlickNotePrefab;
 }

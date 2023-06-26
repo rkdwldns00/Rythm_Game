@@ -2194,6 +2194,7 @@ MonoBehaviour:
   holdNotePrefab: {fileID: 2084691848210909454, guid: 25359a43aca94874e84c6f56c4c7e744, type: 3}
   holdEndNotePrefab: {fileID: 980207650856122209, guid: 626b80c1ff7a7a143b09d1c686f11a63, type: 3}
   flickNotePrefab: {fileID: 980207650856122209, guid: 22edf44d9e3677b4092214646ca9d472, type: 3}
+  criticalFlickNotePrefab: {fileID: 980207650856122209, guid: 9eff8fe0350ff774590488656b24ef84, type: 3}
 --- !u!82 &1811769811
 AudioSource:
   m_ObjectHideFlags: 0
