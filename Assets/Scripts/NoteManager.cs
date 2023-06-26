@@ -39,15 +39,12 @@ public class NoteManager : MonoBehaviour
             name = "Å×½ºÆ®°î",
             notes = new SavedNoteData[]
             {
-                new SavedBasicNoteData() {startX = 4,endX=8,whenSummonBeat=16},
-                new SavedFlickNoteData() {startX = 10, endX=12,whenSummonBeat = 16,rotation = 0},
-                new SavedHoldEndNoteData(){startX = 8, endX = 12,whenSummonBeat = 20},
-                new SavedHoldNoteData() {whenSummonBeat=20,curveData=new SavedHoldNoteCurve[]
-                {
-                    new SavedHoldNoteCurve() {spawnBeat=0,startX=1,endX=4},
-                    new SavedHoldNoteCurve() {spawnBeat=8,startX=1,endX=4},
-                }
-                }
+                new SavedFlickNoteData(){startX = 1,endX =12,rotation=0,whenSummonBeat=20, needTouchStart = false},
+                new SavedFlickNoteData(){startX = 1,endX =12,rotation=0,whenSummonBeat=24, needTouchStart = false},
+                new SavedFlickNoteData(){startX = 1,endX =12,rotation=0,whenSummonBeat=28, needTouchStart = false},
+                new SavedFlickNoteData(){startX = 1,endX =12,rotation=0,whenSummonBeat=32, needTouchStart = false},
+                new SavedFlickNoteData(){startX = 1,endX =12,rotation=0,whenSummonBeat=36, needTouchStart = false},
+                new SavedFlickNoteData(){startX = 1,endX =12,rotation=0,whenSummonBeat=40, needTouchStart = false},
             }
         };
 

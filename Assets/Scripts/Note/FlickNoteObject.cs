@@ -9,7 +9,8 @@ public class FlickNoteObject : Note, IHitableNoteObject
 
     float rotation;
 
-    bool isStartTouch = false;
+    bool isDetectedTouchStart = false;
+    bool needTochStart;
 
     // Start is called before the first frame update
     void Start()
@@ -25,15 +26,17 @@ public class FlickNoteObject : Note, IHitableNoteObject
 
     public bool CheckHit(int line)
     {
-        if (!isStartTouch && HittingNoteChecker.instance.TouchDatas[line] == TouchMode.Start && Mathf.Abs(DistanceToHittingChecker) < 0.13f)
+        if (
+            (!needTochStart || (!isDetectedTouchStart && HittingNoteChecker.instance.TouchDatas[line] == TouchMode.Start))
+            && Mathf.Abs(DistanceToHittingChecker) < 0.13f)
         {
-            isStartTouch = true;
+            isDetectedTouchStart = true;
         }
 
         Vector2 flickPower = HittingNoteChecker.instance.GetFlickPower(line);
         float flickPowerRotation = Mathf.Atan2(flickPower.y, flickPower.x) * Mathf.Rad2Deg;
         return
-            isStartTouch
+            isDetectedTouchStart
             && Mathf.Abs(DistanceToHittingChecker) < 0.13f
             && line + 1 >= startX && line - 1 <= endX - 1
             && HittingNoteChecker.instance.TouchDatas[line] == TouchMode.Hold
@@ -70,6 +73,7 @@ public class FlickNoteObject : Note, IHitableNoteObject
         startX = data.startX;
         endX = data.endX;
         rotation = data.rotation;
+        needTochStart = data.needTouchStart;
     }
 }
 
@@ -81,8 +85,9 @@ public class SavedFlickNoteData : SavedNoteData, ISummonable
     public float endX;
 
     public float rotation;
+    public bool needTouchStart = true;
 
-    public Note Summon(NoteSummoner summoner,SavedNoteData data)
+    public Note Summon(NoteSummoner summoner, SavedNoteData data)
     {
         FlickNoteObject n = null;
 
