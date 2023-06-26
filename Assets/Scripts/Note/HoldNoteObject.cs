@@ -1,12 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Reflection;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
@@ -139,10 +134,54 @@ public class HoldNoteObject : Note
     }
 }
 
-public class SavedHoldNoteData : SavedNoteData
+public class SavedHoldNoteData : SavedNoteData, ISummonable
 {
     public override GameObject NotePrefab => NoteManager.instance.holdNotePrefab;
     public SavedHoldNoteCurve[] curveData;
+
+    public Note Summon(NoteSummoner summoner, SavedNoteData data)
+    {
+        HoldNoteObject noteObject = null;
+
+        SavedHoldNoteData hold = data as SavedHoldNoteData;
+        if (hold != null && hold.curveData.Length > 1)
+        {
+            float startY = summoner.BeatToYpos(hold.whenSummonBeat);
+            GameObject g = summoner.InstantiateNote(data.NotePrefab, 0, startY);
+            HoldNoteObject n = g.GetComponent<HoldNoteObject>();
+            noteObject = n;
+
+            RuntimeHoldNoteCurve[] curves = new RuntimeHoldNoteCurve[hold.curveData.Length];
+            for (int i = 0; i < curves.Length; i++)
+            {
+                RuntimeHoldNoteCurve newCurve = new RuntimeHoldNoteCurve()
+                {
+                    startX = hold.curveData[i].startX,
+                    endX = hold.curveData[i].endX,
+                    yPos = summoner.BeatToYpos(hold.curveData[i].spawnBeat)
+                };
+                curves[i] = newCurve;
+            }
+
+            n.Draw(curves);
+
+            int start = (int)hold.curveData[0].spawnBeat;
+            int length = (int)(hold.curveData[hold.curveData.Length - 1].spawnBeat - start);
+            if (length > 2)
+            {
+                float[] hitCheckTiming = new float[length - 2];
+
+                for (int i = 0; i < hitCheckTiming.Length; i++)
+                {
+                    hitCheckTiming[i] = summoner.beatToSec * (i + 1);
+                }
+
+                n.SetHitCheckTiming(hitCheckTiming);
+            }
+        }
+
+        return noteObject;
+    }
 }
 
 public struct SavedHoldNoteCurve

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicNoteObject : Note, HitableNote
+public class BasicNoteObject : Note, IHitableNoteObject
 {
     float startX;
     float endX;
@@ -53,10 +53,25 @@ public class BasicNoteObject : Note, HitableNote
     }
 }
 
-public class SavedBasicNoteData : SavedNoteData
+public class SavedBasicNoteData : SavedNoteData, ISummonable
 {
     public override GameObject NotePrefab => NoteManager.instance.basicNotePrefab;
 
     public float startX;
     public float endX;
+
+    public Note Summon(NoteSummoner summoner, SavedNoteData data)
+    {
+        BasicNoteObject n = null;
+
+        SavedBasicNoteData basic = data as SavedBasicNoteData;
+        if (basic != null)
+        {
+            GameObject g = summoner.InstantiateNote(data.NotePrefab, (basic.startX + basic.endX) / 2f, summoner.BeatToYpos(basic.whenSummonBeat));
+            n = g.GetComponent<BasicNoteObject>();
+            n?.SetData(data);
+        }
+
+        return n;
+    }
 }

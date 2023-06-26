@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlickNoteObject : Note, HitableNote
+public class FlickNoteObject : Note, IHitableNoteObject
 {
     float startX;
     float endX;
@@ -25,13 +25,14 @@ public class FlickNoteObject : Note, HitableNote
 
     public bool CheckHit(int line)
     {
-        if (!isStartTouch && HittingNoteChecker.instance.TouchDatas[line] == TouchMode.Start && Mathf.Abs(DistanceToHittingChecker) < 0.13f) {
+        if (!isStartTouch && HittingNoteChecker.instance.TouchDatas[line] == TouchMode.Start && Mathf.Abs(DistanceToHittingChecker) < 0.13f)
+        {
             isStartTouch = true;
         }
 
         Vector2 flickPower = HittingNoteChecker.instance.GetFlickPower(line);
         float flickPowerRotation = Mathf.Atan2(flickPower.y, flickPower.x) * Mathf.Rad2Deg;
-        return 
+        return
             isStartTouch
             && Mathf.Abs(DistanceToHittingChecker) < 0.13f
             && line + 1 >= startX && line - 1 <= endX - 1
@@ -72,7 +73,7 @@ public class FlickNoteObject : Note, HitableNote
     }
 }
 
-public class SavedFlickNoteData : SavedNoteData
+public class SavedFlickNoteData : SavedNoteData, ISummonable
 {
     public override GameObject NotePrefab => NoteManager.instance.flickNotePrefab;
 
@@ -80,4 +81,19 @@ public class SavedFlickNoteData : SavedNoteData
     public float endX;
 
     public float rotation;
+
+    public Note Summon(NoteSummoner summoner,SavedNoteData data)
+    {
+        FlickNoteObject n = null;
+
+        SavedFlickNoteData flick = data as SavedFlickNoteData;
+        if (flick != null)
+        {
+            GameObject g = summoner.InstantiateNote(data.NotePrefab, (flick.startX + flick.endX) / 2f, summoner.BeatToYpos(flick.whenSummonBeat));
+            n = g.GetComponent<FlickNoteObject>();
+            n?.SetData(flick);
+        }
+
+        return n;
+    }
 }

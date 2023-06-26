@@ -2,14 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class HoldEndNoteObject : Note, HitableNote
+public class HoldEndNoteObject : Note, IHitableNoteObject
 {
     float startX;
     float endX;
 
     private void Start()
     {
-        print("¼ÒÈ¯µÊ");
+
     }
 
     public bool CheckHit(int line)
@@ -51,10 +51,25 @@ public class HoldEndNoteObject : Note, HitableNote
     }
 }
 
-public class SavedHoldEndNoteData : SavedNoteData
+public class SavedHoldEndNoteData : SavedNoteData, ISummonable
 {
     public override GameObject NotePrefab => NoteManager.instance.holdEndNotePrefab;
 
     public float startX;
     public float endX;
+
+    public Note Summon(NoteSummoner summoner, SavedNoteData data)
+    {
+        HoldEndNoteObject n = null;
+
+        SavedHoldEndNoteData holdEnd = data as SavedHoldEndNoteData;
+        if (holdEnd != null)
+        {
+            GameObject g = summoner.InstantiateNote(data.NotePrefab, (holdEnd.startX + holdEnd.endX) / 2f, summoner.BeatToYpos(holdEnd.whenSummonBeat));
+            n = g.GetComponent<HoldEndNoteObject>();
+            n?.SetData(holdEnd);
+        }
+
+        return n;
+    }
 }

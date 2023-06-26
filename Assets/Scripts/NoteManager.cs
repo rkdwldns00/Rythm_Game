@@ -40,12 +40,14 @@ public class NoteManager : MonoBehaviour
             notes = new SavedNoteData[]
             {
                 new SavedBasicNoteData() {startX = 4,endX=8,whenSummonBeat=16},
-                new SavedHoldEndNoteData(){startX=4, endX=8,whenSummonBeat=20},
-                new SavedHoldEndNoteData(){startX=4, endX=8,whenSummonBeat=24},
-                new SavedHoldEndNoteData(){startX=4, endX=8,whenSummonBeat=28},
-                new SavedHoldEndNoteData(){startX=4, endX=8,whenSummonBeat=32},
-                new SavedHoldEndNoteData(){startX=4, endX=8,whenSummonBeat=36},
-                new SavedHoldEndNoteData(){startX=4, endX=8,whenSummonBeat=40},
+                new SavedFlickNoteData() {startX = 10, endX=12,whenSummonBeat = 16,rotation = 0},
+                new SavedHoldEndNoteData(){startX = 8, endX = 12,whenSummonBeat = 20},
+                new SavedHoldNoteData() {whenSummonBeat=20,curveData=new SavedHoldNoteCurve[]
+                {
+                    new SavedHoldNoteCurve() {spawnBeat=0,startX=1,endX=4},
+                    new SavedHoldNoteCurve() {spawnBeat=8,startX=1,endX=4},
+                }
+                }
             }
         };
 
@@ -84,14 +86,14 @@ public class NoteManager : MonoBehaviour
     public void HitCheck(int line)
     {
         Note hittedNote = null;
-        HitableNote hittedHitableNote = null;
+        IHitableNoteObject hittedHitableNote = null;
 
         noteListeners.RemoveAll((x) => x == null);
 
         foreach (Transform noteTransform in noteListeners)
         {
             Note note = noteTransform.GetComponent<Note>();
-            HitableNote hitableNote = note as HitableNote;
+            IHitableNoteObject hitableNote = note as IHitableNoteObject;
 
             if (note is null)
             {
@@ -131,7 +133,7 @@ public abstract class Note : MonoBehaviour
     public float DistanceToHittingChecker => NoteManager.instance.mapTimer - whenExecuteTime;
 }
 
-public interface HitableNote
+public interface IHitableNoteObject
 {
     //현재 작동해아되는 상태인지 확인
     public bool CheckHit(int line);
@@ -140,13 +142,18 @@ public interface HitableNote
     public void Hit();
 }
 
-class NoteSummoner
+public interface ISummonable
+{
+    public Note Summon(NoteSummoner summoner, SavedNoteData data);
+}
+
+public class NoteSummoner
 {
     Transform field;
     float curruntBpm;
     float curruntNoteDownSpeed = 30f;
 
-    float beatToSec => 60f / (float)NoteManager.MAXIMUM_BEAT * 4f / curruntBpm;
+    public float beatToSec => 60f / (float)NoteManager.MAXIMUM_BEAT * 4f / curruntBpm;
 
     public NoteSummoner(SavedMapData map, Transform field)
     {
@@ -158,7 +165,17 @@ class NoteSummoner
     {
         foreach (SavedNoteData note in map.notes)
         {
-            Note noteObject = null;
+            ISummonable summonable = note as ISummonable;
+            if (summonable is not null)
+            {
+                Note noteObject = summonable.Summon(this, note);
+
+                if (noteObject != null)
+                {
+                    noteObject.whenExecuteTime = beatToSec * note.whenSummonBeat;
+                }
+            }
+            /*Note noteObject = null;
 
             SavedBasicNoteData basic = note as SavedBasicNoteData;
             if (basic != null)
@@ -218,7 +235,7 @@ class NoteSummoner
             if (noteObject != null)
             {
                 noteObject.whenExecuteTime = beatToSec * note.whenSummonBeat;
-            }
+            }*/
         }
     }
 
