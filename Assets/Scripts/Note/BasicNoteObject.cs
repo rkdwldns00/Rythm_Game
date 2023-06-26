@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class BasicNoteObject : Note, IHitableNoteObject
 {
+    [SerializeField] float perfectTiming = 0.04f;
+    [SerializeField] float greatTiming = 0.08f;
+    [SerializeField] float goodTiming = 0.1f;
+    [SerializeField] float badTiming = 0.13f;
+
     float startX;
     float endX;
 
@@ -15,7 +20,7 @@ public class BasicNoteObject : Note, IHitableNoteObject
 
     public bool CheckHit(int line)
     {
-        return Mathf.Abs(DistanceToHittingChecker) < 0.13f
+        return Mathf.Abs(DistanceToHittingChecker) < badTiming
             && line + 1 >= startX && line - 1 <= endX - 1
             && HittingNoteChecker.instance.TouchDatas[line] == TouchMode.Start;
     }
@@ -23,15 +28,15 @@ public class BasicNoteObject : Note, IHitableNoteObject
     public void Hit()
     {
         float t = Mathf.Abs(DistanceToHittingChecker);
-        if (t <= 0.04f)
+        if (t <= perfectTiming)
         {
             HitResultShower.ShowHitResult(HitResult.Perfect);
         }
-        else if (t <= 0.08f)
+        else if (t <= greatTiming)
         {
             HitResultShower.ShowHitResult(HitResult.Great);
         }
-        else if (t <= 0.1f)
+        else if (t <= goodTiming)
         {
             HitResultShower.ShowHitResult(HitResult.Good);
         }
@@ -74,4 +79,9 @@ public class SavedBasicNoteData : SavedNoteData, ISummonable
 
         return n;
     }
+}
+
+public class SavedCriticalBasicNoteData : SavedBasicNoteData
+{
+    public override GameObject NotePrefab => NoteManager.instance.criticalBasicNotePrefab;
 }

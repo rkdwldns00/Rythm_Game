@@ -96,9 +96,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96417de11f814814f8452109ab8004bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  noteMesh:
-  - {x: 0, y: 2, z: 0}
-  - {x: 0, y: 2, z: 3}
-  - {x: 1, y: 3, z: 6}
-  - {x: 0, y: 2, z: 9}
-  - {x: 1, y: 3, z: 12}
+  whenExecuteTime: 0
+  curves: []

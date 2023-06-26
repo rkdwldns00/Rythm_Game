@@ -14,6 +14,7 @@ public class NoteManager : MonoBehaviour
     public Transform field;
     float noteDownSpeed { get; set; } = 30f;
     public GameObject basicNotePrefab;
+    public GameObject criticalBasicNotePrefab;
     public GameObject holdNotePrefab;
     public GameObject holdEndNotePrefab;
     public GameObject flickNotePrefab;
@@ -39,12 +40,10 @@ public class NoteManager : MonoBehaviour
             name = "테스트곡",
             notes = new SavedNoteData[]
             {
-                new SavedFlickNoteData(){startX = 1,endX =12,rotation=0,whenSummonBeat=20, needTouchStart = false},
-                new SavedFlickNoteData(){startX = 1,endX =12,rotation=0,whenSummonBeat=24, needTouchStart = false},
-                new SavedFlickNoteData(){startX = 1,endX =12,rotation=0,whenSummonBeat=28, needTouchStart = false},
-                new SavedFlickNoteData(){startX = 1,endX =12,rotation=0,whenSummonBeat=32, needTouchStart = false},
-                new SavedFlickNoteData(){startX = 1,endX =12,rotation=0,whenSummonBeat=36, needTouchStart = false},
-                new SavedFlickNoteData(){startX = 1,endX =12,rotation=0,whenSummonBeat=40, needTouchStart = false},
+                new SavedBasicNoteData(){ startX=1, endX = 6,whenSummonBeat=12},
+                new SavedCriticalBasicNoteData(){startX=1,endX=6,whenSummonBeat=16},
+                new SavedBasicNoteData(){ startX=1, endX = 6,whenSummonBeat=20},
+                new SavedCriticalBasicNoteData(){startX=1,endX=6,whenSummonBeat=24},
             }
         };
 
@@ -124,7 +123,7 @@ public abstract class SavedNoteData
 
 public abstract class Note : MonoBehaviour
 {
-    public float whenExecuteTime;
+    public float whenExecuteTime { get; set; }
 
     //판정선에 갈때까지 걸리는 시간
     public float DistanceToHittingChecker => NoteManager.instance.mapTimer - whenExecuteTime;

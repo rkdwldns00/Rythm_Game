@@ -2190,6 +2190,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   field: {fileID: 1811769808}
   basicNotePrefab: {fileID: 980207650856122209, guid: 375b43102560704469d24f4dfd2bf553, type: 3}
+  criticalBasicNotePrefab: {fileID: 980207650856122209, guid: 0873902f96c83694d8ee57e81a290a36, type: 3}
   holdNotePrefab: {fileID: 2084691848210909454, guid: 25359a43aca94874e84c6f56c4c7e744, type: 3}
   holdEndNotePrefab: {fileID: 980207650856122209, guid: 626b80c1ff7a7a143b09d1c686f11a63, type: 3}
   flickNotePrefab: {fileID: 980207650856122209, guid: 22edf44d9e3677b4092214646ca9d472, type: 3}
