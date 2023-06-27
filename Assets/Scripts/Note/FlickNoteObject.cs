@@ -89,7 +89,7 @@ public class SavedFlickNoteData : SavedNoteData, ISummonable
     public float rotation;
     public bool needTouchStart = true;
 
-    public Note Summon(NoteSummoner summoner, SavedNoteData data)
+    public override Note Summon(NoteSummoner summoner, SavedNoteData data)
     {
         FlickNoteObject n = null;
 

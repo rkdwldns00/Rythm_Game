@@ -137,7 +137,7 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
     public virtual GameObject NotePrefab => NoteManager.instance.holdNotePrefab;
     public SavedHoldNoteCurve[] curveData;
 
-    public Note Summon(NoteSummoner summoner, SavedNoteData data)
+    public override Note Summon(NoteSummoner summoner, SavedNoteData data)
     {
         HoldNoteObject noteObject = null;
 
@@ -171,7 +171,7 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
 
                 for (int i = 0; i < hitCheckTiming.Length; i++)
                 {
-                    hitCheckTiming[i] = summoner.beatToSec * (i + 1);
+                    hitCheckTiming[i] = summoner.beatToSec(i + 1);
                 }
 
                 n.SetHitCheckTiming(hitCheckTiming);
