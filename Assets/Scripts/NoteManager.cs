@@ -31,7 +31,6 @@ public class NoteManager : MonoBehaviour
         instance = this;
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         Application.targetFrameRate = 120;
@@ -49,24 +48,9 @@ public class NoteManager : MonoBehaviour
             }
         };
 
-        /*map.notes = new SavedNoteData[1000];
-
-        for (int i = 0; i < map.notes.Length; i++)
-        {
-            int a = UnityEngine.Random.Range(1, 12);
-            int b = -1;
-            do
-            {
-                b = UnityEngine.Random.Range(1, 12);
-            } while (a == b);
-            map.notes[i] = new SavedBasicNoteData() { whenSummonBeat = i, startX = Mathf.Min(a, b), endX = Mathf.Max(a, b) };
-        }*/
-
         new NoteSummoner(map, field).SummmonMap(map);
-        //SummmonMap(map);
     }
 
-    // Update is called once per frame
     void Update()
     {
         noteListeners.RemoveAll((x) => x == null);
@@ -173,67 +157,6 @@ public class NoteSummoner
                     noteObject.whenExecuteTime = beatToSec * note.whenSummonBeat;
                 }
             }
-            /*Note noteObject = null;
-
-            SavedBasicNoteData basic = note as SavedBasicNoteData;
-            if (basic != null)
-            {
-                GameObject g = InstantiateNote(note.NotePrefab, (basic.startX + basic.endX) / 2f, BeatToYpos(basic.whenSummonBeat));
-                BasicNoteObject n = g.GetComponent<BasicNoteObject>();
-                noteObject = n;
-                n.SetData(note);
-            }
-
-            SavedFlickNoteData flick = note as SavedFlickNoteData;
-            if (flick != null)
-            {
-                GameObject g = InstantiateNote(note.NotePrefab, (flick.startX + flick.endX) / 2f, BeatToYpos(flick.whenSummonBeat));
-                FlickNoteObject n = g.GetComponent<FlickNoteObject>();
-                noteObject = n;
-                n.SetData(flick);
-            }
-
-            SavedHoldNoteData hold = note as SavedHoldNoteData;
-            if (hold != null && hold.curveData.Length > 1)
-            {
-                float startY = BeatToYpos(hold.whenSummonBeat);
-                GameObject g = InstantiateNote(note.NotePrefab, 0, startY);
-                HoldNoteObject n = g.GetComponent<HoldNoteObject>();
-                noteObject = n;
-
-                RuntimeHoldNoteCurve[] curves = new RuntimeHoldNoteCurve[hold.curveData.Length];
-                for (int i = 0; i < curves.Length; i++)
-                {
-                    RuntimeHoldNoteCurve newCurve = new RuntimeHoldNoteCurve()
-                    {
-                        startX = hold.curveData[i].startX,
-                        endX = hold.curveData[i].endX,
-                        yPos = BeatToYpos(hold.curveData[i].spawnBeat)
-                    };
-                    curves[i] = newCurve;
-                }
-
-                n.Draw(curves);
-
-                int start = (int)hold.curveData[0].spawnBeat;
-                int length = (int)(hold.curveData[hold.curveData.Length - 1].spawnBeat - start);
-                if (length > 2)
-                {
-                    float[] hitCheckTiming = new float[length - 2];
-
-                    for (int i = 0; i < hitCheckTiming.Length; i++)
-                    {
-                        hitCheckTiming[i] = beatToSec * (i + 1);
-                    }
-
-                    n.SetHitCheckTiming(hitCheckTiming);
-                }
-            }
-
-            if (noteObject != null)
-            {
-                noteObject.whenExecuteTime = beatToSec * note.whenSummonBeat;
-            }*/
         }
     }
 

@@ -17,13 +17,11 @@ public class FlickNoteObject : Note, IHitableNoteObject
     bool isDetectedTouchStart = false;
     bool needTochStart;
 
-    // Start is called before the first frame update
     void Start()
     {
 
     }
 
-    // Update is called once per frame
     void Update()
     {
 

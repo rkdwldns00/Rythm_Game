@@ -7,10 +7,8 @@ using UnityEngine;
 [RequireComponent(typeof(MeshRenderer))]
 public class HoldNoteObject : Note
 {
-    //public Vector3[] noteMesh;
     MeshFilter meshFilter;
     public RuntimeHoldNoteCurve[] curves;
-    //SavedHoldNoteCurve[] hitCheckData;
     float[] hitCheckTiming = new float[0];
 
     int checkIndex = 0;
