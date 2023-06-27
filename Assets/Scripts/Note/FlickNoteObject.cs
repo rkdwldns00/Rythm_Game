@@ -81,7 +81,7 @@ public class FlickNoteObject : Note, IHitableNoteObject
 
 public class SavedFlickNoteData : SavedNoteData, ISummonable
 {
-    public override GameObject NotePrefab => NoteManager.instance.flickNotePrefab;
+    public virtual GameObject NotePrefab => NoteManager.instance.flickNotePrefab;
 
     public float startX;
     public float endX;
@@ -96,7 +96,7 @@ public class SavedFlickNoteData : SavedNoteData, ISummonable
         SavedFlickNoteData flick = data as SavedFlickNoteData;
         if (flick != null)
         {
-            GameObject g = summoner.InstantiateNote(data.NotePrefab, (flick.startX + flick.endX) / 2f, summoner.BeatToYpos(flick.whenSummonBeat));
+            GameObject g = summoner.InstantiateNote(((ISummonable)data).NotePrefab, (flick.startX + flick.endX) / 2f, summoner.BeatToYpos(flick.whenSummonBeat));
             n = g.GetComponent<FlickNoteObject>();
             n?.SetData(flick);
         }

@@ -134,7 +134,7 @@ public class HoldNoteObject : Note
 
 public class SavedHoldNoteData : SavedNoteData, ISummonable
 {
-    public override GameObject NotePrefab => NoteManager.instance.holdNotePrefab;
+    public virtual GameObject NotePrefab => NoteManager.instance.holdNotePrefab;
     public SavedHoldNoteCurve[] curveData;
 
     public Note Summon(NoteSummoner summoner, SavedNoteData data)
@@ -145,7 +145,7 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
         if (hold != null && hold.curveData.Length > 1)
         {
             float startY = summoner.BeatToYpos(hold.whenSummonBeat);
-            GameObject g = summoner.InstantiateNote(data.NotePrefab, 0, startY);
+            GameObject g = summoner.InstantiateNote(((ISummonable)data).NotePrefab, 0, startY);
             HoldNoteObject n = g.GetComponent<HoldNoteObject>();
             noteObject = n;
 

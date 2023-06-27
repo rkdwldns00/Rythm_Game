@@ -102,8 +102,6 @@ public class SavedMapData
 
 public abstract class SavedNoteData
 {
-    public abstract GameObject NotePrefab { get; }
-
     public int whenSummonBeat;
 }
 
@@ -126,6 +124,8 @@ public interface IHitableNoteObject
 
 public interface ISummonable
 {
+    public GameObject NotePrefab { get; }
+
     public Note Summon(NoteSummoner summoner, SavedNoteData data);
 }
 
