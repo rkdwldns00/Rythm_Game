@@ -8,6 +8,7 @@ public class HitResultShower : MonoBehaviour
     Text t;
     static HitResultShower instance;
     float size;
+    static int comboCount;
 
     static string text
     {
@@ -41,24 +42,30 @@ public class HitResultShower : MonoBehaviour
             case HitResult.Perfect:
                 text = "PERFECT";
                 color = Color.cyan;
+                comboCount++;
                 break;
             case HitResult.Great:
                 text = "GREAT";
                 color = Color.magenta;
+                comboCount++;
                 break;
             case HitResult.Good:
                 text = "GOOD";
                 color = Color.yellow;
+                comboCount = 0;
                 break;
             case HitResult.Bad:
                 text = "BAD";
                 color = Color.grey;
+                comboCount = 0;
                 break;
             case HitResult.Miss:
                 text = "MISS";
                 color = Color.grey;
+                comboCount = 0;
                 break;
         }
+        text += "\n" + comboCount;
     }
 }
 

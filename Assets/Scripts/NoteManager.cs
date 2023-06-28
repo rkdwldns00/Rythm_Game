@@ -42,23 +42,30 @@ public class NoteManager : MonoBehaviour
             name = "Å×½ºÆ®°î",
             notes = new SavedNoteData[]
             {
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=16},
+                new SavedHoldNoteData(){whenSummonBeat = 16,
+                    curveData =
+                    new SavedHoldNoteCurve[]{
+                        new SavedHoldNoteCurve(){startX=0,endX=3,spawnBeat=0},
+                        new SavedHoldNoteCurve(){startX=10,endX=13,spawnBeat=14},
+                    }
+                },
+                /*new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=16},
                 new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=17},
                 new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=18},
                 new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=19},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=20},
+                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=20},*/
                 new SavedBPMChangeNoteData(){whenSummonBeat=21,bpm=240},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=21},
+                /*new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=21},
                 new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=22},
                 new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=23},
                 new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=24},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=25},
+                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=25},*/
                 new SavedBPMChangeNoteData(){whenSummonBeat=26,bpm=60},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=26},
+                /*new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=26},
                 new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=27},
                 new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=28},
                 new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=29},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=30},
+                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=30},*/
             }
         };
 
@@ -152,7 +159,7 @@ public class NoteSummoner
     public float curruntBpm;
     public float curruntNoteDownSpeed = 30f;
 
-    public float beatToSec(float beat)
+    public float BeatToSec(float beat)
     {
         float curruntBpm = map.startBpm;
         List<SavedBPMChangeNoteData> bpmChangers = new List<SavedBPMChangeNoteData>();
@@ -211,7 +218,7 @@ public class NoteSummoner
 
             if (noteObject != null)
             {
-                noteObject.whenExecuteTime = beatToSec(note.whenSummonBeat);
+                noteObject.whenExecuteTime = BeatToSec(note.whenSummonBeat);
             }
 
         }
@@ -219,7 +226,7 @@ public class NoteSummoner
 
     public float BeatToYpos(float beat)
     {
-        return beatToSec(beat) * curruntNoteDownSpeed;
+        return BeatToSec(beat) * curruntNoteDownSpeed;
     }
 
     public GameObject InstantiateNote(GameObject prefab, float xPos, float yPos)

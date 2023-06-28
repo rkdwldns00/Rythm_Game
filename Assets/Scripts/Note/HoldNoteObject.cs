@@ -15,6 +15,7 @@ public class HoldNoteObject : Note
 
     private void Start()
     {
+
     }
 
     private void Update()
@@ -64,8 +65,8 @@ public class HoldNoteObject : Note
             meshFilter = GetComponent<MeshFilter>();
         }
 
-        Mesh mesh = new();
 
+        Mesh mesh = new();
         Vector3[] vertices = new Vector3[noteMesh.Length * 2];
 
         Vector3[] normals = new Vector3[noteMesh.Length * 2];
@@ -149,19 +150,35 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
             HoldNoteObject n = g.GetComponent<HoldNoteObject>();
             noteObject = n;
 
-            RuntimeHoldNoteCurve[] curves = new RuntimeHoldNoteCurve[hold.curveData.Length];
-            for (int i = 0; i < curves.Length; i++)
+            int afterIntBeat = 1;
+            List<RuntimeHoldNoteCurve> curves = new List<RuntimeHoldNoteCurve>();
+            for (int i = 0; i < hold.curveData.Length; i++)
             {
+                while (hold.curveData[i].spawnBeat > afterIntBeat)
+                {
+                    SavedHoldNoteCurve beforeCurve = hold.curveData[i - 1];
+                    SavedHoldNoteCurve afterCurve = hold.curveData[i];
+                    float rate = (afterIntBeat - beforeCurve.spawnBeat) / (afterCurve.spawnBeat - beforeCurve.spawnBeat);
+                    RuntimeHoldNoteCurve intCurve = new RuntimeHoldNoteCurve()
+                    {
+                        startX = Mathf.Lerp(beforeCurve.startX, afterCurve.startX, rate),
+                        endX = Mathf.Lerp(beforeCurve.endX, afterCurve.endX, rate),
+                        yPos = summoner.BeatToYpos(whenSummonBeat + afterIntBeat) - summoner.BeatToYpos(whenSummonBeat)
+                    };
+                    curves.Add(intCurve);
+                    afterIntBeat++;
+                }
                 RuntimeHoldNoteCurve newCurve = new RuntimeHoldNoteCurve()
                 {
                     startX = hold.curveData[i].startX,
                     endX = hold.curveData[i].endX,
-                    yPos = summoner.BeatToYpos(hold.curveData[i].spawnBeat)
+                    yPos = summoner.BeatToYpos(whenSummonBeat + hold.curveData[i].spawnBeat) - summoner.BeatToYpos(whenSummonBeat)
                 };
-                curves[i] = newCurve;
+                curves.Add(newCurve);
             }
+            curves.ForEach((x) => Debug.Log(x.yPos));
 
-            n.Draw(curves);
+            n.Draw(curves.ToArray());
 
             int start = (int)hold.curveData[0].spawnBeat;
             int length = (int)(hold.curveData[hold.curveData.Length - 1].spawnBeat - start);
@@ -171,7 +188,7 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
 
                 for (int i = 0; i < hitCheckTiming.Length; i++)
                 {
-                    hitCheckTiming[i] = summoner.beatToSec(i + 1);
+                    hitCheckTiming[i] = summoner.BeatToSec(hold.whenSummonBeat + i + 1) - summoner.BeatToSec(whenSummonBeat);
                 }
 
                 n.SetHitCheckTiming(hitCheckTiming);
