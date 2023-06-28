@@ -13,7 +13,9 @@ public class NoteManager : MonoBehaviour
     public static NoteManager instance;
 
     public Transform field;
-    float noteDownSpeed { get; set; } = 30f;
+    public float noteDownSpeed => noteDownSpeedRate * userSettingNoteDownSpeed;
+    public float noteDownSpeedRate { private get; set; } = 1f;
+    public float userSettingNoteDownSpeed => 30f;
     public GameObject basicNotePrefab;
     public GameObject criticalBasicNotePrefab;
     public GameObject holdNotePrefab;
@@ -21,6 +23,7 @@ public class NoteManager : MonoBehaviour
     public GameObject criticalHoldEndNotePrefab;
     public GameObject flickNotePrefab;
     public GameObject criticalFlickNotePrefab;
+    public GameObject speedChangerPrefab;
 
     public float mapTimer => Time.time - mapStartTime;
 
@@ -42,34 +45,20 @@ public class NoteManager : MonoBehaviour
             name = "Å×½ºÆ®°î",
             notes = new SavedNoteData[]
             {
-                new SavedHoldNoteData(){whenSummonBeat = 16,
+                new SavedHoldNoteData(){whenSummonBeat = 10,
                     curveData =
                     new SavedHoldNoteCurve[]{
                         new SavedHoldNoteCurve(){startX=0,endX=3,spawnBeat=0},
-                        new SavedHoldNoteCurve(){startX=10,endX=13,spawnBeat=14},
+                        new SavedHoldNoteCurve(){startX=10,endX=13,spawnBeat=30},
                     }
                 },
-                /*new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=16},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=17},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=18},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=19},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=20},*/
-                new SavedBPMChangeNoteData(){whenSummonBeat=21,bpm=240},
-                /*new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=21},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=22},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=23},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=24},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=25},*/
-                new SavedBPMChangeNoteData(){whenSummonBeat=26,bpm=60},
-                /*new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=26},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=27},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=28},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=29},
-                new SavedCriticalHoldEndNoteData() {startX=1, endX=5,whenSummonBeat=30},*/
+                new SavedSpeedChangerNoteData(){whenSummonBeat = 15,noteDownSpeedRate = 0.1f},
+                new SavedSpeedChangerNoteData(){whenSummonBeat = 20,noteDownSpeedRate = 2f},
+                new SavedSpeedChangerNoteData(){whenSummonBeat = 25,noteDownSpeedRate = 1f},
             }
         };
 
-        new NoteSummoner(map, field).SummmonMap();
+        new NoteSummoner(map, field, 30).SummmonMap();
     }
 
     void Update()
@@ -156,8 +145,28 @@ public class NoteSummoner
 {
     readonly SavedMapData map;
     readonly Transform field;
-    public float curruntBpm;
-    public float curruntNoteDownSpeed = 30f;
+    readonly float userSettingNoteDownSpeed;
+
+    public NoteSummoner(SavedMapData map, Transform field, float noteDownSpeed)
+    {
+        this.map = map;
+        this.field = field;
+        userSettingNoteDownSpeed = noteDownSpeed;
+    }
+
+    public void SummmonMap()
+    {
+        foreach (SavedNoteData note in map.notes)
+        {
+            Note noteObject = note.Summon(this, note);
+
+            if (noteObject != null)
+            {
+                noteObject.whenExecuteTime = BeatToSec(note.whenSummonBeat);
+            }
+
+        }
+    }
 
     public float BeatToSec(float beat)
     {
@@ -199,34 +208,52 @@ public class NoteSummoner
         else
         {
             return 60f / (float)NoteManager.MAXIMUM_BEAT * 4f / curruntBpm * beat;
-        }
-
-    }
-
-    public NoteSummoner(SavedMapData map, Transform field)
-    {
-        this.map = map;
-        curruntBpm = map.startBpm;
-        this.field = field;
-    }
-
-    public void SummmonMap()
-    {
-        foreach (SavedNoteData note in map.notes)
-        {
-            Note noteObject = note.Summon(this, note);
-
-            if (noteObject != null)
-            {
-                noteObject.whenExecuteTime = BeatToSec(note.whenSummonBeat);
-            }
 
         }
+
     }
 
     public float BeatToYpos(float beat)
     {
-        return BeatToSec(beat) * curruntNoteDownSpeed;
+        float curruntSpeed = 1f;
+        List<SavedSpeedChangerNoteData> speedChangers = new List<SavedSpeedChangerNoteData>();
+        foreach (SavedNoteData note in map.notes)
+        {
+            SavedSpeedChangerNoteData changer = note as SavedSpeedChangerNoteData;
+            if (changer is not null)
+            {
+                speedChangers.Add(changer);
+            }
+        }
+
+        if (speedChangers.Count > 0)
+        {
+            speedChangers.Sort((x, y) => { return x.whenSummonBeat - y.whenSummonBeat; });
+
+            int lastBpmChangerIndex = -1;
+            for (int i = 0; i < speedChangers.Count; i++)
+            {
+                if (speedChangers[i].whenSummonBeat <= beat)
+                {
+                    lastBpmChangerIndex = i;
+                }
+            }
+
+            float beatHis = 0;
+            float sumTime = 0;
+            for (int i = 0; i < lastBpmChangerIndex + 1; i++)
+            {
+                sumTime += (BeatToSec(speedChangers[i].whenSummonBeat) - BeatToSec(beatHis)) * curruntSpeed * userSettingNoteDownSpeed;
+                beatHis = speedChangers[i].whenSummonBeat;
+                curruntSpeed = speedChangers[i].noteDownSpeedRate;
+            }
+            sumTime += (BeatToSec(beat) - BeatToSec(beatHis)) * curruntSpeed * userSettingNoteDownSpeed;
+            return sumTime;
+        }
+        else
+        {
+            return BeatToSec(beat) * curruntSpeed * userSettingNoteDownSpeed;
+        }
     }
 
     public GameObject InstantiateNote(GameObject prefab, float xPos, float yPos)

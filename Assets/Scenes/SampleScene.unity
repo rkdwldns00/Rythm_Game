@@ -2196,6 +2196,7 @@ MonoBehaviour:
   criticalHoldEndNotePrefab: {fileID: 980207650856122209, guid: cf834952b66195345a793b8801d11e97, type: 3}
   flickNotePrefab: {fileID: 980207650856122209, guid: 22edf44d9e3677b4092214646ca9d472, type: 3}
   criticalFlickNotePrefab: {fileID: 980207650856122209, guid: 9eff8fe0350ff774590488656b24ef84, type: 3}
+  speedChangerPrefab: {fileID: 1066422339366766245, guid: 68b168607a10e5848ae9114d57cce686, type: 3}
 --- !u!82 &1811769811
 AudioSource:
   m_ObjectHideFlags: 0

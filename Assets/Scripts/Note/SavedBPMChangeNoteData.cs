@@ -8,7 +8,6 @@ public sealed class SavedBPMChangeNoteData : SavedNoteData
 
     public override Note Summon(NoteSummoner summoner, SavedNoteData data)
     {
-        summoner.curruntBpm = bpm;
         return null;
     }
 }
