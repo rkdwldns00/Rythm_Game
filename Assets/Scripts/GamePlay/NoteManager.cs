@@ -39,7 +39,7 @@ public class NoteManager : MonoBehaviour
     {
         Application.targetFrameRate = 120;
 
-        SavedMapData map = new SavedMapData()
+        /*SavedMapData map = new SavedMapData()
         {
             startBpm = 60,
             name = "Å×½ºÆ®°î",
@@ -56,9 +56,9 @@ public class NoteManager : MonoBehaviour
                 new SavedSpeedChangerNoteData(){whenSummonBeat = 20,noteDownSpeedRate = 2f},
                 new SavedSpeedChangerNoteData(){whenSummonBeat = 25,noteDownSpeedRate = 1f},
             }
-        };
+        };*/
 
-        new NoteSummoner(map, field, 30).SummmonMap();
+        //new NoteSummoner(map, field, 30).SummmonMap();
     }
 
     void Update()
