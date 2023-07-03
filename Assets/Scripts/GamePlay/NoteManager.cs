@@ -49,22 +49,34 @@ public class NoteManager : MonoBehaviour
                 new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 5},
                 new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 6},
                 new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 7},
-                new SavedMeterChangerNoteData{beatPerBar = 3,whenSummonBeat=7},
+                new SavedMeterChangerNoteData{beatPerBar = 1,whenSummonBeat=7},
                 new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 8},
                 new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 9},
                 new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 10},
                 new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 11},
-                new SavedMeterChangerNoteData{beatPerBar = 2,whenSummonBeat=11},
+                new SavedMeterChangerNoteData{beatPerBar = 4,whenSummonBeat=11},
                 new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 12},
                 new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 13},
                 new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 14},
-                new SavedMeterChangerNoteData{beatPerBar = 1,whenSummonBeat=14},
                 new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 15},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 16},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 17},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 18},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 19},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 20},
+
+                new SavedBPMChangeNoteData(){bpm = 500,whenSummonBeat=18},
+                new SavedBPMChangeNoteData(){bpm = 120,whenSummonBeat=100},
+
+                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 104},
+                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 105},
+                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 106},
+                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 107},
+                new SavedMeterChangerNoteData{beatPerBar = 1,whenSummonBeat=107},
+                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 108},
+                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 109},
+                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 110},
+                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 111},
+                new SavedMeterChangerNoteData{beatPerBar = 4,whenSummonBeat=111},
+                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 112},
+                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 113},
+                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 114},
+                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 115},
             }
         };
 
@@ -181,46 +193,28 @@ public class NoteSummoner
     public float BeatToSec(float beat)
     {
         float curruntBpm = map.startBpm;
-        List<SavedBPMChangeNoteData> bpmChangers = new List<SavedBPMChangeNoteData>();
+
+        List<SavedBPMChangeNoteData> bpmChnagers = new List<SavedBPMChangeNoteData>();
         foreach (SavedNoteData note in map.notes)
         {
             SavedBPMChangeNoteData bpm = note as SavedBPMChangeNoteData;
             if (bpm is not null)
             {
-                bpmChangers.Add(bpm);
+                bpmChnagers.Add(bpm);
             }
         }
 
-        if (bpmChangers.Count > 0)
+        float sumTime = 0;
+        for (int i = 0; i <= beat; i++)
         {
-            bpmChangers.Sort((x, y) => { return x.whenSummonBeat - y.whenSummonBeat; });
-
-            int lastBpmChangerIndex = -1;
-            for (int i = 0; i < bpmChangers.Count; i++)
+            if (bpmChnagers.Count > 0 && bpmChnagers[0].whenSummonBeat < i)
             {
-                if (bpmChangers[i].whenSummonBeat <= beat)
-                {
-                    lastBpmChangerIndex = i;
-                }
+                curruntBpm = bpmChnagers[0].bpm;
+                bpmChnagers.RemoveAt(0);
             }
-
-            float beatHis = 0;
-            float sumTime = 0;
-            for (int i = 0; i < lastBpmChangerIndex + 1; i++)
-            {
-                sumTime += 60f / BeatPerBar(beat) / curruntBpm * (bpmChangers[i].whenSummonBeat - beatHis);
-                beatHis = bpmChangers[i].whenSummonBeat;
-                curruntBpm = bpmChangers[i].bpm;
-            }
-            sumTime += 60f / BeatPerBar(beat) / curruntBpm * (beat - beatHis);
-            return sumTime;
+            sumTime += 60f / BeatPerBar(i) / curruntBpm;
         }
-        else
-        {
-            return 60f / BeatPerBar(beat) / curruntBpm * beat;
-
-        }
-
+        return sumTime;
     }
 
     float BeatPerBar(float beat)
