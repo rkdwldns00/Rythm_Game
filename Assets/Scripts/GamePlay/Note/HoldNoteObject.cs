@@ -71,7 +71,7 @@ public class HoldNoteObject : Note
 
         Vector3[] normals = new Vector3[noteMesh.Length * 2];
 
-        int[] triangles = new int[(noteMesh.Length - 1) * 3 * 2];
+        int[] triangles = new int[(noteMesh.Length - 1) * 3 * 2 * 2];
 
         for (int i = 0; i < normals.Length; i++)
         {
@@ -90,14 +90,21 @@ public class HoldNoteObject : Note
             }
         }
 
-        for (int i = 0; i < noteMesh.Length - 1; i++)
+        for (int i = 0; i < (noteMesh.Length - 1); i++)
         {
-            triangles[i * 6] = i * 2;
-            triangles[i * 6 + 1] = i * 2 + 1;
-            triangles[i * 6 + 2] = i * 2 + 2;
-            triangles[i * 6 + 3] = i * 2 + 3;
-            triangles[i * 6 + 4] = i * 2 + 2;
-            triangles[i * 6 + 5] = i * 2 + 1;
+            triangles[i * 12] = i * 2;
+            triangles[i * 12 + 1] = i * 2 + 1;
+            triangles[i * 12 + 2] = i * 2 + 2;
+            triangles[i * 12 + 3] = i * 2 + 3;
+            triangles[i * 12 + 4] = i * 2 + 2;
+            triangles[i * 12 + 5] = i * 2 + 1;
+
+            triangles[i * 12 + 6] = i * 2;
+            triangles[i * 12 + 7] = i * 2 + 2;
+            triangles[i * 12 + 8] = i * 2 + 1;
+            triangles[i * 12 + 9] = i * 2 + 3;
+            triangles[i * 12 + 10] = i * 2 + 1;
+            triangles[i * 12 + 11] = i * 2 + 2;
         }
 
         mesh.vertices = vertices;

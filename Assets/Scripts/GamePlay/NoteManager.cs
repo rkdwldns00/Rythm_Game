@@ -45,38 +45,15 @@ public class NoteManager : MonoBehaviour
             name = "Å×½ºÆ®°î",
             notes = new SavedNoteData[]
             {
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 4},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 5},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 6},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 7},
-                new SavedMeterChangerNoteData{beatPerBar = 1,whenSummonBeat=7},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 8},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 9},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 10},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 11},
-                new SavedMeterChangerNoteData{beatPerBar = 4,whenSummonBeat=11},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 12},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 13},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 14},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 15},
-
-                new SavedBPMChangeNoteData(){bpm = 500,whenSummonBeat=18},
-                new SavedBPMChangeNoteData(){bpm = 120,whenSummonBeat=100},
-
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 104},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 105},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 106},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 107},
-                new SavedMeterChangerNoteData{beatPerBar = 1,whenSummonBeat=107},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 108},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 109},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 110},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 111},
-                new SavedMeterChangerNoteData{beatPerBar = 4,whenSummonBeat=111},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 112},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 113},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 114},
-                new SavedBasicNoteData() {startX = 0, endX = 2,whenSummonBeat = 115},
+                new SavedHoldNoteData() {whenSummonBeat=10,
+                    curveData=new SavedHoldNoteCurve[]{
+                        new SavedHoldNoteCurve(){startX=1,endX=2,spawnBeat=0 },
+                        new SavedHoldNoteCurve(){startX=9,endX=10,spawnBeat=10 },
+                        new SavedHoldNoteCurve(){startX=9,endX=10,spawnBeat=15 },
+                    }
+                },
+                new SavedSpeedChangerNoteData(){noteDownSpeedRate = -1f,whenSummonBeat=15 },
+                new SavedSpeedChangerNoteData(){noteDownSpeedRate = 1f,whenSummonBeat=20 }
             }
         };
 
