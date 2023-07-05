@@ -1,11 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class SUSConveter
 {
-    public static SavedMapData Converte(string SUSData)
+    public static SavedMapData ConvertMapData(string SUSData)
     {
         SUSData = SUSData.Replace("\r", "");
 
@@ -24,7 +26,7 @@ public class SUSConveter
         }
         if (requestTickPerBeatIndex == -1)
         {
-            Warring(0, "#REQEST \"ticks_per_beat\"가 존재하지 않습니다.");
+            Warring("파일에 #REQEST \"ticks_per_beat\"명령이 존재하지 않습니다.");
         }
 
         //데이터를 BPM데이터, 박자데이터, 노트데이터로 분할
@@ -73,7 +75,7 @@ public class SUSConveter
             int[] frontData = new int[middleIndex - 4];
             for (int j = 0; j < frontData.Length; j++)
             {
-                frontData[j] = int.Parse(mapStringData[i][j + 4].ToString());
+                frontData[j] = Convert.ToInt32(mapStringData[i][j + 4].ToString(), 16);
             }
 
             //콜론 뒤쪽의 데이터 해석
@@ -142,17 +144,17 @@ public class SUSConveter
             for (int i = 0; i < line.backData.Length / 2; i++)
             {
                 int whenSummonBeat = barStartBeat + i * (beatPerBarDatas[e + 1].Value / (line.backData.Length / 2));
-                float startX = line.frontData[1];
+                float startX = line.frontData[1] - 1;
                 float endX = line.frontData[1] + line.backData[i * 2 + 1] - 1;
                 switch (line.frontData[0])
                 {
-                    case 0:
+                    case 0: //BPM 변경
                         if (line.frontData[1] == 8)
                         {
                             notes.Add(new SavedBPMChangeNoteData() { whenSummonBeat = whenSummonBeat, bpm = bpmData[line.backData[0] * 10 + line.backData[1] - 1] });
                         }
                         break;
-                    case 1:
+                    case 1: //기본노트
                         if (line.backData[i * 2] == 1)
                         {
                             notes.Add(new SavedBasicNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
@@ -160,6 +162,50 @@ public class SUSConveter
                         else if (line.backData[i * 2] == 2)
                         {
                             notes.Add(new SavedCriticalBasicNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
+                        }
+                        break;
+                    case 5: //플릭노트
+                        notes.ForEach((x) => Debug.Log(x));
+                        for(int j=0; j<notes.Count; j++)
+                        {
+                            SavedBasicNoteData b = notes[j] as SavedBasicNoteData;
+                            if (b == null)
+                            {
+                                continue;
+                            }
+                            if (b.whenSummonBeat == whenSummonBeat && b.startX == startX && b.endX == endX)
+                            {
+                                bool isCritical = b is SavedCriticalBasicNoteData;
+
+                                SavedFlickNoteData f = null;
+                                if (isCritical)
+                                {
+                                    f = new SavedCriticalFlickNoteData();
+                                }
+                                else
+                                {
+                                    f = new SavedFlickNoteData();
+                                }
+
+                                f.whenSummonBeat = whenSummonBeat;
+                                f.startX = startX;
+                                f.endX = endX;
+                                f.needTouchStart = true;
+                                switch (line.backData[i * 2])
+                                {
+                                    case 1:
+                                        f.rotation = 0;
+                                        break;
+                                    case 3:
+                                        f.rotation = -45f;
+                                        break;
+                                    case 4:
+                                        f.rotation = 45f;
+                                        break;
+                                }
+
+                                notes[j] = f;
+                            }
                         }
                         break;
                 }
@@ -174,10 +220,11 @@ public class SUSConveter
             {
                 Debug.Log(note.whenSummonBeat + " : Basic");
             }
-            else if(note is SavedMeterChangerNoteData)
+            else if (note is SavedMeterChangerNoteData)
             {
                 Debug.Log(note.whenSummonBeat + " : meter=" + ((SavedMeterChangerNoteData)note).beatPerBar);
-            }else if (note is SavedBPMChangeNoteData)
+            }
+            else if (note is SavedBPMChangeNoteData)
             {
                 Debug.Log(note.whenSummonBeat + " : bpm=" + ((SavedBPMChangeNoteData)note).bpm);
             }
@@ -187,14 +234,33 @@ public class SUSConveter
         return mapData;
     }
 
-    static void Warring(int errorCode, params string[] logs)
+    public static string ReadTxt(string fileName)
     {
-        string message = "SUS Error-" + errorCode + " : SUS파일을 읽는 과정에서 오류가 발생하였습니다.";
+        string filePath = Path.Combine("Assets/", fileName);
+        FileInfo fileInfo = new FileInfo(filePath);
+        string value = "";
+
+        if (fileInfo.Exists)
+        {
+            StreamReader reader = new StreamReader(filePath);
+            value = reader.ReadToEnd();
+            reader.Close();
+        }
+        else
+        {
+            Warring("경로에 유효한 파일이 존재하지 않습니다.");
+        }
+        return value;
+    }
+
+    static void Warring(params string[] logs)
+    {
+        string message = "SUS Error:SUS파일을 읽는 과정에서 오류가 발생하였습니다.";
         foreach (string log in logs)
         {
             message += "\n" + log;
         }
-        Debug.Log(message);
+        Debug.LogWarning(message);
     }
 
     struct SUSLineData
