@@ -16,7 +16,7 @@ public class BasicNoteObject : Note, IHitableNoteObject
 
     private void Start()
     {
-
+      
     }
 
     public bool CheckHit(int line)

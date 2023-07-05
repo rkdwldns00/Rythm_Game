@@ -51,7 +51,7 @@ public class NoteSummoner
                 curruntBpm = bpmChnagers[0].bpm;
                 bpmChnagers.RemoveAt(0);
             }
-            sumTime += 60f / BeatPerBar(i) / curruntBpm;
+            sumTime += 60f / BeatPerBar(i) * 4 / curruntBpm;
         }
         return sumTime;
     }
@@ -76,7 +76,7 @@ public class NoteSummoner
             int lastMeterChangerIndex = -1;
             for (int i = 0; i < meters.Count; i++)
             {
-                if (meters[i].whenSummonBeat < beat)
+                if (meters[i].whenSummonBeat <= beat)
                 {
                     lastMeterChangerIndex = i;
                 }
@@ -87,7 +87,6 @@ public class NoteSummoner
                 curruntBeatPerBar = meters[lastMeterChangerIndex].beatPerBar;
             }
         }
-
         return curruntBeatPerBar;
     }
 
