@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SUSConveter
@@ -121,6 +122,7 @@ public class SUSConveter
 
         List<(int beat, float startX, float endX, bool isCritical, int id)> holdStartDatas = new List<(int beat, float startX, float endX, bool isCritical, int id)>();
         List<(int beat, float startX, float endX, int id)> holdEndDatas = new List<(int beat, float startX, float endX, int id)>();
+        List<(int beat, float startX, float endX, int id)> holdCurveDatas = new List<(int beat, float startX, float endX, int id)>();
 
         //노트리스트에 SUS데이터를 해독하여 추가
         foreach (SUSLineData line in lines)
@@ -253,12 +255,15 @@ public class SUSConveter
                                         notes.Add(holdEndFlick);
                                     }
                                 }
-                                //오류난곳
                             }
                             if (!isHaveDataNote)
                             {
                                 notes.Add(new SavedHoldEndNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
                             }
+                        }
+                        else if (line.backData[i * 2] == 3) //커브
+                        {
+                            holdCurveDatas.Add(new(whenSummonBeat, startX, endX, line.frontData[2]));
                         }
                         break;
                     case 5: //플릭노트
@@ -310,6 +315,7 @@ public class SUSConveter
 
         holdStartDatas.Sort((a, b) => a.beat - b.beat);
         holdEndDatas.Sort((a, b) => a.beat - b.beat);
+        holdCurveDatas.Sort((a, b) => a.beat - b.beat);
         Debug.Log(holdStartDatas.Count + ", " + holdEndDatas.Count);
 
         int len = holdStartDatas.Count;
@@ -343,13 +349,24 @@ public class SUSConveter
                     {
                         h = new SavedHoldNoteData();
                     }
-                    h.whenSummonBeat = holdStartDatas[j].beat;
+                    h.whenSummonBeat = holdStartDatas[0].beat;
 
-                    h.curveData = new SavedHoldNoteCurve[]
+                    List<SavedHoldNoteCurve> curveList = new List<SavedHoldNoteCurve>();
+                    curveList.Add(new SavedHoldNoteCurve() { spawnBeat = 0, startX = holdStartDatas[0].startX, endX = holdStartDatas[0].endX });
+
+                    for (int k = 0; k < holdCurveDatas.Count; k++)
                     {
-                        new SavedHoldNoteCurve(){spawnBeat=0,startX=holdStartDatas[0].startX,endX=holdStartDatas[0].endX,},
-                        new SavedHoldNoteCurve(){spawnBeat=holdEndDatas[j].beat-holdStartDatas[0].beat,startX=holdEndDatas[j].startX,endX=holdEndDatas[j].endX}
-                    };
+                        if (holdCurveDatas[k].id == id && holdStartDatas[0].beat < holdCurveDatas[k].beat && holdStartDatas[0].beat < holdEndDatas[j].beat)
+                        {
+                            curveList.Add(new SavedHoldNoteCurve() { startX = holdCurveDatas[k].startX, endX = holdCurveDatas[k].endX, spawnBeat = holdCurveDatas[k].beat - holdStartDatas[0].beat });
+                            holdCurveDatas.RemoveAt(k);
+                            k--;
+                        }
+                    }
+
+                    curveList.Add(new SavedHoldNoteCurve() { spawnBeat = holdEndDatas[j].beat - holdStartDatas[0].beat, startX = holdEndDatas[j].startX, endX = holdEndDatas[j].endX });
+
+                    h.curveData = curveList.ToArray();
 
                     notes.Add(h);
                     holdStartDatas.RemoveAt(0);
