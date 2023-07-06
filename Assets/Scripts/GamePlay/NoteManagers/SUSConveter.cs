@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class SUSConveter
@@ -384,20 +383,10 @@ public class SUSConveter
 
     public static string ReadTxt(string fileName)
     {
-        string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
-        FileInfo fileInfo = new FileInfo(filePath);
-        string value = "";
 
-        if (fileInfo.Exists)
-        {
-            StreamReader reader = new StreamReader(filePath);
-            value = reader.ReadToEnd();
-            reader.Close();
-        }
-        else
-        {
-            Warring("경로에 유효한 파일이 존재하지 않습니다.");
-        }
+        TextAsset text = Resources.Load<TextAsset>(fileName);
+        string value = text.text;
+
         return value;
     }
 

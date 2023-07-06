@@ -37,9 +37,9 @@ public class NoteManager : MonoBehaviour
 
     void Start()
     {
-        Application.targetFrameRate = 120;
+        Application.targetFrameRate = 60;
 
-        new NoteSummoner(SUSConveter.ConvertMapData(SUSConveter.ReadTxt("map.sus")), field, 30).SummmonMap();
+        new NoteSummoner(SUSConveter.ConvertMapData(SUSConveter.ReadTxt("map")), field, 30).SummmonMap();
     }
 
     void Update()
