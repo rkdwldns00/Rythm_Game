@@ -120,6 +120,9 @@ public class SUSConveter
             }
         }
 
+        List<(int beat, float startX, float endX, bool isCritical, int id)> holdStartDatas = new List<(int beat, float startX, float endX, bool isCritical, int id)>();
+        List<(int beat, float startX, float endX, int id)> holdEndDatas = new List<(int beat, float startX, float endX, int id)>();
+
         //노트리스트에 SUS데이터를 해독하여 추가
         foreach (SUSLineData line in lines)
         {
@@ -164,9 +167,103 @@ public class SUSConveter
                             notes.Add(new SavedCriticalBasicNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
                         }
                         break;
+                    case 3: //홀드노트
+                        if (line.backData[i * 2] == 1) //홀드시작
+                        {
+                            bool isCritical = false;
+                            bool isHaveDataNote = false;
+                            for (int j = 0; j < notes.Count; j++)
+                            {
+                                SavedBasicNoteData b = notes[j] as SavedBasicNoteData;
+                                SavedFlickNoteData f = notes[j] as SavedFlickNoteData;
+                                if (b != null)
+                                {
+                                    if (b.whenSummonBeat == whenSummonBeat && b.startX == startX && b.endX == endX)
+                                    {
+                                        isHaveDataNote = true;
+                                        isCritical = b is SavedCriticalBasicNoteData;
+                                        b.isHoldStartNote = true;
+                                    }
+                                }
+                                else if (f != null)//컷인, 컷아웃 홀드시작
+                                {
+                                    if (f.whenSummonBeat == whenSummonBeat && f.startX == startX && f.endX == endX)
+                                    {
+                                        isHaveDataNote = true;
+
+                                    }
+                                    else
+                                    {
+                                        continue;
+                                    }
+                                }
+                            }
+
+                            if (!isHaveDataNote)
+                            {
+                                notes.Add(new SavedBasicNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat, isHoldStartNote = true });
+                            }
+                            holdStartDatas.Add(new(whenSummonBeat, startX, endX, isCritical, line.frontData[2]));
+                        }
+                        else if (line.backData[i * 2] == 2) //홀드끝
+                        {
+                            holdEndDatas.Add(new(whenSummonBeat, startX, endX, line.frontData[2]));
+                            bool isHaveDataNote = false;
+                            for (int j = 0; j < notes.Count; j++)
+                            {
+                                SavedBasicNoteData b = notes[j] as SavedBasicNoteData;
+                                SavedFlickNoteData f = notes[j] as SavedFlickNoteData;
+                                if (b != null)
+                                {
+                                    if (b.whenSummonBeat == whenSummonBeat && b.startX == startX && b.endX == endX)
+                                    {
+                                        bool isCritical = b is SavedCriticalBasicNoteData;
+                                        SavedHoldEndNoteData holdEnd = null;
+                                        if (isCritical)
+                                        {
+                                            holdEnd = new SavedCriticalHoldEndNoteData();
+                                        }
+                                        else
+                                        {
+                                            holdEnd = new SavedHoldEndNoteData();
+                                        }
+                                        holdEnd.startX = startX;
+                                        holdEnd.endX = endX;
+                                        holdEnd.whenSummonBeat = whenSummonBeat + 1;
+                                        notes[j] = holdEnd;
+                                    }
+                                }
+                                else if (f != null)
+                                {
+                                    if (f.whenSummonBeat == whenSummonBeat && f.startX == startX && f.endX == endX)
+                                    {
+                                        bool isCritical = f is SavedCriticalFlickNoteData;
+                                        SavedFlickNoteData holdEndFlick = null;
+                                        if (isCritical)
+                                        {
+                                            holdEndFlick = new SavedCriticalFlickNoteData();
+                                        }
+                                        else
+                                        {
+                                            holdEndFlick = new SavedFlickNoteData();
+                                        }
+                                        holdEndFlick.startX = startX;
+                                        holdEndFlick.endX = endX;
+                                        holdEndFlick.whenSummonBeat = whenSummonBeat;
+                                        holdEndFlick.needTouchStart = false;
+                                        notes.Add(holdEndFlick);
+                                    }
+                                }
+                                //오류난곳
+                            }
+                            if (!isHaveDataNote)
+                            {
+                                notes.Add(new SavedHoldEndNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
+                            }
+                        }
+                        break;
                     case 5: //플릭노트
-                        notes.ForEach((x) => Debug.Log(x));
-                        for(int j=0; j<notes.Count; j++)
+                        for (int j = 0; j < notes.Count; j++)
                         {
                             SavedBasicNoteData b = notes[j] as SavedBasicNoteData;
                             if (b == null)
@@ -212,9 +309,60 @@ public class SUSConveter
             }
         }
 
+        holdStartDatas.Sort((a, b) => a.beat - b.beat);
+        holdEndDatas.Sort((a, b) => a.beat - b.beat);
+        Debug.Log(holdStartDatas.Count + ", " + holdEndDatas.Count);
+
+        int len = holdStartDatas.Count;
+        for (int i = 0; i < len; i++)
+        {
+            int id = holdStartDatas[0].id;
+            for (int j = 0; j < holdEndDatas.Count; j++)
+            {
+                if (holdEndDatas[j].id == id)
+                {
+                    SavedHoldNoteData h = null;
+                    if (holdStartDatas[0].isCritical)
+                    {
+                        //크리티컬 홀드노트 추가시 수정
+                        h = new SavedHoldNoteData();
+                        for(int k = 0; k < notes.Count; k++)
+                        {
+                            SavedHoldEndNoteData endNote = notes[k] as SavedHoldEndNoteData;
+                            if(endNote != null && endNote.whenSummonBeat == holdEndDatas[j].beat && endNote.startX == holdEndDatas[j].startX && endNote.endX == holdEndDatas[j].endX)
+                            {
+                                SavedCriticalHoldEndNoteData newCiriticalEndNote = new SavedCriticalHoldEndNoteData();
+                                newCiriticalEndNote.whenSummonBeat = endNote.whenSummonBeat;
+                                newCiriticalEndNote.startX = endNote.startX;
+                                newCiriticalEndNote.endX = endNote.endX;
+                                notes[k] = newCiriticalEndNote;
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        h = new SavedHoldNoteData();
+                    }
+                    h.whenSummonBeat = holdStartDatas[j].beat;
+
+                    h.curveData = new SavedHoldNoteCurve[]
+                    {
+                        new SavedHoldNoteCurve(){spawnBeat=0,startX=holdStartDatas[0].startX,endX=holdStartDatas[0].endX,},
+                        new SavedHoldNoteCurve(){spawnBeat=holdEndDatas[j].beat-holdStartDatas[0].beat,startX=holdEndDatas[j].startX,endX=holdEndDatas[j].endX}
+                    };
+
+                    notes.Add(h);
+                    holdStartDatas.RemoveAt(0);
+                    holdEndDatas.RemoveAt(j);
+                    break;
+                }
+            }
+        }
+
         notes.Sort((a, b) => a.whenSummonBeat - b.whenSummonBeat);
 
-        foreach (var note in notes)
+        /*foreach (var note in notes)
         {
             if (note is SavedBasicNoteData)
             {
@@ -228,7 +376,7 @@ public class SUSConveter
             {
                 Debug.Log(note.whenSummonBeat + " : bpm=" + ((SavedBPMChangeNoteData)note).bpm);
             }
-        }
+        }*/
 
         mapData.notes = notes.ToArray();
         return mapData;

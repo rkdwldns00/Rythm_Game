@@ -68,6 +68,7 @@ public class SavedBasicNoteData : SavedNoteData, ISummonable
 
     public float startX;
     public float endX;
+    public bool isHoldStartNote = false;
 
     public override Note Summon(NoteSummoner summoner, SavedNoteData data)
     {
