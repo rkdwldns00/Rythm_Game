@@ -82,7 +82,7 @@ public class SUSConveter
             int[] backData = new int[mapStringData[i].Length - middleIndex - 1];
             for (int j = 0; j < backData.Length; j++)
             {
-                backData[j] = int.Parse(mapStringData[i][middleIndex + j + 1].ToString());
+                backData[j] = Convert.ToInt32(mapStringData[i][middleIndex + j + 1].ToString(), 16);
             }
 
             lines[i] = new SUSLineData() { bar = bar, frontData = frontData, backData = backData };
@@ -326,10 +326,10 @@ public class SUSConveter
                     {
                         //크리티컬 홀드노트 추가시 수정
                         h = new SavedHoldNoteData();
-                        for(int k = 0; k < notes.Count; k++)
+                        for (int k = 0; k < notes.Count; k++)
                         {
                             SavedHoldEndNoteData endNote = notes[k] as SavedHoldEndNoteData;
-                            if(endNote != null && endNote.whenSummonBeat == holdEndDatas[j].beat && endNote.startX == holdEndDatas[j].startX && endNote.endX == holdEndDatas[j].endX)
+                            if (endNote != null && endNote.whenSummonBeat == holdEndDatas[j].beat && endNote.startX == holdEndDatas[j].startX && endNote.endX == holdEndDatas[j].endX)
                             {
                                 SavedCriticalHoldEndNoteData newCiriticalEndNote = new SavedCriticalHoldEndNoteData();
                                 newCiriticalEndNote.whenSummonBeat = endNote.whenSummonBeat;
@@ -384,7 +384,7 @@ public class SUSConveter
 
     public static string ReadTxt(string fileName)
     {
-        string filePath = Path.Combine("Assets/", fileName);
+        string filePath = Path.Combine(Application.streamingAssetsPath, fileName);
         FileInfo fileInfo = new FileInfo(filePath);
         string value = "";
 
