@@ -330,7 +330,7 @@ public class SUSConveter
                     if (holdStartDatas[0].isCritical)
                     {
                         //크리티컬 홀드노트 추가시 수정
-                        h = new SavedHoldNoteData();
+                        h = new SavedCriticalHoldNoteData();
                         for (int k = 0; k < notes.Count; k++)
                         {
                             SavedHoldEndNoteData endNote = notes[k] as SavedHoldEndNoteData;

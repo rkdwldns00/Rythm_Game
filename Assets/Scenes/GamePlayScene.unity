@@ -336,7 +336,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &229911687
 Light:
   m_ObjectHideFlags: 0
@@ -406,14 +406,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 229911686}
-  m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
-  m_LocalPosition: {x: -9.20456, y: -3.525293, z: 24.479248}
+  m_LocalRotation: {x: 0.46174863, y: 0, z: 0, w: 0.8870109}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+  m_LocalEulerAnglesHint: {x: 55, y: 0, z: 0}
 --- !u!1 &230696192
 GameObject:
   m_ObjectHideFlags: 0
@@ -2241,7 +2241,7 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1811769804}
-  m_LocalRotation: {x: 0.4663866, y: 0, z: 0, w: 0.884581}
+  m_LocalRotation: {x: 0.46174863, y: 0, z: 0, w: 0.8870109}
   m_LocalPosition: {x: 0, y: 0, z: 9.17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2250,7 +2250,7 @@ RectTransform:
   - {fileID: 179067011}
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 55.6, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 55, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0.38}
@@ -2286,6 +2286,7 @@ MonoBehaviour:
   basicNotePrefab: {fileID: 980207650856122209, guid: 375b43102560704469d24f4dfd2bf553, type: 3}
   criticalBasicNotePrefab: {fileID: 980207650856122209, guid: 0873902f96c83694d8ee57e81a290a36, type: 3}
   holdNotePrefab: {fileID: 2084691848210909454, guid: 25359a43aca94874e84c6f56c4c7e744, type: 3}
+  criticalHoldNotePrefab: {fileID: 2084691848210909454, guid: 34c5a4be8e95b964c8311a04f22b4b9b, type: 3}
   holdEndNotePrefab: {fileID: 980207650856122209, guid: 626b80c1ff7a7a143b09d1c686f11a63, type: 3}
   criticalHoldEndNotePrefab: {fileID: 980207650856122209, guid: cf834952b66195345a793b8801d11e97, type: 3}
   flickNotePrefab: {fileID: 980207650856122209, guid: 22edf44d9e3677b4092214646ca9d472, type: 3}

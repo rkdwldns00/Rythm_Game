@@ -206,6 +206,11 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
     }
 }
 
+public class SavedCriticalHoldNoteData : SavedHoldNoteData
+{
+    public override GameObject NotePrefab => NoteManager.instance.criticalHoldNotePrefab;
+}
+
 public struct SavedHoldNoteCurve
 {
     public float startX;

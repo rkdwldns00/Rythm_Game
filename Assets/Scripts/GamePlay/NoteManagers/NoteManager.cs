@@ -19,6 +19,7 @@ public class NoteManager : MonoBehaviour
     public GameObject basicNotePrefab;
     public GameObject criticalBasicNotePrefab;
     public GameObject holdNotePrefab;
+    public GameObject criticalHoldNotePrefab;
     public GameObject holdEndNotePrefab;
     public GameObject criticalHoldEndNotePrefab;
     public GameObject flickNotePrefab;
