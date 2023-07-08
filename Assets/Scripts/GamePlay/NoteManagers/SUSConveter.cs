@@ -61,7 +61,7 @@ public class SUSConveter
             int barIndex = int.Parse(source.Substring(1, 3));
             float meter = float.Parse(source.Substring(source.IndexOf(":") + 1, source.Length - source.IndexOf(":") - 1));
 
-            barLength[i] = new KeyValuePair<int, float>(barIndex, meter / 4);
+            barLength[i] = new KeyValuePair<int, float>(barIndex, meter);
         }
 
         //노트데이터
@@ -95,28 +95,50 @@ public class SUSConveter
         List<SavedNoteData> notes = new List<SavedNoteData>();
 
         //박자 체크
-        List<KeyValuePair<int, int>> beatPerBarDatas = new List<KeyValuePair<int, int>>();
-        foreach (SUSLineData line in lines)
+        List<BeatPerBar> beatPerBarDatas = new List<BeatPerBar>();
+        int lastAddedBarInBeatPerBar = 0;
+        for (int i = 0; i < lines.Length; i++)
         {
-            int value = line.backData.Length / 2;
-            if ((value % 2 == 0 || value == 1) && value < 16)
+            int origin = lines[i].backData.Length / 2;
+            int value = origin;
+            if (lines[i].frontData[1] != 0)
             {
-                value = 16;
+                if (lines[i].bar != lastAddedBarInBeatPerBar)
+                {
+                    if ((value % 2 == 0 || value == 1) && value < 16)
+                    {
+                        value = 16;
+                    }
+                    beatPerBarDatas.Add(new BeatPerBar(lines[i].bar, value, origin));
+                    lastAddedBarInBeatPerBar = lines[i].bar;
+                }
+                else
+                {
+                    for (int j = 0; j < beatPerBarDatas.Count; j++)
+                    {
+                        if (beatPerBarDatas[j].bar == lines[i].bar)
+                        {
+                            BeatPerBar data = beatPerBarDatas[j];
+                            data.beatCount = Mathf.Max(data.beatCount, lines[i].backData.Length / 2);
+                            beatPerBarDatas[j] = data;
+                            break;
+                        }
+                    }
+                }
             }
-            beatPerBarDatas.Add(new KeyValuePair<int, int>(line.bar, value));
         }
         beatPerBarDatas.Sort((a, b) =>
         {
-            return a.Key - b.Key;
+            return a.bar - b.bar;
         });
-
+        Debug.Log("count=" + beatPerBarDatas.Count);
         int sumBeat = 0;
         for (int i = 0; i < beatPerBarDatas.Count; i++)
         {
-            notes.Add(new SavedMeterChangerNoteData() { beatPerBar = beatPerBarDatas[i].Value, whenSummonBeat = sumBeat });
+            notes.Add(new SavedMeterChangerNoteData() { beatPerBar = beatPerBarDatas[i].beatCount, whenSummonBeat = sumBeat });
             if (i < beatPerBarDatas.Count - 1)
             {
-                sumBeat += beatPerBarDatas[i].Value * (beatPerBarDatas[i + 1].Key - beatPerBarDatas[i].Key);
+                sumBeat += beatPerBarDatas[i].beatCount * (beatPerBarDatas[i + 1].bar - beatPerBarDatas[i].bar);
             }
         }
 
@@ -135,19 +157,57 @@ public class SUSConveter
                 int b = 0;
                 for (int j = 0; j < beatPerBarDatas.Count; j++)
                 {
-                    if (beatPerBarDatas[j].Key >= e)
+                    if (beatPerBarDatas[j].bar >= e)
                     {
-                        b = beatPerBarDatas[j].Value;
+                        b = beatPerBarDatas[j].beatCount;
                         break;
                     }
                 }
                 barStartBeat += b;
             }
 
+            BeatPerBar beatPerBar = new BeatPerBar(line.bar, 16, 16);
+            //마디길이계산 추가필요
+            for (int j = 0; j < beatPerBarDatas.Count; j++)
+            {
+                if (beatPerBarDatas[j].bar >= e)
+                {
+                    if (beatPerBarDatas[j].bar == e)
+                    {
+                        beatPerBar = beatPerBarDatas[j];
+                    }
+                    else
+                    {
+                        Debug.Log(beatPerBarDatas[j].bar);
+                        beatPerBar = beatPerBarDatas[Mathf.Max(j - 1, 0)];
+                    }
+                    break;
+                }
+            }
+
+            float barLengthRate = 1;
+            for (int j = 0; j < barLength.Length; j++)
+            {
+                if (barLength[j].Key >= e)
+                {
+                    if (barLength[j].Key == e)
+                    {
+                        barLengthRate = barLength[j].Value / 4f;
+                    }
+                    else
+                    {
+                        barLengthRate = barLength[Mathf.Max(j - 1, 0)].Value / 4f;
+                    }
+                    break;
+                }
+            }
+
+            Debug.Log(e + ", lineBar:" + line.bar + ", beatPerBar:" + beatPerBar.bar + ", beat:" + beatPerBar.beatCount + ", origin:" + beatPerBar.originBeatCount + ", barLen:" + barLengthRate);
+
             //뒷부분 데이터를 통해 실제 노트 작성
             for (int i = 0; i < line.backData.Length / 2; i++)
             {
-                int whenSummonBeat = barStartBeat + i * (beatPerBarDatas[e + 1].Value / (line.backData.Length / 2));
+                int whenSummonBeat = barStartBeat + i * (int)((beatPerBar.beatCount / (line.backData.Length / 2)));
                 float startX = line.frontData[1] - 1;
                 float endX = line.frontData[1] + line.backData[i * 2 + 1] - 1;
                 switch (line.frontData[0])
@@ -316,7 +376,6 @@ public class SUSConveter
         holdStartDatas.Sort((a, b) => a.beat - b.beat);
         holdEndDatas.Sort((a, b) => a.beat - b.beat);
         holdCurveDatas.Sort((a, b) => a.beat - b.beat);
-        Debug.Log(holdStartDatas.Count + ", " + holdEndDatas.Count);
 
         int len = holdStartDatas.Count;
         for (int i = 0; i < len; i++)
@@ -378,21 +437,19 @@ public class SUSConveter
 
         notes.Sort((a, b) => a.whenSummonBeat - b.whenSummonBeat);
 
-        /*foreach (var note in notes)
+        for (int i = 0; i < notes.Count; i++)
         {
-            if (note is SavedBasicNoteData)
+            string message = notes[i].whenSummonBeat + "-" + notes[i].GetType() + ":";
+            if (notes[i] is SavedMeterChangerNoteData)
             {
-                Debug.Log(note.whenSummonBeat + " : Basic");
+                message += ((SavedMeterChangerNoteData)notes[i]).beatPerBar;
             }
-            else if (note is SavedMeterChangerNoteData)
+            if (notes[i] is SavedBPMChangeNoteData)
             {
-                Debug.Log(note.whenSummonBeat + " : meter=" + ((SavedMeterChangerNoteData)note).beatPerBar);
+                message += ((SavedBPMChangeNoteData)notes[i]).bpm;
             }
-            else if (note is SavedBPMChangeNoteData)
-            {
-                Debug.Log(note.whenSummonBeat + " : bpm=" + ((SavedBPMChangeNoteData)note).bpm);
-            }
-        }*/
+            Debug.Log(message);
+        }
 
         mapData.notes = notes.ToArray();
         return mapData;
@@ -422,5 +479,19 @@ public class SUSConveter
         public int bar;
         public int[] frontData;
         public int[] backData;
+    }
+
+    struct BeatPerBar
+    {
+        public int bar;
+        public int beatCount;
+        public readonly int originBeatCount;
+
+        public BeatPerBar(int bar, int beatCount, int originBeatCount)
+        {
+            this.bar = bar;
+            this.beatCount = beatCount;
+            this.originBeatCount = originBeatCount;
+        }
     }
 }

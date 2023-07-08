@@ -183,7 +183,6 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
                 };
                 curves.Add(newCurve);
             }
-            curves.ForEach((x) => Debug.Log(x.yPos));
 
             n.Draw(curves.ToArray());
 

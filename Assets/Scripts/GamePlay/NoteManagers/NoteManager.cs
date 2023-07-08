@@ -15,7 +15,7 @@ public class NoteManager : MonoBehaviour
     public Transform field;
     public float noteDownSpeed => noteDownSpeedRate * userSettingNoteDownSpeed;
     public float noteDownSpeedRate { private get; set; } = 1f;
-    public float userSettingNoteDownSpeed => 30f;
+    public float userSettingNoteDownSpeed => 50f;
     public GameObject basicNotePrefab;
     public GameObject criticalBasicNotePrefab;
     public GameObject holdNotePrefab;
@@ -40,7 +40,7 @@ public class NoteManager : MonoBehaviour
     {
         Application.targetFrameRate = 60;
 
-        new NoteSummoner(SUSConveter.ConvertMapData(SUSConveter.ReadTxt("map")), field, 30).SummmonMap();
+        new NoteSummoner(SUSConveter.ConvertMapData(SUSConveter.ReadTxt("map")), field, userSettingNoteDownSpeed).SummmonMap();
     }
 
     void Update()
