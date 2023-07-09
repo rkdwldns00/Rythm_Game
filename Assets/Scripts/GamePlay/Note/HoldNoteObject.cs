@@ -16,7 +16,11 @@ public class HoldNoteObject : Note
 
     private void Start()
     {
-
+        Debug.Log("len : " + curves.Length);
+        foreach (var curve in curves)
+        {
+            Debug.Log(curve.yPos + " : " + curve.startX + " ~ " + curve.endX);
+        }
     }
 
     private void Update()
@@ -54,15 +58,13 @@ public class HoldNoteObject : Note
         }
         if (NoteManager.NOTE_CHECK_YPOS > transform.localPosition.y)
         {
-            Draw(curves);
+            Draw();
         }
     }
 
-    public void Draw(RuntimeHoldNoteCurve[] noteMesh)
+    public void Draw()
     {
-        curves = noteMesh;
-
-        List<RuntimeHoldNoteCurve> curveList = noteMesh.ToList();
+        List<RuntimeHoldNoteCurve> curveList = curves.ToList();
 
         if (NoteManager.NOTE_CHECK_YPOS > transform.localPosition.y)
         {
@@ -73,9 +75,9 @@ public class HoldNoteObject : Note
             curveList.Add(new RuntimeHoldNoteCurve() { startX = startX, endX = endX, yPos = NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y });
         }
         curveList.Sort((a, b) => (int)Mathf.Sign(a.yPos - b.yPos));
-        noteMesh = curveList.ToArray();
+        curves = curveList.ToArray();
 
-        if (noteMesh == null || noteMesh.Length <= 1)
+        if (curves == null || curves.Length <= 1)
         {
             return;
         }
@@ -87,11 +89,11 @@ public class HoldNoteObject : Note
 
 
         Mesh mesh = new();
-        Vector3[] vertices = new Vector3[noteMesh.Length * 2];
+        Vector3[] vertices = new Vector3[curves.Length * 2];
 
-        Vector3[] normals = new Vector3[noteMesh.Length * 2];
+        Vector3[] normals = new Vector3[curves.Length * 2];
 
-        int[] triangles = new int[(noteMesh.Length - 1) * 3 * 2 * 2];
+        int[] triangles = new int[(curves.Length - 1) * 3 * 2 * 2];
 
         for (int i = 0; i < normals.Length; i++)
         {
@@ -102,15 +104,15 @@ public class HoldNoteObject : Note
         {
             if (i % 2 == 0)
             {
-                vertices[i] = new Vector3(noteMesh[i / 2].endX, noteMesh[i / 2].yPos, 0);
+                vertices[i] = new Vector3(curves[i / 2].endX, curves[i / 2].yPos, 0);
             }
             else
             {
-                vertices[i] = new Vector3(noteMesh[i / 2].startX, noteMesh[i / 2].yPos, 0);
+                vertices[i] = new Vector3(curves[i / 2].startX, curves[i / 2].yPos, 0);
             }
         }
 
-        for (int i = 0; i < (noteMesh.Length - 1); i++)
+        for (int i = 0; i < (curves.Length - 1); i++)
         {
             triangles[i * 12] = i * 2;
             triangles[i * 12 + 1] = i * 2 + 1;
@@ -156,8 +158,6 @@ public class HoldNoteObject : Note
         float endX;
         startX = Mathf.Lerp(beforeCurve.startX, afterCurve.startX, ((NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y) - beforeCurve.yPos) / (afterCurve.yPos - beforeCurve.yPos));
         endX = Mathf.Lerp(beforeCurve.endX, afterCurve.endX, ((NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y) - beforeCurve.yPos) / (afterCurve.yPos - beforeCurve.yPos));
-        Debug.DrawRay(transform.position + transform.rotation * new Vector3(startX, NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y), Vector3.up, Color.magenta);
-        Debug.DrawRay(transform.position + transform.rotation * new Vector3(endX, NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y), Vector3.up, Color.magenta);
 
         return (startX, endX);
     }
@@ -209,7 +209,6 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
                         endX = Mathf.Lerp(beforeCurve.endX, afterCurve.endX, rate),
                         yPos = summoner.BeatToYpos(whenSummonBeat + afterIntBeat) - summoner.BeatToYpos(whenSummonBeat)
                     };
-                    curves.Add(intCurve);
                     afterIntBeat++;
                 }
                 RuntimeHoldNoteCurve newCurve = new RuntimeHoldNoteCurve()
@@ -218,10 +217,12 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
                     endX = hold.curveData[i].endX,
                     yPos = summoner.BeatToYpos(whenSummonBeat + hold.curveData[i].spawnBeat) - summoner.BeatToYpos(whenSummonBeat)
                 };
+
                 curves.Add(newCurve);
             }
 
-            n.Draw(curves.ToArray());
+            n.curves = curves.ToArray();
+            n.Draw();
 
             int start = (int)hold.curveData[0].spawnBeat;
             int length = (int)(hold.curveData[hold.curveData.Length - 1].spawnBeat - start);
@@ -278,6 +279,19 @@ public struct RuntimeHoldNoteCurve
         this.endX = endX;
         this.yPos = yPos;
         curveType = SavedHoldNoteCurveType.Basic;
+    }
+
+    public static bool operator ==(RuntimeHoldNoteCurve a,RuntimeHoldNoteCurve b)
+    {
+        return a.startX == b.startX &&
+            a.endX == b.endX &&
+            a.yPos == b.yPos &&
+            a.curveType == b.curveType;
+    }
+
+    public static bool operator !=(RuntimeHoldNoteCurve a,RuntimeHoldNoteCurve b)
+    {
+        return !(a == b);
     }
 }
 

@@ -253,6 +253,8 @@ public class SUSConveter
                                     {
                                         isHaveDataNote = true;
                                         curveType = curveResister.curveType;
+                                        notes.RemoveAt(j);
+                                        break;
                                     }
                                     else
                                     {
@@ -291,39 +293,24 @@ public class SUSConveter
                                         }
                                         holdEnd.startX = startX;
                                         holdEnd.endX = endX;
-                                        holdEnd.whenSummonBeat = whenSummonBeat + 1;
+                                        holdEnd.whenSummonBeat = whenSummonBeat;
                                         notes[j] = holdEnd;
-
-                                        isHaveDataNote = true;
                                     }
                                 }
                                 else if (f != null)
                                 {
                                     if (f.whenSummonBeat == whenSummonBeat && f.startX == startX && f.endX == endX)
                                     {
-                                        bool isCritical = f is SavedCriticalFlickNoteData;
-                                        SavedFlickNoteData holdEndFlick = null;
-                                        if (isCritical)
-                                        {
-                                            holdEndFlick = new SavedCriticalFlickNoteData();
-                                        }
-                                        else
-                                        {
-                                            holdEndFlick = new SavedFlickNoteData();
-                                        }
-                                        holdEndFlick.startX = startX;
-                                        holdEndFlick.endX = endX;
-                                        holdEndFlick.whenSummonBeat = whenSummonBeat;
-                                        holdEndFlick.needTouchStart = false;
-                                        notes.Add(holdEndFlick);
-
-                                        isHaveDataNote = true;
+                                        f.startX = startX;
+                                        f.endX = endX;
+                                        f.whenSummonBeat = whenSummonBeat;
+                                        f.needTouchStart = false;
                                     }
                                 }
-                            }
-                            if (isHaveDataNote)
-                            {
-                                notes.Add(new SavedHoldEndNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
+                                else
+                                {
+                                    notes.Add(new SavedHoldEndNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
+                                }
                             }
                         }
                         else if (line.backData[i * 2] == 3) //Ä¿ºê
