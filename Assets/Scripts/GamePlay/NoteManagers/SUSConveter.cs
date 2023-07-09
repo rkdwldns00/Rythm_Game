@@ -415,6 +415,10 @@ public class SUSConveter
 
                     for (int k = 0; k < holdCurveDatas.Count; k++)
                     {
+                        if (holdCurveDatas[k].beat <= holdStartDatas[0].beat || holdCurveDatas[k].beat > holdEndDatas[j].beat)
+                        {
+                            continue;
+                        }
                         if (holdCurveDatas[k].id == id && holdStartDatas[0].beat < holdCurveDatas[k].beat && holdStartDatas[0].beat < holdEndDatas[j].beat)
                         {
                             curveList.Add(new SavedHoldNoteCurve() { startX = holdCurveDatas[k].startX, endX = holdCurveDatas[k].endX, spawnBeat = holdCurveDatas[k].beat - holdStartDatas[0].beat });
