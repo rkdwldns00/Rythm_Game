@@ -161,6 +161,20 @@ public class HoldNoteObject : Note
 
         return (startX, endX);
     }
+
+    public Vector2 BezierCalCulate(float lerpValue, params Vector2[] points)
+    {
+        while (points.Length > 1)
+        {
+            Vector2[] newPoints = new Vector2[points.Length - 1];
+            for (int i = 0; i < newPoints.Length; i++)
+            {
+                newPoints[i] = Vector2.Lerp(points[i], points[i + 1], lerpValue);
+            }
+            points = newPoints;
+        }
+        return points[0];
+    }
 }
 
 public class SavedHoldNoteData : SavedNoteData, ISummonable
@@ -256,10 +270,33 @@ public struct RuntimeHoldNoteCurve
 
     public float yPos;
 
+    public SavedHoldNoteCurveType curveType;
+
     public RuntimeHoldNoteCurve(float startX, float endX, float yPos)
     {
         this.startX = startX;
         this.endX = endX;
         this.yPos = yPos;
+        curveType = SavedHoldNoteCurveType.Basic;
     }
+}
+
+public class SavedCurveTypeRgsister : SavedNoteData
+{
+    public SavedHoldNoteCurveType curveType = SavedHoldNoteCurveType.Basic;
+    public float startX;
+    public float endX;
+
+    public override Note Summon(NoteSummoner summoner, SavedNoteData data)
+    {
+        Debug.LogWarning("SavedCurveTypeResister가 사용되지 않았습니다.");
+        return null;
+    }
+}
+
+public enum SavedHoldNoteCurveType
+{
+    Basic,
+    CutIn,
+    CutOut
 }

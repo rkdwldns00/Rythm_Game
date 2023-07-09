@@ -144,7 +144,7 @@ public class SUSConveter
 
         List<(int beat, float startX, float endX, bool isCritical, int id)> holdStartDatas = new List<(int beat, float startX, float endX, bool isCritical, int id)>();
         List<(int beat, float startX, float endX, int id)> holdEndDatas = new List<(int beat, float startX, float endX, int id)>();
-        List<(int beat, float startX, float endX, int id)> holdCurveDatas = new List<(int beat, float startX, float endX, int id)>();
+        List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, int id)> holdCurveDatas = new List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, int id)>();
 
         //노트리스트에 SUS데이터를 해독하여 추가
         foreach (SUSLineData line in lines)
@@ -233,10 +233,11 @@ public class SUSConveter
                         {
                             bool isCritical = false;
                             bool isHaveDataNote = false;
+                            SavedHoldNoteCurveType curveType = SavedHoldNoteCurveType.Basic;
                             for (int j = 0; j < notes.Count; j++)
                             {
                                 SavedBasicNoteData b = notes[j] as SavedBasicNoteData;
-                                SavedFlickNoteData f = notes[j] as SavedFlickNoteData;
+                                SavedCurveTypeRgsister curveResister = notes[j] as SavedCurveTypeRgsister;
                                 if (b != null)
                                 {
                                     if (b.whenSummonBeat == whenSummonBeat && b.startX == startX && b.endX == endX)
@@ -246,12 +247,12 @@ public class SUSConveter
                                         b.isHoldStartNote = true;
                                     }
                                 }
-                                else if (f != null)//컷인, 컷아웃 홀드시작
+                                else if (curveResister != null)//컷인, 컷아웃 홀드시작
                                 {
-                                    if (f.whenSummonBeat == whenSummonBeat && f.startX == startX && f.endX == endX)
+                                    if (curveResister.whenSummonBeat == whenSummonBeat && curveResister.startX == startX && curveResister.endX == endX)
                                     {
                                         isHaveDataNote = true;
-
+                                        curveType = curveResister.curveType;
                                     }
                                     else
                                     {
@@ -292,6 +293,8 @@ public class SUSConveter
                                         holdEnd.endX = endX;
                                         holdEnd.whenSummonBeat = whenSummonBeat + 1;
                                         notes[j] = holdEnd;
+
+                                        isHaveDataNote = true;
                                     }
                                 }
                                 else if (f != null)
@@ -313,20 +316,40 @@ public class SUSConveter
                                         holdEndFlick.whenSummonBeat = whenSummonBeat;
                                         holdEndFlick.needTouchStart = false;
                                         notes.Add(holdEndFlick);
+
+                                        isHaveDataNote = true;
                                     }
                                 }
                             }
-                            if (!isHaveDataNote)
+                            if (isHaveDataNote)
                             {
                                 notes.Add(new SavedHoldEndNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
                             }
                         }
                         else if (line.backData[i * 2] == 3) //커브
                         {
-                            holdCurveDatas.Add(new(whenSummonBeat, startX, endX, line.frontData[2]));
+                            SavedHoldNoteCurveType curveType = SavedHoldNoteCurveType.Basic;
+                            for (int j = 0; j < notes.Count; j++)
+                            {
+                                SavedCurveTypeRgsister curveResister = notes[j] as SavedCurveTypeRgsister;
+                                if (curveResister != null)//컷인, 컷아웃 홀드시작
+                                {
+                                    if (curveResister.whenSummonBeat == whenSummonBeat && curveResister.startX == startX && curveResister.endX == endX)
+                                    {
+                                        curveType = curveResister.curveType;
+                                        notes.RemoveAt(j);
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        continue;
+                                    }
+                                }
+                            }
+                            holdCurveDatas.Add(new(whenSummonBeat, startX, endX, curveType, line.frontData[2]));
                         }
                         break;
-                    case 5: //플릭노트
+                    case 5: //플릭노트, 커브타입데이터
                         for (int j = 0; j < notes.Count; j++)
                         {
                             SavedBasicNoteData b = notes[j] as SavedBasicNoteData;
@@ -336,36 +359,58 @@ public class SUSConveter
                             }
                             if (b.whenSummonBeat == whenSummonBeat && b.startX == startX && b.endX == endX)
                             {
-                                bool isCritical = b is SavedCriticalBasicNoteData;
-
-                                SavedFlickNoteData f = null;
-                                if (isCritical)
+                                int flickData = line.backData[i * 2];
+                                if (flickData == 1 || flickData == 3 || flickData == 4) //플릭노트일 경우
                                 {
-                                    f = new SavedCriticalFlickNoteData();
-                                }
-                                else
-                                {
-                                    f = new SavedFlickNoteData();
-                                }
+                                    bool isCritical = b is SavedCriticalBasicNoteData;
 
-                                f.whenSummonBeat = whenSummonBeat;
-                                f.startX = startX;
-                                f.endX = endX;
-                                f.needTouchStart = true;
-                                switch (line.backData[i * 2])
-                                {
-                                    case 1:
-                                        f.rotation = 0;
-                                        break;
-                                    case 3:
-                                        f.rotation = -45f;
-                                        break;
-                                    case 4:
-                                        f.rotation = 45f;
-                                        break;
-                                }
+                                    SavedFlickNoteData f = null;
+                                    if (isCritical)
+                                    {
+                                        f = new SavedCriticalFlickNoteData();
+                                    }
+                                    else
+                                    {
+                                        f = new SavedFlickNoteData();
+                                    }
 
-                                notes[j] = f;
+                                    f.whenSummonBeat = whenSummonBeat;
+                                    f.startX = startX;
+                                    f.endX = endX;
+                                    f.needTouchStart = true;
+                                    switch (line.backData[i * 2])
+                                    {
+                                        case 1:
+                                            f.rotation = 0;
+                                            break;
+                                        case 3:
+                                            f.rotation = -45f;
+                                            break;
+                                        case 4:
+                                            f.rotation = 45f;
+                                            break;
+                                    }
+
+                                    notes[j] = f;
+                                }
+                                else //커브타입데이터일 경우
+                                {
+                                    SavedCurveTypeRgsister register = new SavedCurveTypeRgsister();
+                                    register.startX = startX;
+                                    register.endX = endX;
+                                    register.whenSummonBeat = whenSummonBeat;
+
+                                    if (flickData == 2)
+                                    {
+                                        register.curveType = SavedHoldNoteCurveType.CutIn;
+                                    }
+                                    else if (flickData == 6)
+                                    {
+                                        register.curveType = SavedHoldNoteCurveType.CutOut;
+                                    }
+
+                                    notes[j] = register;
+                                }
                             }
                         }
                         break;
