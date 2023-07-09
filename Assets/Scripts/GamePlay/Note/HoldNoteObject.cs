@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter))]
@@ -26,6 +27,8 @@ public class HoldNoteObject : Note
             float start;
             float end;
             (start, end) = FindCanHitArea();
+            start -= 1;
+            end += 1;
 
             int startLine = Mathf.FloorToInt(start);
             int endLine = Mathf.CeilToInt(end - 1);
@@ -49,11 +52,28 @@ public class HoldNoteObject : Note
                 HitResultShower.ShowHitResult(HitResult.Miss);
             }
         }
+        if (NoteManager.NOTE_CHECK_YPOS > transform.localPosition.y)
+        {
+            Draw(curves);
+        }
     }
 
     public void Draw(RuntimeHoldNoteCurve[] noteMesh)
     {
         curves = noteMesh;
+
+        List<RuntimeHoldNoteCurve> curveList = noteMesh.ToList();
+
+        if (NoteManager.NOTE_CHECK_YPOS > transform.localPosition.y)
+        {
+            float startX;
+            float endX;
+            curveList.RemoveAll((a) => a.yPos < NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y);
+            (startX, endX) = FindCanHitArea();
+            curveList.Add(new RuntimeHoldNoteCurve() { startX = startX, endX = endX, yPos = NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y });
+        }
+        curveList.Sort((a, b) => (int)Mathf.Sign(a.yPos - b.yPos));
+        noteMesh = curveList.ToArray();
 
         if (noteMesh == null || noteMesh.Length <= 1)
         {
@@ -136,7 +156,10 @@ public class HoldNoteObject : Note
         float endX;
         startX = Mathf.Lerp(beforeCurve.startX, afterCurve.startX, ((NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y) - beforeCurve.yPos) / (afterCurve.yPos - beforeCurve.yPos));
         endX = Mathf.Lerp(beforeCurve.endX, afterCurve.endX, ((NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y) - beforeCurve.yPos) / (afterCurve.yPos - beforeCurve.yPos));
-        return (startX - 1, endX + 1);
+        Debug.DrawRay(transform.position + transform.rotation * new Vector3(startX, NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y), Vector3.up, Color.magenta);
+        Debug.DrawRay(transform.position + transform.rotation * new Vector3(endX, NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y), Vector3.up, Color.magenta);
+
+        return (startX, endX);
     }
 }
 
