@@ -131,7 +131,6 @@ public class HoldNoteObject : Note
         {
             meshFilter = GetComponent<MeshFilter>();
         }
-        curveList.ForEach((a) => Debug.Log(a.yPos + ":" + a.curveType));
 
         Mesh mesh = new();
         Vector3[] vertices = new Vector3[curves.Length * 2];

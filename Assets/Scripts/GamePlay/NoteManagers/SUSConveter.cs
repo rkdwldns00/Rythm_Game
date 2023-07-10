@@ -289,6 +289,8 @@ public class SUSConveter
                                         holdEnd.endX = endX;
                                         holdEnd.whenSummonBeat = whenSummonBeat;
                                         notes[j] = holdEnd;
+                                        isHaveDataNote = true;
+                                        break;
                                     }
                                 }
                                 else if (f != null)
@@ -299,12 +301,14 @@ public class SUSConveter
                                         f.endX = endX;
                                         f.whenSummonBeat = whenSummonBeat;
                                         f.needTouchStart = false;
+                                        isHaveDataNote = true;
+                                        break;
                                     }
                                 }
-                                else
-                                {
-                                    notes.Add(new SavedHoldEndNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
-                                }
+                            }
+                            if (!isHaveDataNote)
+                            {
+                                notes.Add(new SavedHoldEndNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
                             }
                         }
                         else if (line.backData[i * 2] == 3) //Ä¿ºê
