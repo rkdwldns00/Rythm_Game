@@ -68,7 +68,11 @@ public class SavedBasicNoteData : SavedNoteData, ISummonable
     {
         get
         {
-            if (isHoldStartNote)
+            if(isCriticalNote)
+            {
+                return NoteManager.instance.criticalBasicNotePrefab;
+            }
+            else if (isHoldStartNote)
             {
                 return NoteManager.instance.holdStartNotePrefab;
             }
@@ -82,6 +86,7 @@ public class SavedBasicNoteData : SavedNoteData, ISummonable
     public float startX;
     public float endX;
     public bool isHoldStartNote = false;
+    public bool isCriticalNote = false;
 
     public override Note Summon(NoteSummoner summoner, SavedNoteData data)
     {
@@ -99,17 +104,20 @@ public class SavedBasicNoteData : SavedNoteData, ISummonable
     }
 }
 
-public class SavedCriticalBasicNoteData : SavedBasicNoteData
-{
-    public override GameObject NotePrefab => NoteManager.instance.criticalBasicNotePrefab;
-}
-
 public class SavedHoldEndNoteData : SavedBasicNoteData
 {
-    public override GameObject NotePrefab => NoteManager.instance.holdEndNotePrefab;
-}
-
-public class SavedCriticalHoldEndNoteData : SavedHoldEndNoteData
-{
-    public override GameObject NotePrefab => NoteManager.instance.criticalHoldEndNotePrefab;
+    public override GameObject NotePrefab
+    {
+        get
+        {
+            if(isCriticalNote)
+            {
+                return NoteManager.instance.criticalHoldEndNotePrefab;
+            }
+            else
+            {
+                return NoteManager.instance.holdEndNotePrefab;
+            }
+        }
+    }
 }

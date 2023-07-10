@@ -209,8 +209,22 @@ public class HoldNoteObject : Note
 
 public class SavedHoldNoteData : SavedNoteData, ISummonable
 {
-    public virtual GameObject NotePrefab => NoteManager.instance.holdNotePrefab;
+    public virtual GameObject NotePrefab
+    {
+        get
+        {
+            if (isCriticalNote)
+            {
+                return NoteManager.instance.criticalHoldNotePrefab;
+            }
+            else
+            {
+                return NoteManager.instance.holdNotePrefab; ;
+            }
+        }
+    }
     public SavedHoldNoteCurve[] curveData;
+    public bool isCriticalNote = false;
 
     public override Note Summon(NoteSummoner summoner, SavedNoteData data)
     {
@@ -255,11 +269,6 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
 
         return noteObject;
     }
-}
-
-public class SavedCriticalHoldNoteData : SavedHoldNoteData
-{
-    public override GameObject NotePrefab => NoteManager.instance.criticalHoldNotePrefab;
 }
 
 public struct SavedHoldNoteCurve

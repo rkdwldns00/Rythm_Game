@@ -221,7 +221,7 @@ public class SUSConveter
                         }
                         else if (line.backData[i * 2] == 2)
                         {
-                            notes.Add(new SavedCriticalBasicNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
+                            notes.Add(new SavedBasicNoteData() { startX = startX, endX = endX, isCriticalNote = true, whenSummonBeat = whenSummonBeat });
                         }
                         break;
                     case 3: //홀드노트
@@ -239,7 +239,7 @@ public class SUSConveter
                                     if (b.whenSummonBeat == whenSummonBeat && b.startX == startX && b.endX == endX)
                                     {
                                         isHaveNote = true;
-                                        isCritical = b is SavedCriticalBasicNoteData;
+                                        isCritical = b.isCriticalNote;
                                         b.isHoldStartNote = true;
                                     }
                                 }
@@ -275,16 +275,7 @@ public class SUSConveter
                                 {
                                     if (b.whenSummonBeat == whenSummonBeat && b.startX == startX && b.endX == endX)
                                     {
-                                        bool isCritical = b is SavedCriticalBasicNoteData;
-                                        SavedHoldEndNoteData holdEnd = null;
-                                        if (isCritical)
-                                        {
-                                            holdEnd = new SavedCriticalHoldEndNoteData();
-                                        }
-                                        else
-                                        {
-                                            holdEnd = new SavedHoldEndNoteData();
-                                        }
+                                        SavedHoldEndNoteData holdEnd = new SavedHoldEndNoteData() { isCriticalNote = b.isCriticalNote };
                                         holdEnd.startX = startX;
                                         holdEnd.endX = endX;
                                         holdEnd.whenSummonBeat = whenSummonBeat;
@@ -348,18 +339,8 @@ public class SUSConveter
                                 int flickData = line.backData[i * 2];
                                 if (flickData == 1 || flickData == 3 || flickData == 4) //플릭노트일 경우
                                 {
-                                    bool isCritical = b is SavedCriticalBasicNoteData;
-
-                                    SavedFlickNoteData f = null;
-                                    if (isCritical)
-                                    {
-                                        f = new SavedCriticalFlickNoteData();
-                                    }
-                                    else
-                                    {
-                                        f = new SavedFlickNoteData();
-                                    }
-
+                                    SavedFlickNoteData f = new SavedFlickNoteData();
+                                    f.isCriticalNote = b.isCriticalNote;
                                     f.whenSummonBeat = whenSummonBeat;
                                     f.startX = startX;
                                     f.endX = endX;
@@ -385,7 +366,7 @@ public class SUSConveter
                                     register.startX = startX;
                                     register.endX = endX;
                                     register.whenSummonBeat = whenSummonBeat;
-                                    register.isCritical = b is SavedCriticalBasicNoteData;
+                                    register.isCritical = b.isCriticalNote;
 
                                     if (flickData == 6)
                                     {
@@ -396,7 +377,7 @@ public class SUSConveter
                                         register.curveType = SavedHoldNoteCurveType.CurveOut;
                                     }
 
-                                    notes[j]=register;
+                                    notes[j] = register;
                                 }
                             }
                         }
@@ -416,28 +397,20 @@ public class SUSConveter
             {
                 if (holdEndDatas[j].id == id)
                 {
-                    SavedHoldNoteData h = null;
+                    SavedHoldNoteData h = new SavedHoldNoteData(); ;
                     if (holdStartDatas[0].isCritical)
                     {
                         //크리티컬 홀드노트 추가시 수정
-                        h = new SavedCriticalHoldNoteData();
+                        h.isCriticalNote = true;
                         for (int k = 0; k < notes.Count; k++)
                         {
                             SavedHoldEndNoteData endNote = notes[k] as SavedHoldEndNoteData;
                             if (endNote != null && endNote.whenSummonBeat == holdEndDatas[j].beat && endNote.startX == holdEndDatas[j].startX && endNote.endX == holdEndDatas[j].endX)
                             {
-                                SavedCriticalHoldEndNoteData newCiriticalEndNote = new SavedCriticalHoldEndNoteData();
-                                newCiriticalEndNote.whenSummonBeat = endNote.whenSummonBeat;
-                                newCiriticalEndNote.startX = endNote.startX;
-                                newCiriticalEndNote.endX = endNote.endX;
-                                notes[k] = newCiriticalEndNote;
+                                endNote.isCriticalNote = true;
                                 break;
                             }
                         }
-                    }
-                    else
-                    {
-                        h = new SavedHoldNoteData();
                     }
                     h.whenSummonBeat = holdStartDatas[0].beat;
 

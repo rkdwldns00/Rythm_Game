@@ -17,16 +17,6 @@ public class FlickNoteObject : Note, IHitableNoteObject
     bool isDetectedTouchStart = false;
     bool needTochStart;
 
-    void Start()
-    {
-
-    }
-
-    void Update()
-    {
-
-    }
-
     public bool CheckHit(int line)
     {
         if (
@@ -81,13 +71,28 @@ public class FlickNoteObject : Note, IHitableNoteObject
 
 public class SavedFlickNoteData : SavedNoteData, ISummonable
 {
-    public virtual GameObject NotePrefab => NoteManager.instance.flickNotePrefab;
+    public virtual GameObject NotePrefab
+    {
+        get
+        {
+            if (isCriticalNote)
+            {
+                return NoteManager.instance.criticalFlickNotePrefab;
+            }
+            else
+            {
+                return NoteManager.instance.flickNotePrefab;
+            }
+        }
+    }
 
     public float startX;
     public float endX;
 
     public float rotation;
     public bool needTouchStart = true;
+
+    public bool isCriticalNote = false;
 
     public override Note Summon(NoteSummoner summoner, SavedNoteData data)
     {
@@ -103,9 +108,4 @@ public class SavedFlickNoteData : SavedNoteData, ISummonable
 
         return n;
     }
-}
-
-public class SavedCriticalFlickNoteData : SavedFlickNoteData
-{
-    public override GameObject NotePrefab => NoteManager.instance.criticalFlickNotePrefab;
 }
