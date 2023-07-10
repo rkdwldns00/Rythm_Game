@@ -16,11 +16,7 @@ public class HoldNoteObject : Note
 
     private void Start()
     {
-        Debug.Log("len : " + curves.Length);
-        foreach (var curve in curves)
-        {
-            Debug.Log(curve.yPos + " : " + curve.startX + " ~ " + curve.endX);
-        }
+
     }
 
     private void Update()
@@ -86,7 +82,7 @@ public class HoldNoteObject : Note
         {
             meshFilter = GetComponent<MeshFilter>();
         }
-
+        curveList.ForEach((a) => Debug.Log(a.yPos + ":" + a.curveType));
 
         Mesh mesh = new();
         Vector3[] vertices = new Vector3[curves.Length * 2];
@@ -161,20 +157,6 @@ public class HoldNoteObject : Note
 
         return (startX, endX);
     }
-
-    public Vector2 BezierCalCulate(float lerpValue, params Vector2[] points)
-    {
-        while (points.Length > 1)
-        {
-            Vector2[] newPoints = new Vector2[points.Length - 1];
-            for (int i = 0; i < newPoints.Length; i++)
-            {
-                newPoints[i] = Vector2.Lerp(points[i], points[i + 1], lerpValue);
-            }
-            points = newPoints;
-        }
-        return points[0];
-    }
 }
 
 public class SavedHoldNoteData : SavedNoteData, ISummonable
@@ -194,38 +176,23 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
             HoldNoteObject n = g.GetComponent<HoldNoteObject>();
             noteObject = n;
 
-            int afterIntBeat = 1;
             List<RuntimeHoldNoteCurve> curves = new List<RuntimeHoldNoteCurve>();
             for (int i = 0; i < hold.curveData.Length; i++)
             {
-                while (hold.curveData[i].spawnBeat > afterIntBeat)
-                {
-                    SavedHoldNoteCurve beforeCurve = hold.curveData[i - 1];
-                    SavedHoldNoteCurve afterCurve = hold.curveData[i];
-                    float rate = (afterIntBeat - beforeCurve.spawnBeat) / (afterCurve.spawnBeat - beforeCurve.spawnBeat);
-                    RuntimeHoldNoteCurve intCurve = new RuntimeHoldNoteCurve()
-                    {
-                        startX = Mathf.Lerp(beforeCurve.startX, afterCurve.startX, rate),
-                        endX = Mathf.Lerp(beforeCurve.endX, afterCurve.endX, rate),
-                        yPos = summoner.BeatToYpos(whenSummonBeat + afterIntBeat) - summoner.BeatToYpos(whenSummonBeat)
-                    };
-                    afterIntBeat++;
-                }
                 RuntimeHoldNoteCurve newCurve = new RuntimeHoldNoteCurve()
                 {
                     startX = hold.curveData[i].startX,
                     endX = hold.curveData[i].endX,
-                    yPos = summoner.BeatToYpos(whenSummonBeat + hold.curveData[i].spawnBeat) - summoner.BeatToYpos(whenSummonBeat)
+                    yPos = summoner.BeatToYpos((float)whenSummonBeat + hold.curveData[i].spawnBeat) - summoner.BeatToYpos(whenSummonBeat)
                 };
 
                 curves.Add(newCurve);
             }
-
+            
             n.curves = curves.ToArray();
             n.Draw();
 
-            int start = (int)hold.curveData[0].spawnBeat;
-            int length = (int)(hold.curveData[hold.curveData.Length - 1].spawnBeat - start);
+            int length = (int)(hold.curveData[hold.curveData.Length - 1].spawnBeat);
             if (length > 2)
             {
                 float[] hitCheckTiming = new float[length - 2];
@@ -255,11 +222,14 @@ public struct SavedHoldNoteCurve
 
     public float spawnBeat;
 
-    public SavedHoldNoteCurve(float startX, float endX, float spawnBeat)
+    public SavedHoldNoteCurveType curveType;
+
+    public SavedHoldNoteCurve(float startX, float endX, float spawnBeat,SavedHoldNoteCurveType curveType)
     {
         this.startX = startX;
         this.endX = endX;
         this.spawnBeat = spawnBeat;
+        this.curveType = curveType;
     }
 }
 
@@ -311,6 +281,6 @@ public class SavedCurveTypeRgsister : SavedNoteData
 public enum SavedHoldNoteCurveType
 {
     Basic,
-    CutIn,
-    CutOut
+    CurveIn,
+    CurveOut
 }

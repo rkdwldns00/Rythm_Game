@@ -131,7 +131,6 @@ public class SUSConveter
         {
             return a.bar - b.bar;
         });
-        Debug.Log("count=" + beatPerBarDatas.Count);
         int sumBeat = 0;
         for (int i = 0; i < beatPerBarDatas.Count; i++)
         {
@@ -142,7 +141,7 @@ public class SUSConveter
             }
         }
 
-        List<(int beat, float startX, float endX, bool isCritical, int id)> holdStartDatas = new List<(int beat, float startX, float endX, bool isCritical, int id)>();
+        List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, bool isCritical, int id)> holdStartDatas = new List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, bool isCritical, int id)>();
         List<(int beat, float startX, float endX, int id)> holdEndDatas = new List<(int beat, float startX, float endX, int id)>();
         List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, int id)> holdCurveDatas = new List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, int id)>();
 
@@ -178,7 +177,6 @@ public class SUSConveter
                     }
                     else
                     {
-                        Debug.Log(beatPerBarDatas[j].bar);
                         beatPerBar = beatPerBarDatas[Mathf.Max(j - 1, 0)];
                     }
                     break;
@@ -201,8 +199,6 @@ public class SUSConveter
                     break;
                 }
             }
-
-            Debug.Log(e + ", lineBar:" + line.bar + ", beatPerBar:" + beatPerBar.bar + ", beat:" + beatPerBar.beatCount + ", origin:" + beatPerBar.originBeatCount + ", barLen:" + barLengthRate);
 
             //µﬁ∫Œ∫– µ•¿Ã≈Õ∏¶ ≈Î«ÿ Ω«¡¶ ≥Î∆Æ ¿€º∫
             for (int i = 0; i < line.backData.Length / 2; i++)
@@ -247,7 +243,7 @@ public class SUSConveter
                                         b.isHoldStartNote = true;
                                     }
                                 }
-                                else if (curveResister != null)//ƒ∆¿Œ, ƒ∆æ∆øÙ »¶µÂΩ√¿€
+                                if (curveResister != null)//ƒ∆¿Œ, ƒ∆æ∆øÙ »¶µÂΩ√¿€
                                 {
                                     if (curveResister.whenSummonBeat == whenSummonBeat && curveResister.startX == startX && curveResister.endX == endX)
                                     {
@@ -267,7 +263,8 @@ public class SUSConveter
                             {
                                 notes.Add(new SavedBasicNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat, isHoldStartNote = true });
                             }
-                            holdStartDatas.Add(new(whenSummonBeat, startX, endX, isCritical, line.frontData[2]));
+
+                            holdStartDatas.Add(new(whenSummonBeat, startX, endX, curveType, isCritical, line.frontData[2]));
                         }
                         else if (line.backData[i * 2] == 2) //»¶µÂ≥°
                         {
@@ -323,6 +320,7 @@ public class SUSConveter
                                 {
                                     if (curveResister.whenSummonBeat == whenSummonBeat && curveResister.startX == startX && curveResister.endX == endX)
                                     {
+                                        Debug.Log(curveResister.whenSummonBeat + "-" + curveResister.curveType);
                                         curveType = curveResister.curveType;
                                         notes.RemoveAt(j);
                                         break;
@@ -387,13 +385,13 @@ public class SUSConveter
                                     register.endX = endX;
                                     register.whenSummonBeat = whenSummonBeat;
 
-                                    if (flickData == 2)
+                                    if (flickData == 6)
                                     {
-                                        register.curveType = SavedHoldNoteCurveType.CutIn;
+                                        register.curveType = SavedHoldNoteCurveType.CurveIn;
                                     }
-                                    else if (flickData == 6)
+                                    else if (flickData == 2)
                                     {
-                                        register.curveType = SavedHoldNoteCurveType.CutOut;
+                                        register.curveType = SavedHoldNoteCurveType.CurveOut;
                                     }
 
                                     notes[j] = register;
@@ -408,7 +406,6 @@ public class SUSConveter
         holdStartDatas.Sort((a, b) => a.beat - b.beat);
         holdEndDatas.Sort((a, b) => a.beat - b.beat);
         holdCurveDatas.Sort((a, b) => a.beat - b.beat);
-
         int len = holdStartDatas.Count;
         for (int i = 0; i < len; i++)
         {
@@ -443,7 +440,7 @@ public class SUSConveter
                     h.whenSummonBeat = holdStartDatas[0].beat;
 
                     List<SavedHoldNoteCurve> curveList = new List<SavedHoldNoteCurve>();
-                    curveList.Add(new SavedHoldNoteCurve() { spawnBeat = 0, startX = holdStartDatas[0].startX, endX = holdStartDatas[0].endX });
+                    curveList.Add(new SavedHoldNoteCurve() { spawnBeat = 0, startX = holdStartDatas[0].startX, endX = holdStartDatas[0].endX, curveType = holdStartDatas[0].curveType });
 
                     for (int k = 0; k < holdCurveDatas.Count; k++)
                     {
@@ -454,6 +451,56 @@ public class SUSConveter
                         if (holdCurveDatas[k].id == id && holdStartDatas[0].beat < holdCurveDatas[k].beat && holdStartDatas[0].beat < holdEndDatas[j].beat)
                         {
                             curveList.Add(new SavedHoldNoteCurve() { startX = holdCurveDatas[k].startX, endX = holdCurveDatas[k].endX, spawnBeat = holdCurveDatas[k].beat - holdStartDatas[0].beat });
+                            if (holdCurveDatas[k].curveType != SavedHoldNoteCurveType.Basic && k < holdCurveDatas.Count)
+                            {
+                                int endBeat;
+                                float endStartX;
+                                float endEndX;
+                                if (k < holdCurveDatas.Count - 1)
+                                {
+                                    endBeat = holdCurveDatas[k + 1].beat;
+                                    endStartX = holdCurveDatas[k + 1].startX;
+                                    endEndX = holdCurveDatas[k + 1].endX;
+                                }
+                                else
+                                {
+                                    endBeat = holdEndDatas[j].beat;
+                                    endStartX = holdEndDatas[j].startX;
+                                    endEndX = holdEndDatas[j].endX;
+                                }
+                                for (float curveBeat = holdCurveDatas[k].beat + 0.5f; curveBeat < endBeat; curveBeat += 0.5f)
+                                {
+                                    Vector2 leftStartPos = new Vector2(holdCurveDatas[k].startX, holdCurveDatas[k].beat);
+                                    Vector2 leftEndPos = new Vector2(endStartX, endBeat);
+
+                                    Vector2 rightStartPos = new Vector2(holdCurveDatas[k].endX, holdCurveDatas[k].beat);
+                                    Vector2 rightEndPos = new Vector2(endEndX, endBeat);
+
+                                    float lerpValue = (curveBeat - holdCurveDatas[k].beat) / ((float)endBeat - holdCurveDatas[k].beat);
+
+                                    Vector2 leftViaPos = Vector2.zero;
+                                    Vector2 rightViaPos = Vector2.zero;
+
+                                    if (holdCurveDatas[k].curveType == SavedHoldNoteCurveType.CurveIn)
+                                    {
+                                        leftViaPos = new Vector2(leftEndPos.x, leftStartPos.y);
+                                        rightViaPos = new Vector2(rightEndPos.x, rightStartPos.y);
+                                    }
+                                    else if (holdCurveDatas[k].curveType == SavedHoldNoteCurveType.CurveOut)
+                                    {
+                                        leftViaPos = new Vector2(leftStartPos.x, leftEndPos.y);
+                                        rightViaPos = new Vector2(rightStartPos.x, rightEndPos.y);
+                                    }
+                                    curveList.Add(new SavedHoldNoteCurve()
+                                    {
+                                        startX = MyUtil.BezierCalCulate(lerpValue, leftStartPos, leftViaPos, leftEndPos).x,
+                                        endX = MyUtil.BezierCalCulate(lerpValue, rightStartPos, rightViaPos, rightEndPos).x,
+                                        spawnBeat = curveBeat - holdStartDatas[0].beat,
+                                        curveType = holdCurveDatas[k].curveType,
+                                    });
+                                }
+                            }
+
                             holdCurveDatas.RemoveAt(k);
                             k--;
                         }

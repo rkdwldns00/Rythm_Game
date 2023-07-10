@@ -44,7 +44,8 @@ public class NoteSummoner
         }
 
         float sumTime = 0;
-        for (int i = 0; i < beat; i++)
+        int i;
+        for (i = 0; i < beat; i++)
         {
             if (bpmChnagers.Count > 0 && bpmChnagers[0].whenSummonBeat < i)
             {
@@ -53,6 +54,7 @@ public class NoteSummoner
             }
             sumTime += 60f / BeatPerBar(i) * 4 / curruntBpm;
         }
+        sumTime += 60f / BeatPerBar(i) * 4 / curruntBpm * (beat - i);
         return sumTime;
     }
 
