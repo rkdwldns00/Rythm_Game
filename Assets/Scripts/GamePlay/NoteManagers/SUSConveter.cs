@@ -248,11 +248,8 @@ public class SUSConveter
                                     if (curveResister.whenSummonBeat == whenSummonBeat && curveResister.startX == startX && curveResister.endX == endX)
                                     {
                                         curveType = curveResister.curveType;
+                                        isCritical = curveResister.isCritical;
                                         notes.RemoveAt(j);
-                                    }
-                                    else
-                                    {
-                                        continue;
                                     }
                                 }
                             }
@@ -384,6 +381,7 @@ public class SUSConveter
                                     register.startX = startX;
                                     register.endX = endX;
                                     register.whenSummonBeat = whenSummonBeat;
+                                    register.isCritical = b is SavedCriticalBasicNoteData;
 
                                     if (flickData == 6)
                                     {
@@ -394,7 +392,7 @@ public class SUSConveter
                                         register.curveType = SavedHoldNoteCurveType.CurveOut;
                                     }
 
-                                    notes[j] = register;
+                                    notes[j]=register;
                                 }
                             }
                         }
@@ -450,8 +448,8 @@ public class SUSConveter
                         }
                         if (holdCurveDatas[k].id == id && holdStartDatas[0].beat < holdCurveDatas[k].beat && holdStartDatas[0].beat < holdEndDatas[j].beat)
                         {
-                            curveList.Add(new SavedHoldNoteCurve() { startX = holdCurveDatas[k].startX, endX = holdCurveDatas[k].endX, spawnBeat = holdCurveDatas[k].beat - holdStartDatas[0].beat });
-                            if (holdCurveDatas[k].curveType != SavedHoldNoteCurveType.Basic && k < holdCurveDatas.Count)
+                            curveList.Add(new SavedHoldNoteCurve(holdCurveDatas[k].startX, holdCurveDatas[k].endX, holdCurveDatas[k].beat - holdStartDatas[0].beat, holdCurveDatas[k].curveType));
+                            /*if (holdCurveDatas[k].curveType != SavedHoldNoteCurveType.Basic && k < holdCurveDatas.Count)
                             {
                                 int endBeat;
                                 float endStartX;
@@ -499,7 +497,7 @@ public class SUSConveter
                                         curveType = holdCurveDatas[k].curveType,
                                     });
                                 }
-                            }
+                            }*/
 
                             holdCurveDatas.RemoveAt(k);
                             k--;

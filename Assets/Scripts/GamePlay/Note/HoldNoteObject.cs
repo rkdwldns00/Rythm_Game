@@ -71,6 +71,55 @@ public class HoldNoteObject : Note
             curveList.Add(new RuntimeHoldNoteCurve() { startX = startX, endX = endX, yPos = NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y });
         }
         curveList.Sort((a, b) => (int)Mathf.Sign(a.yPos - b.yPos));
+
+        List<RuntimeHoldNoteCurve> newCurveList = new List<RuntimeHoldNoteCurve>();
+        for (int k = 0; k < curveList.Count; k++)
+        {
+            if (curveList[k].curveType != SavedHoldNoteCurveType.Basic)
+            {
+                float endBeat;
+                float endStartX;
+                float endEndX;
+
+                endBeat = curveList[k + 1].yPos;
+                endStartX = curveList[k + 1].startX;
+                endEndX = curveList[k + 1].endX;
+
+                for (float curveYpos = curveList[k].yPos + 0.5f; curveYpos < endBeat; curveYpos += 0.5f)
+                {
+                    Vector2 leftStartPos = new Vector2(curveList[k].startX, curveList[k].yPos);
+                    Vector2 leftEndPos = new Vector2(endStartX, endBeat);
+
+                    Vector2 rightStartPos = new Vector2(curveList[k].endX, curveList[k].yPos);
+                    Vector2 rightEndPos = new Vector2(endEndX, endBeat);
+
+                    float lerpValue = (curveYpos - curveList[k].yPos) / ((float)endBeat - curveList[k].yPos);
+
+                    Vector2 leftViaPos = Vector2.zero;
+                    Vector2 rightViaPos = Vector2.zero;
+
+                    if (curveList[k].curveType == SavedHoldNoteCurveType.CurveIn)
+                    {
+                        leftViaPos = new Vector2(leftEndPos.x, leftStartPos.y);
+                        rightViaPos = new Vector2(rightEndPos.x, rightStartPos.y);
+                    }
+                    else if (curveList[k].curveType == SavedHoldNoteCurveType.CurveOut)
+                    {
+                        leftViaPos = new Vector2(leftStartPos.x, leftEndPos.y);
+                        rightViaPos = new Vector2(rightStartPos.x, rightEndPos.y);
+                    }
+                    newCurveList.Add(new RuntimeHoldNoteCurve()
+                    {
+                        startX = MyUtil.BezierCalCulate(lerpValue, leftStartPos, leftViaPos, leftEndPos).x,
+                        endX = MyUtil.BezierCalCulate(lerpValue, rightStartPos, rightViaPos, rightEndPos).x,
+                        yPos = curveYpos,
+                    });
+                }
+            }
+        }
+
+        newCurveList.ForEach((a) => curveList.Add(a));
+        curveList.Sort((a, b) => (int)Mathf.Sign(a.yPos - b.yPos));
         curves = curveList.ToArray();
 
         if (curves == null || curves.Length <= 1)
@@ -179,16 +228,15 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
             List<RuntimeHoldNoteCurve> curves = new List<RuntimeHoldNoteCurve>();
             for (int i = 0; i < hold.curveData.Length; i++)
             {
-                RuntimeHoldNoteCurve newCurve = new RuntimeHoldNoteCurve()
-                {
-                    startX = hold.curveData[i].startX,
-                    endX = hold.curveData[i].endX,
-                    yPos = summoner.BeatToYpos((float)whenSummonBeat + hold.curveData[i].spawnBeat) - summoner.BeatToYpos(whenSummonBeat)
-                };
+                RuntimeHoldNoteCurve newCurve = new RuntimeHoldNoteCurve(
+                    hold.curveData[i].startX,
+                    hold.curveData[i].endX,
+                    summoner.BeatToYpos((float)whenSummonBeat + hold.curveData[i].spawnBeat) - summoner.BeatToYpos(whenSummonBeat),
+                    hold.curveData[i].curveType);
 
                 curves.Add(newCurve);
             }
-            
+
             n.curves = curves.ToArray();
             n.Draw();
 
@@ -224,7 +272,7 @@ public struct SavedHoldNoteCurve
 
     public SavedHoldNoteCurveType curveType;
 
-    public SavedHoldNoteCurve(float startX, float endX, float spawnBeat,SavedHoldNoteCurveType curveType)
+    public SavedHoldNoteCurve(float startX, float endX, float spawnBeat, SavedHoldNoteCurveType curveType)
     {
         this.startX = startX;
         this.endX = endX;
@@ -243,15 +291,15 @@ public struct RuntimeHoldNoteCurve
 
     public SavedHoldNoteCurveType curveType;
 
-    public RuntimeHoldNoteCurve(float startX, float endX, float yPos)
+    public RuntimeHoldNoteCurve(float startX, float endX, float yPos, SavedHoldNoteCurveType curveType)
     {
         this.startX = startX;
         this.endX = endX;
         this.yPos = yPos;
-        curveType = SavedHoldNoteCurveType.Basic;
+        this.curveType = curveType;
     }
 
-    public static bool operator ==(RuntimeHoldNoteCurve a,RuntimeHoldNoteCurve b)
+    public static bool operator ==(RuntimeHoldNoteCurve a, RuntimeHoldNoteCurve b)
     {
         return a.startX == b.startX &&
             a.endX == b.endX &&
@@ -259,7 +307,7 @@ public struct RuntimeHoldNoteCurve
             a.curveType == b.curveType;
     }
 
-    public static bool operator !=(RuntimeHoldNoteCurve a,RuntimeHoldNoteCurve b)
+    public static bool operator !=(RuntimeHoldNoteCurve a, RuntimeHoldNoteCurve b)
     {
         return !(a == b);
     }
@@ -270,6 +318,7 @@ public class SavedCurveTypeRgsister : SavedNoteData
     public SavedHoldNoteCurveType curveType = SavedHoldNoteCurveType.Basic;
     public float startX;
     public float endX;
+    public bool isCritical = false;
 
     public override Note Summon(NoteSummoner summoner, SavedNoteData data)
     {
