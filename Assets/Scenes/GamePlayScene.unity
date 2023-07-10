@@ -2285,6 +2285,7 @@ MonoBehaviour:
   field: {fileID: 1811769808}
   basicNotePrefab: {fileID: 980207650856122209, guid: 375b43102560704469d24f4dfd2bf553, type: 3}
   criticalBasicNotePrefab: {fileID: 980207650856122209, guid: 0873902f96c83694d8ee57e81a290a36, type: 3}
+  holdStartNotePrefab: {fileID: 980207650856122209, guid: 0e001152a77702c459333af8cc10b78b, type: 3}
   holdNotePrefab: {fileID: 2084691848210909454, guid: 25359a43aca94874e84c6f56c4c7e744, type: 3}
   criticalHoldNotePrefab: {fileID: 2084691848210909454, guid: 34c5a4be8e95b964c8311a04f22b4b9b, type: 3}
   holdEndNotePrefab: {fileID: 980207650856122209, guid: 626b80c1ff7a7a143b09d1c686f11a63, type: 3}

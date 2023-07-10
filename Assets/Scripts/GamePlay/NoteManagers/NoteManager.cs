@@ -18,6 +18,7 @@ public class NoteManager : MonoBehaviour
     public float userSettingNoteDownSpeed => 10f;
     public GameObject basicNotePrefab;
     public GameObject criticalBasicNotePrefab;
+    public GameObject holdStartNotePrefab;
     public GameObject holdNotePrefab;
     public GameObject criticalHoldNotePrefab;
     public GameObject holdEndNotePrefab;

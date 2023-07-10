@@ -228,7 +228,7 @@ public class SUSConveter
                         if (line.backData[i * 2] == 1) //»¶µÂΩ√¿€
                         {
                             bool isCritical = false;
-                            bool isHaveDataNote = false;
+                            bool isHaveNote = false;
                             SavedHoldNoteCurveType curveType = SavedHoldNoteCurveType.Basic;
                             for (int j = 0; j < notes.Count; j++)
                             {
@@ -238,19 +238,17 @@ public class SUSConveter
                                 {
                                     if (b.whenSummonBeat == whenSummonBeat && b.startX == startX && b.endX == endX)
                                     {
-                                        isHaveDataNote = true;
+                                        isHaveNote = true;
                                         isCritical = b is SavedCriticalBasicNoteData;
                                         b.isHoldStartNote = true;
                                     }
                                 }
-                                if (curveResister != null)//ƒ∆¿Œ, ƒ∆æ∆øÙ »¶µÂΩ√¿€
+                                else if (curveResister != null)//ƒ∆¿Œ, ƒ∆æ∆øÙ »¶µÂΩ√¿€
                                 {
                                     if (curveResister.whenSummonBeat == whenSummonBeat && curveResister.startX == startX && curveResister.endX == endX)
                                     {
-                                        isHaveDataNote = true;
                                         curveType = curveResister.curveType;
                                         notes.RemoveAt(j);
-                                        break;
                                     }
                                     else
                                     {
@@ -259,9 +257,11 @@ public class SUSConveter
                                 }
                             }
 
-                            if (!isHaveDataNote)
+                            if (!isHaveNote)
                             {
-                                notes.Add(new SavedBasicNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat, isHoldStartNote = true });
+                                SavedBasicNoteData b = new SavedBasicNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat, isHoldStartNote = true };
+                                b.isHoldStartNote = true;
+                                notes.Add(b);
                             }
 
                             holdStartDatas.Add(new(whenSummonBeat, startX, endX, curveType, isCritical, line.frontData[2]));

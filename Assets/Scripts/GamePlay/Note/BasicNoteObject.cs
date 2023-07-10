@@ -64,7 +64,20 @@ public class BasicNoteObject : Note, IHitableNoteObject
 
 public class SavedBasicNoteData : SavedNoteData, ISummonable
 {
-    public virtual GameObject NotePrefab => NoteManager.instance.basicNotePrefab;
+    public virtual GameObject NotePrefab
+    {
+        get
+        {
+            if (isHoldStartNote)
+            {
+                return NoteManager.instance.holdStartNotePrefab;
+            }
+            else
+            {
+                return NoteManager.instance.basicNotePrefab;
+            }
+        }
+    }
 
     public float startX;
     public float endX;
