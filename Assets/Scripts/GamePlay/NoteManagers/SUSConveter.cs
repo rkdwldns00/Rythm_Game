@@ -7,6 +7,10 @@ public class SUSConveter
 {
     public static SavedMapData ConvertMapData(string SUSData)
     {
+        //반환용 맵 데이터 생성
+        SavedMapData newMapData = new SavedMapData();
+        newMapData.title = "Downloaded Map";
+
         SUSData = SUSData.Replace("\r", "");
 
         //줄바꿈을 기준으로 데이터 분할
@@ -16,7 +20,31 @@ public class SUSConveter
         int requestTickPerBeatIndex = -1;
         for (int readingLineIndex = 0; readingLineIndex < splitForEnterData.Length; readingLineIndex++)
         {
-            if (splitForEnterData[readingLineIndex].Contains("#REQUEST "))
+            string readingString = splitForEnterData[readingLineIndex];
+            int nameStartIndex = readingString.IndexOf("\"") + 1;
+            int nameEndIndex = readingString.LastIndexOf("\"");
+            if (readingString.Contains("#TITLE "))
+            {
+                if (nameStartIndex == nameEndIndex + 1) Warring("제목 정보가 유효하지 않습니다.");
+                newMapData.title = readingString.Substring(nameStartIndex, nameEndIndex - nameStartIndex);
+            }
+            else if (readingString.Contains("#ARTIST "))
+            {
+                if (nameStartIndex == nameEndIndex + 1) Warring("작곡가 정보가 유효하지 않습니다.");
+
+                newMapData.artistName = readingString.Substring(nameStartIndex, nameEndIndex - nameStartIndex);
+            }
+            else if (readingString.Contains("#DESIGNER "))
+            {
+                if (nameStartIndex == nameEndIndex + 1) Warring("맵 디자이너 정보가 유효하지 않습니다.");
+
+                newMapData.designerName = readingString.Substring(nameStartIndex, nameEndIndex - nameStartIndex);
+            }
+            else if (readingString.Contains("#WAVEOFFSET "))
+            {
+                if (!float.TryParse(readingString.Substring(12, readingString.Length - 12), out newMapData.startOffset)) Warring("곡의 시작 오프셋이 실수가 아닙니다.");
+            }
+            else if (readingString.Contains("#REQUEST "))
             {
                 requestTickPerBeatIndex = readingLineIndex;
                 break;
@@ -50,6 +78,7 @@ public class SUSConveter
 
             bpmDatas[bpmIndex - 1] = bpm;
         }
+        newMapData.startBpm = bpmDatas[0];
 
         //barLengthDatas 배열에 사용할 박자저장
         KeyValuePair<int, float>[] barLengthDatas = new KeyValuePair<int, float>[meterStringData.Count];
@@ -86,10 +115,7 @@ public class SUSConveter
             mapDataLines[readingMapStringDataIndex] = new SUSLineData() { bar = bar, frontData = frontData, backData = backData };
         }
 
-        //반환용 맵 데이터 생성
-        SavedMapData newMapData = new SavedMapData();
-        newMapData.name = "Downloaded Map";
-        newMapData.startBpm = bpmDatas[0];
+
         List<SavedNoteData> newNoteDatas = new List<SavedNoteData>();
 
         //박자 체크

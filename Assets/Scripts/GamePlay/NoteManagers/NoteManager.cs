@@ -93,7 +93,12 @@ public class NoteManager : MonoBehaviour
 
 public class SavedMapData
 {
-    public string name;
+    public string title;
+
+    public string artistName;
+    public string designerName;
+
+    public float startOffset;
     public float startBpm;
     public SavedNoteData[] notes;
 }
