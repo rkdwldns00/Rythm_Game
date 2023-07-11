@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class SUSConveter
@@ -16,11 +14,11 @@ public class SUSConveter
 
         //데이터 시작부분 감지
         int requestTickPerBeatIndex = -1;
-        for (int i = 0; i < splitForEnterData.Length; i++)
+        for (int readingLineIndex = 0; readingLineIndex < splitForEnterData.Length; readingLineIndex++)
         {
-            if (splitForEnterData[i].Contains("#REQUEST "))
+            if (splitForEnterData[readingLineIndex].Contains("#REQUEST "))
             {
-                requestTickPerBeatIndex = i;
+                requestTickPerBeatIndex = readingLineIndex;
                 break;
             }
         }
@@ -33,111 +31,112 @@ public class SUSConveter
         List<string> bpmStringData = new List<string>();
         List<string> meterStringData = new List<string>();
         List<string> mapStringData = new List<string>();
-        for (int i = requestTickPerBeatIndex + 1; i < splitForEnterData.Length; i++)
+        for (int readingLineIndex = requestTickPerBeatIndex + 1; readingLineIndex < splitForEnterData.Length; readingLineIndex++)
         {
-            if (splitForEnterData[i].Length == 0 || splitForEnterData[i][0] != '#') continue;
-            if (splitForEnterData[i].Contains("#BPM")) bpmStringData.Add(splitForEnterData[i]);
-            else if (splitForEnterData[i].Substring(4, 2) == "02") meterStringData.Add(splitForEnterData[i]);
-            else mapStringData.Add(splitForEnterData[i]);
+            if (splitForEnterData[readingLineIndex].Length == 0 || splitForEnterData[readingLineIndex][0] != '#') continue;
+            if (splitForEnterData[readingLineIndex].Contains("#BPM")) bpmStringData.Add(splitForEnterData[readingLineIndex]);
+            else if (splitForEnterData[readingLineIndex].Substring(4, 2) == "02") meterStringData.Add(splitForEnterData[readingLineIndex]);
+            else mapStringData.Add(splitForEnterData[readingLineIndex]);
         }
 
-        //bpmData 배열에 사용할 BPM저장
-        float[] bpmData = new float[bpmStringData.Count];
-        foreach (string source in bpmStringData)
+        //bpmDatas 배열에 사용할 BPM저장
+        float[] bpmDatas = new float[bpmStringData.Count];
+        foreach (string bpmDataString in bpmStringData)
         {
-            int bpmIndex = int.Parse(source.Substring(4, 2));
+            int bpmIndex = int.Parse(bpmDataString.Substring(4, 2));
 
-            int dataStartIndex = source.IndexOf(":") + 1;
-            float bpm = float.Parse(source.Substring(dataStartIndex, source.Length - dataStartIndex));
+            int dataStartIndex = bpmDataString.IndexOf(":") + 1;
+            float bpm = float.Parse(bpmDataString.Substring(dataStartIndex, bpmDataString.Length - dataStartIndex));
 
-            bpmData[bpmIndex - 1] = bpm;
+            bpmDatas[bpmIndex - 1] = bpm;
         }
 
-        //meterData 배열에 사용할 박자저장
-        KeyValuePair<int, float>[] barLength = new KeyValuePair<int, float>[meterStringData.Count];
-        for (int i = 0; i < meterStringData.Count; i++)
+        //barLengthDatas 배열에 사용할 박자저장
+        KeyValuePair<int, float>[] barLengthDatas = new KeyValuePair<int, float>[meterStringData.Count];
+        for (int readingMeterDataIndex = 0; readingMeterDataIndex < meterStringData.Count; readingMeterDataIndex++)
         {
-            string source = meterStringData[i];
-            int barIndex = int.Parse(source.Substring(1, 3));
-            float meter = float.Parse(source.Substring(source.IndexOf(":") + 1, source.Length - source.IndexOf(":") - 1));
+            string readingMeterString = meterStringData[readingMeterDataIndex];
+            int barIndex = int.Parse(readingMeterString.Substring(1, 3));
+            float meter = float.Parse(readingMeterString.Substring(readingMeterString.IndexOf(":") + 1, readingMeterString.Length - readingMeterString.IndexOf(":") - 1));
 
-            barLength[i] = new KeyValuePair<int, float>(barIndex, meter);
+            barLengthDatas[readingMeterDataIndex] = new KeyValuePair<int, float>(barIndex, meter);
         }
 
         //노트데이터
-        SUSLineData[] lines = new SUSLineData[mapStringData.Count];
-        for (int i = 0; i < lines.Length; i++)
+        SUSLineData[] mapDataLines = new SUSLineData[mapStringData.Count];
+        for (int readingMapStringDataIndex = 0; readingMapStringDataIndex < mapDataLines.Length; readingMapStringDataIndex++)
         {
-            int middleIndex = mapStringData[i].IndexOf(":");
+            int middleIndex = mapStringData[readingMapStringDataIndex].IndexOf(":");
 
             //콜론 앞쪽의 데이터 해석
-            int bar = int.Parse(mapStringData[i].Substring(1, 3));
+            int bar = int.Parse(mapStringData[readingMapStringDataIndex].Substring(1, 3));
             int[] frontData = new int[middleIndex - 4];
-            for (int j = 0; j < frontData.Length; j++)
+            for (int writingFrontDataIndex = 0; writingFrontDataIndex < frontData.Length; writingFrontDataIndex++)
             {
-                frontData[j] = Convert.ToInt32(mapStringData[i][j + 4].ToString(), 16);
+                frontData[writingFrontDataIndex] = Convert.ToInt32(mapStringData[readingMapStringDataIndex][writingFrontDataIndex + 4].ToString(), 16);
             }
 
             //콜론 뒤쪽의 데이터 해석
-            int[] backData = new int[mapStringData[i].Length - middleIndex - 1];
-            for (int j = 0; j < backData.Length; j++)
+            int[] backData = new int[mapStringData[readingMapStringDataIndex].Length - middleIndex - 1];
+            for (int writingBackDataIndex = 0; writingBackDataIndex < backData.Length; writingBackDataIndex++)
             {
-                backData[j] = Convert.ToInt32(mapStringData[i][middleIndex + j + 1].ToString(), 16);
+                backData[writingBackDataIndex] = Convert.ToInt32(mapStringData[readingMapStringDataIndex][middleIndex + writingBackDataIndex + 1].ToString(), 16);
             }
 
-            lines[i] = new SUSLineData() { bar = bar, frontData = frontData, backData = backData };
+            mapDataLines[readingMapStringDataIndex] = new SUSLineData() { bar = bar, frontData = frontData, backData = backData };
         }
 
         //반환용 맵 데이터 생성
-        SavedMapData mapData = new SavedMapData();
-        mapData.name = "Downloaded Map";
-        mapData.startBpm = bpmData[0];
-        List<SavedNoteData> notes = new List<SavedNoteData>();
+        SavedMapData newMapData = new SavedMapData();
+        newMapData.name = "Downloaded Map";
+        newMapData.startBpm = bpmDatas[0];
+        List<SavedNoteData> newNoteDatas = new List<SavedNoteData>();
 
         //박자 체크
         List<BeatPerBar> beatPerBarDatas = new List<BeatPerBar>();
         int lastAddedBarInBeatPerBar = 0;
-        for (int i = 0; i < lines.Length; i++)
+        for (int readingLineIndex = 0; readingLineIndex < mapDataLines.Length; readingLineIndex++)
         {
-            int origin = lines[i].backData.Length / 2;
-            int value = origin;
-            if (lines[i].frontData[1] != 0)
+            int originBarLength = mapDataLines[readingLineIndex].backData.Length / 2;
+            int nomalizedBarLength = originBarLength;
+            if (mapDataLines[readingLineIndex].frontData[1] != 0)
             {
-                if (lines[i].bar != lastAddedBarInBeatPerBar)
+                if (mapDataLines[readingLineIndex].bar != lastAddedBarInBeatPerBar)
                 {
-                    if ((value % 2 == 0 || value == 1) && value < 16)
+                    if ((nomalizedBarLength % 2 == 0 || nomalizedBarLength == 1) && nomalizedBarLength < 16)
                     {
-                        value = 16;
+                        nomalizedBarLength = 16;
                     }
-                    beatPerBarDatas.Add(new BeatPerBar(lines[i].bar, value, origin));
-                    lastAddedBarInBeatPerBar = lines[i].bar;
+                    beatPerBarDatas.Add(new BeatPerBar(mapDataLines[readingLineIndex].bar, nomalizedBarLength, originBarLength));
+                    lastAddedBarInBeatPerBar = mapDataLines[readingLineIndex].bar;
                 }
                 else
                 {
-                    for (int j = 0; j < beatPerBarDatas.Count; j++)
+                    for (int readingBeatPerBarDataIndex = 0; readingBeatPerBarDataIndex < beatPerBarDatas.Count; readingBeatPerBarDataIndex++)
                     {
-                        if (beatPerBarDatas[j].bar == lines[i].bar)
+                        if (beatPerBarDatas[readingBeatPerBarDataIndex].bar == mapDataLines[readingLineIndex].bar)
                         {
-                            BeatPerBar data = beatPerBarDatas[j];
-                            data.beatCount = Mathf.Max(data.beatCount, lines[i].backData.Length / 2);
-                            beatPerBarDatas[j] = data;
+                            BeatPerBar data = beatPerBarDatas[readingBeatPerBarDataIndex];
+                            data.beatCount = Mathf.Max(data.beatCount, mapDataLines[readingLineIndex].backData.Length / 2);
+                            beatPerBarDatas[readingBeatPerBarDataIndex] = data;
                             break;
                         }
                     }
                 }
             }
         }
-        beatPerBarDatas.Sort((a, b) =>
-        {
-            return a.bar - b.bar;
-        });
+        beatPerBarDatas.Sort((a, b) => a.bar - b.bar);
         int sumBeat = 0;
-        for (int i = 0; i < beatPerBarDatas.Count; i++)
+        for (int readingBeatPerBarDataIndex = 0; readingBeatPerBarDataIndex < beatPerBarDatas.Count; readingBeatPerBarDataIndex++)
         {
-            notes.Add(new SavedMeterChangerNoteData() { beatPerBar = beatPerBarDatas[i].beatCount, whenSummonBeat = sumBeat });
-            if (i < beatPerBarDatas.Count - 1)
+            newNoteDatas.Add(new SavedMeterChangerNoteData()
             {
-                sumBeat += beatPerBarDatas[i].beatCount * (beatPerBarDatas[i + 1].bar - beatPerBarDatas[i].bar);
+                beatPerBar = beatPerBarDatas[readingBeatPerBarDataIndex].beatCount,
+                whenSummonBeat = sumBeat
+            });
+            if (readingBeatPerBarDataIndex < beatPerBarDatas.Count - 1)
+            {
+                sumBeat += beatPerBarDatas[readingBeatPerBarDataIndex].beatCount * (beatPerBarDatas[readingBeatPerBarDataIndex + 1].bar - beatPerBarDatas[readingBeatPerBarDataIndex].bar);
             }
         }
 
@@ -146,152 +145,166 @@ public class SUSConveter
         List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, int id)> holdCurveDatas = new List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, int id)>();
 
         //노트리스트에 SUS데이터를 해독하여 추가
-        foreach (SUSLineData line in lines)
+        foreach (SUSLineData readingLine in mapDataLines)
         {
             //마디의 시작비트를 계산
             int barStartBeat = 0;
-            int e = 0;
-            for (e = 0; e < line.bar; e++)
+            int readingBar = 0;
+            for (readingBar = 0; readingBar < readingLine.bar; readingBar++)
             {
-                int b = 0;
-                for (int j = 0; j < beatPerBarDatas.Count; j++)
+                for (int i = 0; i < beatPerBarDatas.Count; i++)
                 {
-                    if (beatPerBarDatas[j].bar >= e)
+                    if (beatPerBarDatas[i].bar >= readingBar)
                     {
-                        b = beatPerBarDatas[j].beatCount;
+                        barStartBeat += beatPerBarDatas[i].beatCount;
                         break;
                     }
                 }
-                barStartBeat += b;
             }
 
-            BeatPerBar beatPerBar = new BeatPerBar(line.bar, 16, 16);
+            BeatPerBar beatPerBar = new BeatPerBar(readingLine.bar, 16, 16);
             //마디길이계산 추가필요
-            for (int j = 0; j < beatPerBarDatas.Count; j++)
+            for (int readingBeatPerBarDataIndex = 0; readingBeatPerBarDataIndex < beatPerBarDatas.Count; readingBeatPerBarDataIndex++)
             {
-                if (beatPerBarDatas[j].bar >= e)
+                if (beatPerBarDatas[readingBeatPerBarDataIndex].bar >= readingBar)
                 {
-                    if (beatPerBarDatas[j].bar == e)
+                    if (beatPerBarDatas[readingBeatPerBarDataIndex].bar == readingBar)
                     {
-                        beatPerBar = beatPerBarDatas[j];
+                        beatPerBar = beatPerBarDatas[readingBeatPerBarDataIndex];
                     }
                     else
                     {
-                        beatPerBar = beatPerBarDatas[Mathf.Max(j - 1, 0)];
+                        beatPerBar = beatPerBarDatas[Mathf.Max(readingBeatPerBarDataIndex - 1, 0)];
                     }
                     break;
                 }
             }
 
             float barLengthRate = 1;
-            for (int j = 0; j < barLength.Length; j++)
+            for (int readingBarLengthDataIndex = 0; readingBarLengthDataIndex < barLengthDatas.Length; readingBarLengthDataIndex++)
             {
-                if (barLength[j].Key >= e)
+                if (barLengthDatas[readingBarLengthDataIndex].Key >= readingBar)
                 {
-                    if (barLength[j].Key == e)
+                    if (barLengthDatas[readingBarLengthDataIndex].Key == readingBar)
                     {
-                        barLengthRate = barLength[j].Value / 4f;
+                        barLengthRate = barLengthDatas[readingBarLengthDataIndex].Value / 4f;
                     }
                     else
                     {
-                        barLengthRate = barLength[Mathf.Max(j - 1, 0)].Value / 4f;
+                        barLengthRate = barLengthDatas[Mathf.Max(readingBarLengthDataIndex - 1, 0)].Value / 4f;
                     }
                     break;
                 }
             }
 
             //뒷부분 데이터를 통해 실제 노트 작성
-            for (int i = 0; i < line.backData.Length / 2; i++)
+            for (int indexOfReadingNoteWithBackData = 0; indexOfReadingNoteWithBackData < readingLine.backData.Length / 2; indexOfReadingNoteWithBackData++)
             {
-                int whenSummonBeat = barStartBeat + i * (int)((beatPerBar.beatCount / (line.backData.Length / 2)));
-                float startX = line.frontData[1] - 1;
-                float endX = line.frontData[1] + line.backData[i * 2 + 1] - 1;
-                switch (line.frontData[0])
+                int whenSummonBeat = barStartBeat + indexOfReadingNoteWithBackData * (int)((beatPerBar.beatCount / (readingLine.backData.Length / 2)));
+                float startX = readingLine.frontData[1] - 1;
+                float endX = readingLine.frontData[1] + readingLine.backData[indexOfReadingNoteWithBackData * 2 + 1] - 1;
+                switch (readingLine.frontData[0])
                 {
                     case 0: //BPM 변경
-                        if (line.frontData[1] == 8)
+                        if (readingLine.frontData[1] == 8)
                         {
-                            notes.Add(new SavedBPMChangeNoteData() { whenSummonBeat = whenSummonBeat, bpm = bpmData[line.backData[0] * 10 + line.backData[1] - 1] });
+                            newNoteDatas.Add(new SavedBPMChangeNoteData()
+                            {
+                                whenSummonBeat = whenSummonBeat,
+                                bpm = bpmDatas[readingLine.backData[0] * 10 + readingLine.backData[1] - 1]
+                            });
                         }
                         break;
                     case 1: //기본노트
-                        if (line.backData[i * 2] == 1)
+                        if (readingLine.backData[indexOfReadingNoteWithBackData * 2] == 1)
                         {
-                            notes.Add(new SavedBasicNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
+                            newNoteDatas.Add(new SavedBasicNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
                         }
-                        else if (line.backData[i * 2] == 2)
+                        else if (readingLine.backData[indexOfReadingNoteWithBackData * 2] == 2)
                         {
-                            notes.Add(new SavedBasicNoteData() { startX = startX, endX = endX, isCriticalNote = true, whenSummonBeat = whenSummonBeat });
+                            newNoteDatas.Add(new SavedBasicNoteData()
+                            {
+                                startX = startX,
+                                endX = endX,
+                                isCriticalNote = true,
+                                whenSummonBeat = whenSummonBeat
+                            });
                         }
                         break;
                     case 3: //홀드노트
-                        if (line.backData[i * 2] == 1) //홀드시작
+                        if (readingLine.backData[indexOfReadingNoteWithBackData * 2] == 1) //홀드시작
                         {
                             bool isCritical = false;
                             bool isHaveNote = false;
                             SavedHoldNoteCurveType curveType = SavedHoldNoteCurveType.Basic;
-                            for (int j = 0; j < notes.Count; j++)
+                            for (int readingNoteIndex = 0; readingNoteIndex < newNoteDatas.Count; readingNoteIndex++)
                             {
-                                SavedBasicNoteData b = notes[j] as SavedBasicNoteData;
-                                SavedCurveTypeRgsister curveResister = notes[j] as SavedCurveTypeRgsister;
-                                if (b != null)
+                                SavedBasicNoteData basic = newNoteDatas[readingNoteIndex] as SavedBasicNoteData;
+                                SavedCurveTypeRgsister curveResister = newNoteDatas[readingNoteIndex] as SavedCurveTypeRgsister;
+                                if (basic != null)
                                 {
-                                    if (b.whenSummonBeat == whenSummonBeat && b.startX == startX && b.endX == endX)
+                                    if (basic.whenSummonBeat == whenSummonBeat && basic.startX == startX && basic.endX == endX)
                                     {
                                         isHaveNote = true;
-                                        isCritical = b.isCriticalNote;
-                                        b.isHoldStartNote = true;
+                                        isCritical = basic.isCriticalNote;
+                                        basic.isHoldStartNote = true;
                                     }
                                 }
                                 else if (curveResister != null)//컷인, 컷아웃 홀드시작
                                 {
-                                    if (curveResister.whenSummonBeat == whenSummonBeat && curveResister.startX == startX && curveResister.endX == endX)
+                                    if (curveResister.whenSummonBeat == whenSummonBeat &&
+                                        curveResister.startX == startX &&
+                                        curveResister.endX == endX)
                                     {
                                         curveType = curveResister.curveType;
                                         isCritical = curveResister.isCritical;
-                                        notes.RemoveAt(j);
+                                        newNoteDatas.RemoveAt(readingNoteIndex);
                                     }
                                 }
                             }
 
                             if (!isHaveNote)
                             {
-                                SavedBasicNoteData b = new SavedBasicNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat, isHoldStartNote = true };
-                                b.isHoldStartNote = true;
-                                notes.Add(b);
+                                newNoteDatas.Add(new SavedBasicNoteData()
+                                {
+                                    startX = startX,
+                                    endX = endX,
+                                    whenSummonBeat = whenSummonBeat,
+                                    isHoldStartNote = true
+                                });
                             }
 
-                            holdStartDatas.Add(new(whenSummonBeat, startX, endX, curveType, isCritical, line.frontData[2]));
+                            holdStartDatas.Add(new(whenSummonBeat, startX, endX, curveType, isCritical, readingLine.frontData[2]));
                         }
-                        else if (line.backData[i * 2] == 2) //홀드끝
+                        else if (readingLine.backData[indexOfReadingNoteWithBackData * 2] == 2) //홀드끝
                         {
-                            holdEndDatas.Add(new(whenSummonBeat, startX, endX, line.frontData[2]));
+                            holdEndDatas.Add(new(whenSummonBeat, startX, endX, readingLine.frontData[2]));
                             bool isHaveDataNote = false;
-                            for (int j = 0; j < notes.Count; j++)
+                            for (int checkingNoteIndex = 0; checkingNoteIndex < newNoteDatas.Count; checkingNoteIndex++)
                             {
-                                SavedBasicNoteData b = notes[j] as SavedBasicNoteData;
-                                SavedFlickNoteData f = notes[j] as SavedFlickNoteData;
-                                if (b != null)
+                                SavedBasicNoteData basic = newNoteDatas[checkingNoteIndex] as SavedBasicNoteData;
+                                SavedFlickNoteData flick = newNoteDatas[checkingNoteIndex] as SavedFlickNoteData;
+                                if (basic != null)
                                 {
-                                    if (b.whenSummonBeat == whenSummonBeat && b.startX == startX && b.endX == endX)
+                                    if (basic.whenSummonBeat == whenSummonBeat && basic.startX == startX && basic.endX == endX)
                                     {
-                                        SavedHoldEndNoteData holdEnd = new SavedHoldEndNoteData() { isCriticalNote = b.isCriticalNote };
+                                        SavedHoldEndNoteData holdEnd = new SavedHoldEndNoteData() { isCriticalNote = basic.isCriticalNote };
                                         holdEnd.startX = startX;
                                         holdEnd.endX = endX;
                                         holdEnd.whenSummonBeat = whenSummonBeat;
-                                        notes[j] = holdEnd;
+                                        newNoteDatas[checkingNoteIndex] = holdEnd;
                                         isHaveDataNote = true;
                                         break;
                                     }
                                 }
-                                else if (f != null)
+                                else if (flick != null)
                                 {
-                                    if (f.whenSummonBeat == whenSummonBeat && f.startX == startX && f.endX == endX)
+                                    if (flick.whenSummonBeat == whenSummonBeat && flick.startX == startX && flick.endX == endX)
                                     {
-                                        f.startX = startX;
-                                        f.endX = endX;
-                                        f.whenSummonBeat = whenSummonBeat;
-                                        f.needTouchStart = false;
+                                        flick.startX = startX;
+                                        flick.endX = endX;
+                                        flick.whenSummonBeat = whenSummonBeat;
+                                        flick.needTouchStart = false;
                                         isHaveDataNote = true;
                                         break;
                                     }
@@ -299,22 +312,24 @@ public class SUSConveter
                             }
                             if (!isHaveDataNote)
                             {
-                                notes.Add(new SavedHoldEndNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
+                                newNoteDatas.Add(new SavedHoldEndNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
                             }
                         }
-                        else if (line.backData[i * 2] == 3) //커브
+                        else if (readingLine.backData[indexOfReadingNoteWithBackData * 2] == 3) //커브
                         {
                             SavedHoldNoteCurveType curveType = SavedHoldNoteCurveType.Basic;
-                            for (int j = 0; j < notes.Count; j++)
+                            for (int checkingNoteIndex = 0; checkingNoteIndex < newNoteDatas.Count; checkingNoteIndex++)
                             {
-                                SavedCurveTypeRgsister curveResister = notes[j] as SavedCurveTypeRgsister;
+                                SavedCurveTypeRgsister curveResister = newNoteDatas[checkingNoteIndex] as SavedCurveTypeRgsister;
                                 if (curveResister != null)//컷인, 컷아웃 홀드시작
                                 {
-                                    if (curveResister.whenSummonBeat == whenSummonBeat && curveResister.startX == startX && curveResister.endX == endX)
+                                    if (curveResister.whenSummonBeat == whenSummonBeat &&
+                                        curveResister.startX == startX &&
+                                        curveResister.endX == endX)
                                     {
                                         Debug.Log(curveResister.whenSummonBeat + "-" + curveResister.curveType);
                                         curveType = curveResister.curveType;
-                                        notes.RemoveAt(j);
+                                        newNoteDatas.RemoveAt(checkingNoteIndex);
                                         break;
                                     }
                                     else
@@ -323,42 +338,42 @@ public class SUSConveter
                                     }
                                 }
                             }
-                            holdCurveDatas.Add(new(whenSummonBeat, startX, endX, curveType, line.frontData[2]));
+                            holdCurveDatas.Add(new(whenSummonBeat, startX, endX, curveType, readingLine.frontData[2]));
                         }
                         break;
                     case 5: //플릭노트, 커브타입데이터
-                        for (int j = 0; j < notes.Count; j++)
+                        for (int checkingNoteIndex = 0; checkingNoteIndex < newNoteDatas.Count; checkingNoteIndex++)
                         {
-                            SavedBasicNoteData b = notes[j] as SavedBasicNoteData;
-                            if (b == null)
+                            SavedBasicNoteData basic = newNoteDatas[checkingNoteIndex] as SavedBasicNoteData;
+                            if (basic == null)
                             {
                                 continue;
                             }
-                            if (b.whenSummonBeat == whenSummonBeat && b.startX == startX && b.endX == endX)
+                            if (basic.whenSummonBeat == whenSummonBeat && basic.startX == startX && basic.endX == endX)
                             {
-                                int flickData = line.backData[i * 2];
+                                int flickData = readingLine.backData[indexOfReadingNoteWithBackData * 2];
                                 if (flickData == 1 || flickData == 3 || flickData == 4) //플릭노트일 경우
                                 {
-                                    SavedFlickNoteData f = new SavedFlickNoteData();
-                                    f.isCriticalNote = b.isCriticalNote;
-                                    f.whenSummonBeat = whenSummonBeat;
-                                    f.startX = startX;
-                                    f.endX = endX;
-                                    f.needTouchStart = true;
-                                    switch (line.backData[i * 2])
+                                    SavedFlickNoteData flick = new SavedFlickNoteData();
+                                    flick.isCriticalNote = basic.isCriticalNote;
+                                    flick.whenSummonBeat = whenSummonBeat;
+                                    flick.startX = startX;
+                                    flick.endX = endX;
+                                    flick.needTouchStart = true;
+                                    switch (readingLine.backData[indexOfReadingNoteWithBackData * 2])
                                     {
                                         case 1:
-                                            f.rotation = 0;
+                                            flick.rotation = 0;
                                             break;
                                         case 3:
-                                            f.rotation = -45f;
+                                            flick.rotation = -45f;
                                             break;
                                         case 4:
-                                            f.rotation = 45f;
+                                            flick.rotation = 45f;
                                             break;
                                     }
 
-                                    notes[j] = f;
+                                    newNoteDatas[checkingNoteIndex] = flick;
                                 }
                                 else //커브타입데이터일 경우
                                 {
@@ -366,7 +381,7 @@ public class SUSConveter
                                     register.startX = startX;
                                     register.endX = endX;
                                     register.whenSummonBeat = whenSummonBeat;
-                                    register.isCritical = b.isCriticalNote;
+                                    register.isCritical = basic.isCriticalNote;
 
                                     if (flickData == 6)
                                     {
@@ -377,7 +392,7 @@ public class SUSConveter
                                         register.curveType = SavedHoldNoteCurveType.CurveOut;
                                     }
 
-                                    notes[j] = register;
+                                    newNoteDatas[checkingNoteIndex] = register;
                                 }
                             }
                         }
@@ -389,128 +404,104 @@ public class SUSConveter
         holdStartDatas.Sort((a, b) => a.beat - b.beat);
         holdEndDatas.Sort((a, b) => a.beat - b.beat);
         holdCurveDatas.Sort((a, b) => a.beat - b.beat);
-        int len = holdStartDatas.Count;
-        for (int i = 0; i < len; i++)
+
+        for (int readingHoldStartDataIndex = 0; readingHoldStartDataIndex < holdStartDatas.Count; readingHoldStartDataIndex++)
         {
             int id = holdStartDatas[0].id;
-            for (int j = 0; j < holdEndDatas.Count; j++)
+            for (int readingHoldEndDataIndex = 0; readingHoldEndDataIndex < holdEndDatas.Count; readingHoldEndDataIndex++)
             {
-                if (holdEndDatas[j].id == id)
+                if (holdEndDatas[readingHoldEndDataIndex].id == id)
                 {
-                    SavedHoldNoteData h = new SavedHoldNoteData(); ;
+                    SavedHoldNoteData hold = new SavedHoldNoteData(); ;
                     if (holdStartDatas[0].isCritical)
                     {
                         //크리티컬 홀드노트 추가시 수정
-                        h.isCriticalNote = true;
-                        for (int k = 0; k < notes.Count; k++)
+                        hold.isCriticalNote = true;
+                        for (int k = 0; k < newNoteDatas.Count; k++)
                         {
-                            SavedHoldEndNoteData endNote = notes[k] as SavedHoldEndNoteData;
-                            if (endNote != null && endNote.whenSummonBeat == holdEndDatas[j].beat && endNote.startX == holdEndDatas[j].startX && endNote.endX == holdEndDatas[j].endX)
+                            SavedHoldEndNoteData endNote = newNoteDatas[k] as SavedHoldEndNoteData;
+                            if (endNote != null && endNote.whenSummonBeat == holdEndDatas[readingHoldEndDataIndex].beat &&
+                                endNote.startX == holdEndDatas[readingHoldEndDataIndex].startX &&
+                                endNote.endX == holdEndDatas[readingHoldEndDataIndex].endX)
                             {
                                 endNote.isCriticalNote = true;
                                 break;
                             }
                         }
                     }
-                    h.whenSummonBeat = holdStartDatas[0].beat;
+                    hold.whenSummonBeat = holdStartDatas[0].beat;
 
-                    List<SavedHoldNoteCurve> curveList = new List<SavedHoldNoteCurve>();
-                    curveList.Add(new SavedHoldNoteCurve() { spawnBeat = 0, startX = holdStartDatas[0].startX, endX = holdStartDatas[0].endX, curveType = holdStartDatas[0].curveType });
-
-                    for (int k = 0; k < holdCurveDatas.Count; k++)
+                    List<SavedHoldNoteCurve> newCurveList = new List<SavedHoldNoteCurve>();
+                    newCurveList.Add(new SavedHoldNoteCurve()
                     {
-                        if (holdCurveDatas[k].beat <= holdStartDatas[0].beat || holdCurveDatas[k].beat > holdEndDatas[j].beat)
+                        spawnBeat = 0,
+                        startX = holdStartDatas[0].startX,
+                        endX = holdStartDatas[0].endX,
+                        curveType = holdStartDatas[0].curveType
+                    });
+
+                    for (int readingCurveDataIndex = 0; readingCurveDataIndex < holdCurveDatas.Count; readingCurveDataIndex++)
+                    {
+                        if (holdCurveDatas[readingCurveDataIndex].beat <= holdStartDatas[0].beat ||
+                            holdCurveDatas[readingCurveDataIndex].beat > holdEndDatas[readingHoldEndDataIndex].beat)
                         {
                             continue;
                         }
-                        if (holdCurveDatas[k].id == id && holdStartDatas[0].beat < holdCurveDatas[k].beat && holdStartDatas[0].beat < holdEndDatas[j].beat)
+                        if (holdCurveDatas[readingCurveDataIndex].id == id &&
+                            holdStartDatas[0].beat < holdCurveDatas[readingCurveDataIndex].beat &&
+                            holdStartDatas[0].beat < holdEndDatas[readingHoldEndDataIndex].beat)
                         {
-                            curveList.Add(new SavedHoldNoteCurve(holdCurveDatas[k].startX, holdCurveDatas[k].endX, holdCurveDatas[k].beat - holdStartDatas[0].beat, holdCurveDatas[k].curveType));
-                            /*if (holdCurveDatas[k].curveType != SavedHoldNoteCurveType.Basic && k < holdCurveDatas.Count)
-                            {
-                                int endBeat;
-                                float endStartX;
-                                float endEndX;
-                                if (k < holdCurveDatas.Count - 1)
-                                {
-                                    endBeat = holdCurveDatas[k + 1].beat;
-                                    endStartX = holdCurveDatas[k + 1].startX;
-                                    endEndX = holdCurveDatas[k + 1].endX;
-                                }
-                                else
-                                {
-                                    endBeat = holdEndDatas[j].beat;
-                                    endStartX = holdEndDatas[j].startX;
-                                    endEndX = holdEndDatas[j].endX;
-                                }
-                                for (float curveBeat = holdCurveDatas[k].beat + 0.5f; curveBeat < endBeat; curveBeat += 0.5f)
-                                {
-                                    Vector2 leftStartPos = new Vector2(holdCurveDatas[k].startX, holdCurveDatas[k].beat);
-                                    Vector2 leftEndPos = new Vector2(endStartX, endBeat);
+                            newCurveList.Add(
+                                new SavedHoldNoteCurve(
+                                    holdCurveDatas[readingCurveDataIndex].startX,
+                                    holdCurveDatas[readingCurveDataIndex].endX,
+                                    holdCurveDatas[readingCurveDataIndex].beat - holdStartDatas[0].beat,
+                                    holdCurveDatas[readingCurveDataIndex].curveType
+                                    ));
 
-                                    Vector2 rightStartPos = new Vector2(holdCurveDatas[k].endX, holdCurveDatas[k].beat);
-                                    Vector2 rightEndPos = new Vector2(endEndX, endBeat);
-
-                                    float lerpValue = (curveBeat - holdCurveDatas[k].beat) / ((float)endBeat - holdCurveDatas[k].beat);
-
-                                    Vector2 leftViaPos = Vector2.zero;
-                                    Vector2 rightViaPos = Vector2.zero;
-
-                                    if (holdCurveDatas[k].curveType == SavedHoldNoteCurveType.CurveIn)
-                                    {
-                                        leftViaPos = new Vector2(leftEndPos.x, leftStartPos.y);
-                                        rightViaPos = new Vector2(rightEndPos.x, rightStartPos.y);
-                                    }
-                                    else if (holdCurveDatas[k].curveType == SavedHoldNoteCurveType.CurveOut)
-                                    {
-                                        leftViaPos = new Vector2(leftStartPos.x, leftEndPos.y);
-                                        rightViaPos = new Vector2(rightStartPos.x, rightEndPos.y);
-                                    }
-                                    curveList.Add(new SavedHoldNoteCurve()
-                                    {
-                                        startX = MyUtil.BezierCalCulate(lerpValue, leftStartPos, leftViaPos, leftEndPos).x,
-                                        endX = MyUtil.BezierCalCulate(lerpValue, rightStartPos, rightViaPos, rightEndPos).x,
-                                        spawnBeat = curveBeat - holdStartDatas[0].beat,
-                                        curveType = holdCurveDatas[k].curveType,
-                                    });
-                                }
-                            }*/
-
-                            holdCurveDatas.RemoveAt(k);
-                            k--;
+                            holdCurveDatas.RemoveAt(readingCurveDataIndex);
+                            readingCurveDataIndex--;
                         }
                     }
 
-                    curveList.Add(new SavedHoldNoteCurve() { spawnBeat = holdEndDatas[j].beat - holdStartDatas[0].beat, startX = holdEndDatas[j].startX, endX = holdEndDatas[j].endX });
+                    newCurveList.Add(new SavedHoldNoteCurve()
+                    {
+                        spawnBeat = holdEndDatas[readingHoldEndDataIndex].beat - holdStartDatas[0].beat,
+                        startX = holdEndDatas[readingHoldEndDataIndex].startX,
+                        endX = holdEndDatas[readingHoldEndDataIndex].endX
+                    });
 
-                    h.curveData = curveList.ToArray();
+                    hold.curveData = newCurveList.ToArray();
 
-                    notes.Add(h);
+                    newNoteDatas.Add(hold);
                     holdStartDatas.RemoveAt(0);
-                    holdEndDatas.RemoveAt(j);
+                    holdEndDatas.RemoveAt(readingHoldEndDataIndex);
+
+                    readingHoldStartDataIndex--;
+                    readingHoldEndDataIndex--;
                     break;
                 }
             }
         }
 
-        notes.Sort((a, b) => a.whenSummonBeat - b.whenSummonBeat);
+        newNoteDatas.Sort((a, b) => a.whenSummonBeat - b.whenSummonBeat);
 
-        for (int i = 0; i < notes.Count; i++)
+        for (int readingNoteIndex = 0; readingNoteIndex < newNoteDatas.Count; readingNoteIndex++)
         {
-            string message = notes[i].whenSummonBeat + "-" + notes[i].GetType() + ":";
-            if (notes[i] is SavedMeterChangerNoteData)
+            string message = newNoteDatas[readingNoteIndex].whenSummonBeat + "-" + newNoteDatas[readingNoteIndex].GetType() + ":";
+            if (newNoteDatas[readingNoteIndex] is SavedMeterChangerNoteData)
             {
-                message += ((SavedMeterChangerNoteData)notes[i]).beatPerBar;
+                message += ((SavedMeterChangerNoteData)newNoteDatas[readingNoteIndex]).beatPerBar;
             }
-            if (notes[i] is SavedBPMChangeNoteData)
+            if (newNoteDatas[readingNoteIndex] is SavedBPMChangeNoteData)
             {
-                message += ((SavedBPMChangeNoteData)notes[i]).bpm;
+                message += ((SavedBPMChangeNoteData)newNoteDatas[readingNoteIndex]).bpm;
             }
             Debug.Log(message);
         }
 
-        mapData.notes = notes.ToArray();
-        return mapData;
+        newMapData.notes = newNoteDatas.ToArray();
+        return newMapData;
     }
 
     public static string ReadTxt(string fileName)
