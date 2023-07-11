@@ -8,8 +8,7 @@ public class SUSConveter
     public static SavedMapData ConvertMapData(string SUSData)
     {
         //반환용 맵 데이터 생성
-        SavedMapData newMapData = new SavedMapData();
-        newMapData.title = "Downloaded Map";
+        SavedMapData newMapData = new();
 
         SUSData = SUSData.Replace("\r", "");
 
@@ -56,25 +55,27 @@ public class SUSConveter
         }
 
         //데이터를 BPM데이터, 박자데이터, 노트데이터로 분할
-        List<string> bpmStringData = new List<string>();
-        List<string> meterStringData = new List<string>();
-        List<string> mapStringData = new List<string>();
+        List<string> bpmStringDatas = new();
+        List<string> meterStringData = new();
+        List<string> mapStringData = new();
         for (int readingLineIndex = requestTickPerBeatIndex + 1; readingLineIndex < splitForEnterData.Length; readingLineIndex++)
         {
             if (splitForEnterData[readingLineIndex].Length == 0 || splitForEnterData[readingLineIndex][0] != '#') continue;
-            if (splitForEnterData[readingLineIndex].Contains("#BPM")) bpmStringData.Add(splitForEnterData[readingLineIndex]);
+            if (splitForEnterData[readingLineIndex].Contains("#BPM")) bpmStringDatas.Add(splitForEnterData[readingLineIndex]);
             else if (splitForEnterData[readingLineIndex].Substring(4, 2) == "02") meterStringData.Add(splitForEnterData[readingLineIndex]);
             else mapStringData.Add(splitForEnterData[readingLineIndex]);
         }
 
         //bpmDatas 배열에 사용할 BPM저장
-        float[] bpmDatas = new float[bpmStringData.Count];
-        foreach (string bpmDataString in bpmStringData)
+        float[] bpmDatas = new float[bpmStringDatas.Count];
+        foreach (string bpmStringData in bpmStringDatas)
         {
-            int bpmIndex = int.Parse(bpmDataString.Substring(4, 2));
+            int bpmIndex = -1;
+            if (!int.TryParse(bpmStringData.Substring(4, 2), out bpmIndex) || bpmIndex < 1) Warring("BPM데이터의 인덱스가 유효하지 않습니다.", "오류위치 : " + bpmStringData);
 
-            int dataStartIndex = bpmDataString.IndexOf(":") + 1;
-            float bpm = float.Parse(bpmDataString.Substring(dataStartIndex, bpmDataString.Length - dataStartIndex));
+            int dataStartIndex = bpmStringData.IndexOf(":") + 1;
+            float bpm = -1;
+            if (!float.TryParse(bpmStringData.Substring(dataStartIndex, bpmStringData.Length - dataStartIndex), out bpm)) Warring("BPM데이터의 BPM이 유효하지 않습니다.", "오류위치 : " + bpmStringData);
 
             bpmDatas[bpmIndex - 1] = bpm;
         }
@@ -116,10 +117,10 @@ public class SUSConveter
         }
 
 
-        List<SavedNoteData> newNoteDatas = new List<SavedNoteData>();
+        List<SavedNoteData> newNoteDatas = new();
 
         //박자 체크
-        List<BeatPerBar> beatPerBarDatas = new List<BeatPerBar>();
+        List<BeatPerBar> beatPerBarDatas = new();
         int lastAddedBarInBeatPerBar = 0;
         for (int readingLineIndex = 0; readingLineIndex < mapDataLines.Length; readingLineIndex++)
         {
@@ -166,9 +167,9 @@ public class SUSConveter
             }
         }
 
-        List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, bool isCritical, int id)> holdStartDatas = new List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, bool isCritical, int id)>();
-        List<(int beat, float startX, float endX, int id)> holdEndDatas = new List<(int beat, float startX, float endX, int id)>();
-        List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, int id)> holdCurveDatas = new List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, int id)>();
+        List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, bool isCritical, int id)> holdStartDatas = new();
+        List<(int beat, float startX, float endX, int id)> holdEndDatas = new();
+        List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, int id)> holdCurveDatas = new();
 
         //노트리스트에 SUS데이터를 해독하여 추가
         foreach (SUSLineData readingLine in mapDataLines)
@@ -314,7 +315,7 @@ public class SUSConveter
                                 {
                                     if (basic.whenSummonBeat == whenSummonBeat && basic.startX == startX && basic.endX == endX)
                                     {
-                                        SavedHoldEndNoteData holdEnd = new SavedHoldEndNoteData() { isCriticalNote = basic.isCriticalNote };
+                                        SavedHoldEndNoteData holdEnd = new() { isCriticalNote = basic.isCriticalNote };
                                         holdEnd.startX = startX;
                                         holdEnd.endX = endX;
                                         holdEnd.whenSummonBeat = whenSummonBeat;
@@ -380,7 +381,7 @@ public class SUSConveter
                                 int flickData = readingLine.backData[indexOfReadingNoteWithBackData * 2];
                                 if (flickData == 1 || flickData == 3 || flickData == 4) //플릭노트일 경우
                                 {
-                                    SavedFlickNoteData flick = new SavedFlickNoteData();
+                                    SavedFlickNoteData flick = new();
                                     flick.isCriticalNote = basic.isCriticalNote;
                                     flick.whenSummonBeat = whenSummonBeat;
                                     flick.startX = startX;
@@ -403,7 +404,7 @@ public class SUSConveter
                                 }
                                 else //커브타입데이터일 경우
                                 {
-                                    SavedCurveTypeRgsister register = new SavedCurveTypeRgsister();
+                                    SavedCurveTypeRgsister register = new();
                                     register.startX = startX;
                                     register.endX = endX;
                                     register.whenSummonBeat = whenSummonBeat;
@@ -438,7 +439,7 @@ public class SUSConveter
             {
                 if (holdEndDatas[readingHoldEndDataIndex].id == id)
                 {
-                    SavedHoldNoteData hold = new SavedHoldNoteData(); ;
+                    SavedHoldNoteData hold = new();
                     if (holdStartDatas[0].isCritical)
                     {
                         //크리티컬 홀드노트 추가시 수정
@@ -457,7 +458,7 @@ public class SUSConveter
                     }
                     hold.whenSummonBeat = holdStartDatas[0].beat;
 
-                    List<SavedHoldNoteCurve> newCurveList = new List<SavedHoldNoteCurve>();
+                    List<SavedHoldNoteCurve> newCurveList = new();
                     newCurveList.Add(new SavedHoldNoteCurve()
                     {
                         spawnBeat = 0,

@@ -8,6 +8,7 @@ public class FlickNoteObject : Note, IHitableNoteObject
     [SerializeField] float greatTiming = 0.08f;
     [SerializeField] float goodTiming = 0.1f;
     [SerializeField] float badTiming = 0.13f;
+    [SerializeField] AudioClip keySound;
 
     float startX;
     float endX;
@@ -37,6 +38,8 @@ public class FlickNoteObject : Note, IHitableNoteObject
 
     public void Hit()
     {
+        if(keySound != null) SoundManager.PlaySound(keySound);
+
         float t = Mathf.Abs(DistanceToHittingChecker);
         if (t <= perfectTiming)
         {

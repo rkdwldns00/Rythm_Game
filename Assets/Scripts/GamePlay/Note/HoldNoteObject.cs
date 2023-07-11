@@ -306,19 +306,6 @@ public struct RuntimeHoldNoteCurve
         this.yPos = yPos;
         this.curveType = curveType;
     }
-
-    public static bool operator ==(RuntimeHoldNoteCurve a, RuntimeHoldNoteCurve b)
-    {
-        return a.startX == b.startX &&
-            a.endX == b.endX &&
-            a.yPos == b.yPos &&
-            a.curveType == b.curveType;
-    }
-
-    public static bool operator !=(RuntimeHoldNoteCurve a, RuntimeHoldNoteCurve b)
-    {
-        return !(a == b);
-    }
 }
 
 public class SavedCurveTypeRgsister : SavedNoteData

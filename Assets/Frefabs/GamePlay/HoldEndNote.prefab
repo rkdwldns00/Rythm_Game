@@ -94,3 +94,4 @@ MonoBehaviour:
   greatTiming: 0.08
   goodTiming: 0.1
   badTiming: 0.13
+  keySound: {fileID: 8300000, guid: 6f658c59134959a4d960fed7e250d64a, type: 3}

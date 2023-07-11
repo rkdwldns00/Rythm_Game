@@ -10,13 +10,14 @@ public class BasicNoteObject : Note, IHitableNoteObject
     [SerializeField] float greatTiming = 0.08f;
     [SerializeField] float goodTiming = 0.1f;
     [SerializeField] float badTiming = 0.13f;
+    [SerializeField] AudioClip keySound;
 
     float startX;
     float endX;
 
     private void Start()
     {
-        
+
     }
 
     public bool CheckHit(int line)
@@ -31,6 +32,8 @@ public class BasicNoteObject : Note, IHitableNoteObject
 
     public void Hit()
     {
+        if (keySound != null) SoundManager.PlaySound(keySound);
+
         float t = Mathf.Abs(DistanceToHittingChecker);
         if (t <= perfectTiming)
         {
@@ -68,7 +71,7 @@ public class SavedBasicNoteData : SavedNoteData, ISummonable
     {
         get
         {
-            if(isCriticalNote)
+            if (isCriticalNote)
             {
                 return NoteManager.instance.criticalBasicNotePrefab;
             }
@@ -110,7 +113,7 @@ public class SavedHoldEndNoteData : SavedBasicNoteData
     {
         get
         {
-            if(isCriticalNote)
+            if (isCriticalNote)
             {
                 return NoteManager.instance.criticalHoldEndNotePrefab;
             }

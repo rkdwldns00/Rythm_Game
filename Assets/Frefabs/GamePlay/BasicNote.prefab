@@ -89,4 +89,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2caafad7b3f5a5f4a8d88b492dcbad8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whenExecuteTime: 0
+  isDetectTouchEnd: 0
+  perfectTiming: 0.04
+  greatTiming: 0.08
+  goodTiming: 0.1
+  badTiming: 0.13
+  keySound: {fileID: 8300000, guid: 6f658c59134959a4d960fed7e250d64a, type: 3}
