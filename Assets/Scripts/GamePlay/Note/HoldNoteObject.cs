@@ -8,10 +8,12 @@ using UnityEngine;
 [RequireComponent(typeof(MeshRenderer))]
 public class HoldNoteObject : Note
 {
+    public GameObject holdNoteTickPrefab;
+
     MeshFilter meshFilter;
     public RuntimeHoldNoteCurve[] curves;
     float[] hitCheckTiming = new float[0];
-
+    public Dictionary<float, GameObject> tickObjects { get; set; } = new Dictionary<float, GameObject>();
     int checkIndex = 0;
 
     private void Start()
@@ -23,7 +25,6 @@ public class HoldNoteObject : Note
     {
         if (hitCheckTiming.Length > checkIndex && hitCheckTiming[checkIndex] <= DistanceToHittingChecker)
         {
-            checkIndex++;
             float start;
             float end;
             (start, end) = FindCanHitArea();
@@ -51,6 +52,13 @@ public class HoldNoteObject : Note
             {
                 HitResultShower.ShowHitResult(HitResult.Miss);
             }
+
+            if (tickObjects.Count > 0 && tickObjects.ContainsKey(hitCheckTiming[checkIndex]))
+            {
+                tickObjects[hitCheckTiming[checkIndex]].GetComponent<HoldNoteTickObjet>().Execute(isTouch);
+                tickObjects.Remove(hitCheckTiming[checkIndex]);
+            }
+            checkIndex++;
         }
         if (NoteManager.NOTE_CHECK_YPOS > transform.localPosition.y)
         {
@@ -185,13 +193,13 @@ public class HoldNoteObject : Note
         hitCheckTiming = times;
     }
 
-    (float startX, float endX) FindCanHitArea()
+    public (float startX, float endX) FindCanHitArea(float yPos)
     {
         RuntimeHoldNoteCurve beforeCurve = curves[0];
         RuntimeHoldNoteCurve afterCurve = curves[curves.Length - 1];
         for (int i = 0; i < curves.Length - 1; i++)
         {
-            if (curves[i].yPos <= NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y)
+            if (curves[i].yPos <= yPos)
             {
                 beforeCurve = curves[i];
                 afterCurve = curves[i + 1];
@@ -200,10 +208,15 @@ public class HoldNoteObject : Note
 
         float startX;
         float endX;
-        startX = Mathf.Lerp(beforeCurve.startX, afterCurve.startX, ((NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y) - beforeCurve.yPos) / (afterCurve.yPos - beforeCurve.yPos));
-        endX = Mathf.Lerp(beforeCurve.endX, afterCurve.endX, ((NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y) - beforeCurve.yPos) / (afterCurve.yPos - beforeCurve.yPos));
+        startX = Mathf.Lerp(beforeCurve.startX, afterCurve.startX, (yPos - beforeCurve.yPos) / (afterCurve.yPos - beforeCurve.yPos));
+        endX = Mathf.Lerp(beforeCurve.endX, afterCurve.endX, (yPos - beforeCurve.yPos) / (afterCurve.yPos - beforeCurve.yPos));
 
         return (startX, endX);
+    }
+
+    (float startX, float endX) FindCanHitArea()
+    {
+        return FindCanHitArea(NoteManager.NOTE_CHECK_YPOS - transform.localPosition.y);
     }
 }
 
@@ -224,6 +237,7 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
         }
     }
     public SavedHoldNoteCurve[] curveData;
+    public float[] tickBeatData;
     public bool isCriticalNote = false;
 
     public override Note Summon(NoteSummoner summoner, SavedNoteData data)
@@ -234,8 +248,8 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
         if (hold != null && hold.curveData.Length > 1)
         {
             float startY = summoner.BeatToYpos(hold.whenSummonBeat);
-            GameObject g = summoner.InstantiateNote(((ISummonable)data).NotePrefab, 0, startY);
-            HoldNoteObject n = g.GetComponent<HoldNoteObject>();
+            GameObject newHoldNote = summoner.InstantiateNote(((ISummonable)data).NotePrefab, 0, startY);
+            HoldNoteObject n = newHoldNote.GetComponent<HoldNoteObject>();
             noteObject = n;
 
             List<RuntimeHoldNoteCurve> curves = new List<RuntimeHoldNoteCurve>();
@@ -253,18 +267,32 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
             n.curves = curves.ToArray();
             n.Draw();
 
+            List<float> hitCheckTiming = new List<float>();
             int length = (int)(hold.curveData[hold.curveData.Length - 1].spawnBeat);
             if (length > 2)
             {
-                float[] hitCheckTiming = new float[length - 2];
-
-                for (int i = 0; i < hitCheckTiming.Length; i++)
+                for (int i = 1; i < length - 2; i++)
                 {
-                    hitCheckTiming[i] = summoner.BeatToSec(hold.whenSummonBeat + i + 1) - summoner.BeatToSec(whenSummonBeat);
+                    hitCheckTiming.Add(summoner.BeatToSec(hold.whenSummonBeat + i) - summoner.BeatToSec(hold.whenSummonBeat));
                 }
 
-                n.SetHitCheckTiming(hitCheckTiming);
             }
+            if (tickBeatData != null && tickBeatData.Length > 0)
+            {
+                for (int i = 0; i < tickBeatData.Length; i++)
+                {
+                    GameObject newTick = UnityEngine.Object.Instantiate(n.holdNoteTickPrefab, n.transform);
+                    float yPos = summoner.BeatToYpos(hold.whenSummonBeat + tickBeatData[i]) - summoner.BeatToYpos(hold.whenSummonBeat);
+                    (float startX, float endX) = n.FindCanHitArea(yPos);
+                    newTick.transform.localPosition = new Vector3((startX + endX) / 2, yPos, -0.02f);
+                    float sec = summoner.BeatToSec(hold.whenSummonBeat + tickBeatData[i]) - summoner.BeatToSec(hold.whenSummonBeat);
+                    n.tickObjects.Add(sec, newTick);
+                    hitCheckTiming.Add(sec);
+                }
+            }
+
+            hitCheckTiming.Sort((a, b) => (int)Mathf.Sign(a - b));
+            n.SetHitCheckTiming(hitCheckTiming.ToArray());
         }
 
         return noteObject;
@@ -317,7 +345,19 @@ public class SavedCurveTypeRgsister : SavedNoteData
 
     public override Note Summon(NoteSummoner summoner, SavedNoteData data)
     {
-        Debug.LogWarning("SavedCurveTypeResister가 사용되지 않았습니다.");
+        Debug.LogWarning(GetType().Name + "가 생성되었지만 사용되지 않았습니다.");
+        return null;
+    }
+}
+
+public class SavedIgnoreXTickRegister : SavedNoteData
+{
+    public float startX;
+    public float endX;
+
+    public override Note Summon(NoteSummoner summoner, SavedNoteData data)
+    {
+        Debug.LogWarning(GetType().Name + "가 생성되었지만 사용되지 않았습니다.");
         return null;
     }
 }
@@ -327,4 +367,11 @@ public enum SavedHoldNoteCurveType
     Basic,
     CurveIn,
     CurveOut
+}
+
+public enum SavedTickType
+{
+    Basic,
+    Invisiable,
+    IgnoreX
 }

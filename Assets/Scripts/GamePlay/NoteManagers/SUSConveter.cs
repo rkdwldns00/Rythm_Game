@@ -169,7 +169,7 @@ public class SUSConveter
 
         List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, bool isCritical, int id)> holdStartDatas = new();
         List<(int beat, float startX, float endX, int id)> holdEndDatas = new();
-        List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, int id)> holdCurveDatas = new();
+        List<(int beat, float startX, float endX, SavedHoldNoteCurveType curveType, SavedTickType tickType, int id)> holdCurveDatas = new();
 
         //노트리스트에 SUS데이터를 해독하여 추가
         foreach (SUSLineData readingLine in mapDataLines)
@@ -254,6 +254,15 @@ public class SUSConveter
                                 startX = startX,
                                 endX = endX,
                                 isCriticalNote = true,
+                                whenSummonBeat = whenSummonBeat
+                            });
+                        }
+                        else if (readingLine.backData[indexOfReadingNoteWithBackData * 2] == 3)
+                        {
+                            newNoteDatas.Add(new SavedIgnoreXTickRegister()
+                            {
+                                startX = startX,
+                                endX = endX,
                                 whenSummonBeat = whenSummonBeat
                             });
                         }
@@ -342,30 +351,54 @@ public class SUSConveter
                                 newNoteDatas.Add(new SavedHoldEndNoteData() { startX = startX, endX = endX, whenSummonBeat = whenSummonBeat });
                             }
                         }
-                        else if (readingLine.backData[indexOfReadingNoteWithBackData * 2] == 3) //커브
+                        else if (readingLine.backData[indexOfReadingNoteWithBackData * 2] == 3 ||
+                            readingLine.backData[indexOfReadingNoteWithBackData * 2] == 5) //커브
                         {
+                            SavedTickType tickType = SavedTickType.Basic;
                             SavedHoldNoteCurveType curveType = SavedHoldNoteCurveType.Basic;
+
                             for (int checkingNoteIndex = 0; checkingNoteIndex < newNoteDatas.Count; checkingNoteIndex++)
                             {
                                 SavedCurveTypeRgsister curveResister = newNoteDatas[checkingNoteIndex] as SavedCurveTypeRgsister;
+                                SavedIgnoreXTickRegister ignoreXTick = newNoteDatas[checkingNoteIndex] as SavedIgnoreXTickRegister;
+
                                 if (curveResister != null)//컷인, 컷아웃 홀드시작
                                 {
                                     if (curveResister.whenSummonBeat == whenSummonBeat &&
                                         curveResister.startX == startX &&
                                         curveResister.endX == endX)
                                     {
-                                        Debug.Log(curveResister.whenSummonBeat + "-" + curveResister.curveType);
-                                        curveType = curveResister.curveType;
                                         newNoteDatas.RemoveAt(checkingNoteIndex);
-                                        break;
+                                        curveType = curveResister.curveType;
                                     }
                                     else
                                     {
                                         continue;
                                     }
                                 }
+                                if (readingLine.backData[indexOfReadingNoteWithBackData * 2] == 5)
+                                {
+                                    tickType = SavedTickType.Invisiable;
+                                    break;
+                                }
+                                else if (ignoreXTick != null)
+                                {
+                                    if (ignoreXTick.whenSummonBeat == whenSummonBeat &&
+                                        ignoreXTick.startX == startX &&
+                                        ignoreXTick.endX == endX)
+                                    {
+                                        tickType = SavedTickType.IgnoreX;
+                                        newNoteDatas.RemoveAt(checkingNoteIndex);
+
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    tickType = SavedTickType.Basic;
+                                }
                             }
-                            holdCurveDatas.Add(new(whenSummonBeat, startX, endX, curveType, readingLine.frontData[2]));
+                            holdCurveDatas.Add(new(whenSummonBeat, startX, endX, curveType, tickType, readingLine.frontData[2]));
                         }
                         break;
                     case 5: //플릭노트, 커브타입데이터
@@ -432,6 +465,8 @@ public class SUSConveter
         holdEndDatas.Sort((a, b) => a.beat - b.beat);
         holdCurveDatas.Sort((a, b) => a.beat - b.beat);
 
+        holdCurveDatas.ForEach((a) => Debug.Log("type : " + a.tickType));
+
         for (int readingHoldStartDataIndex = 0; readingHoldStartDataIndex < holdStartDatas.Count; readingHoldStartDataIndex++)
         {
             int id = holdStartDatas[0].id;
@@ -459,6 +494,7 @@ public class SUSConveter
                     hold.whenSummonBeat = holdStartDatas[0].beat;
 
                     List<SavedHoldNoteCurve> newCurveList = new();
+                    List<float> newTickBeatList = new();
                     newCurveList.Add(new SavedHoldNoteCurve()
                     {
                         spawnBeat = 0,
@@ -478,13 +514,21 @@ public class SUSConveter
                             holdStartDatas[0].beat < holdCurveDatas[readingCurveDataIndex].beat &&
                             holdStartDatas[0].beat < holdEndDatas[readingHoldEndDataIndex].beat)
                         {
-                            newCurveList.Add(
-                                new SavedHoldNoteCurve(
-                                    holdCurveDatas[readingCurveDataIndex].startX,
-                                    holdCurveDatas[readingCurveDataIndex].endX,
-                                    holdCurveDatas[readingCurveDataIndex].beat - holdStartDatas[0].beat,
-                                    holdCurveDatas[readingCurveDataIndex].curveType
-                                    ));
+                            if (holdCurveDatas[readingCurveDataIndex].tickType != SavedTickType.IgnoreX)
+                            {
+                                newCurveList.Add(
+                                    new SavedHoldNoteCurve(
+                                        holdCurveDatas[readingCurveDataIndex].startX,
+                                        holdCurveDatas[readingCurveDataIndex].endX,
+                                        holdCurveDatas[readingCurveDataIndex].beat - holdStartDatas[0].beat,
+                                        holdCurveDatas[readingCurveDataIndex].curveType
+                                        ));
+                            }
+
+                            if (holdCurveDatas[readingCurveDataIndex].tickType != SavedTickType.Invisiable)
+                            {
+                                newTickBeatList.Add(holdCurveDatas[readingCurveDataIndex].beat - holdStartDatas[0].beat);
+                            }
 
                             holdCurveDatas.RemoveAt(readingCurveDataIndex);
                             readingCurveDataIndex--;
@@ -499,6 +543,7 @@ public class SUSConveter
                     });
 
                     hold.curveData = newCurveList.ToArray();
+                    hold.tickBeatData = newTickBeatList.ToArray();
 
                     newNoteDatas.Add(hold);
                     holdStartDatas.RemoveAt(0);

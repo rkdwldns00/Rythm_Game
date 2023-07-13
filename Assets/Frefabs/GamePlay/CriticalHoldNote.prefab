@@ -96,4 +96,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 96417de11f814814f8452109ab8004bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  holdNoteTickPrefab: {fileID: 7873530367957035989, guid: 84d5d490ef1e5b54bb9415fd81391f90, type: 3}
   curves: []

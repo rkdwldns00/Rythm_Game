@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class NoteManager : MonoBehaviour
@@ -40,15 +41,44 @@ public class NoteManager : MonoBehaviour
     {
         Application.targetFrameRate = 60;
 
-        new NoteSummoner(SUSConveter.ConvertMapData(SUSConveter.ReadTxt("map")), field, userSettingNoteDownSpeed).SummmonMap();
+        /*new NoteSummoner(new SavedMapData()
+        {
+            startBpm = 120,
+            notes = new SavedNoteData[]
+            {
+                new SavedHoldNoteData(){whenSummonBeat=10,curveData=new SavedHoldNoteCurve[]
+                {
+                    new SavedHoldNoteCurve(){spawnBeat=0,startX=2,endX=5},
+                    new SavedHoldNoteCurve(){spawnBeat=100,startX=5,endX=8},
+                }},
+                new SavedBPMChangeNoteData(){bpm=2400,whenSummonBeat=10}
+            }
+        }, field, userSettingNoteDownSpeed).SummmonMap();*/
+        
+        new NoteSummoner(new SavedMapData()
+        {
+            startBpm = 120,
+            notes = new SavedNoteData[]
+            {
+                new SavedBPMChangeNoteData(){bpm=240,whenSummonBeat=10},
+                new SavedBasicNoteData(){startX=3,endX=6,whenSummonBeat=9},
+                new SavedBasicNoteData(){startX=3,endX=6,whenSummonBeat=10},
+                new SavedBasicNoteData(){startX=3,endX=6,whenSummonBeat=11},
+                new SavedBasicNoteData(){startX=3,endX=6,whenSummonBeat=12},
+                new SavedBasicNoteData(){startX=3,endX=6,whenSummonBeat=13},
+            }
+        }, field, userSettingNoteDownSpeed).SummmonMap();
+
+
+        //new NoteSummoner(SUSConveter.ConvertMapData(SUSConveter.ReadTxt("map")), field, userSettingNoteDownSpeed).SummmonMap();
     }
 
     void Update()
     {
-        for(float i = 0; i < 1; i += 0.01f)
+        for (float i = 0; i < 1; i += 0.01f)
         {
             Vector2 s = MyUtil.BezierCalCulate(i, Vector2.zero, Vector2.up, Vector2.one, new Vector2(1, 2));
-            Vector2 e = MyUtil.BezierCalCulate(i+0.01f, Vector2.zero, Vector2.up, Vector2.one, new Vector2(1, 2));
+            Vector2 e = MyUtil.BezierCalCulate(i + 0.01f, Vector2.zero, Vector2.up, Vector2.one, new Vector2(1, 2));
             Debug.DrawLine(s, e);
         }
         noteListeners.RemoveAll((x) => x == null);

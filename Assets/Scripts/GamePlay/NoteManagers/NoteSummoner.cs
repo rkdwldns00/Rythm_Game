@@ -33,13 +33,13 @@ public class NoteSummoner
     {
         float curruntBpm = map.startBpm;
 
-        List<SavedBPMChangeNoteData> bpmChnagers = new List<SavedBPMChangeNoteData>();
+        List<SavedBPMChangeNoteData> bpmChangers = new List<SavedBPMChangeNoteData>();
         foreach (SavedNoteData note in map.notes)
         {
             SavedBPMChangeNoteData bpm = note as SavedBPMChangeNoteData;
             if (bpm is not null)
             {
-                bpmChnagers.Add(bpm);
+                bpmChangers.Add(bpm);
             }
         }
 
@@ -47,10 +47,10 @@ public class NoteSummoner
         int i;
         for (i = 0; i < beat; i++)
         {
-            if (bpmChnagers.Count > 0 && bpmChnagers[0].whenSummonBeat < i)
+            if (bpmChangers.Count > 0 && bpmChangers[0].whenSummonBeat < i)
             {
-                curruntBpm = bpmChnagers[0].bpm;
-                bpmChnagers.RemoveAt(0);
+                curruntBpm = bpmChangers[0].bpm;
+                bpmChangers.RemoveAt(0);
             }
             sumTime += 60f / BeatPerBar(i) * 4 / curruntBpm;
         }

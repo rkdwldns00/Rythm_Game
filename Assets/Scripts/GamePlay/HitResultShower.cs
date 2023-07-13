@@ -62,7 +62,7 @@ public class HitResultShower : MonoBehaviour
             case HitResult.Miss:
                 text = "MISS";
                 color = Color.grey;
-                comboCount = 0;
+                comboCount++;
                 break;
         }
         text += "\n" + comboCount;
