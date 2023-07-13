@@ -47,7 +47,7 @@ public class NoteSummoner
         int i;
         for (i = 0; i < beat; i++)
         {
-            if (bpmChangers.Count > 0 && bpmChangers[0].whenSummonBeat < i)
+            if (bpmChangers.Count > 0 && bpmChangers[0].whenSummonBeat <= i)
             {
                 curruntBpm = bpmChangers[0].bpm;
                 bpmChangers.RemoveAt(0);

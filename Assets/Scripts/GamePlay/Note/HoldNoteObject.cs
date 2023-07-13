@@ -271,7 +271,7 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
             int length = (int)(hold.curveData[hold.curveData.Length - 1].spawnBeat);
             if (length > 2)
             {
-                for (int i = 1; i < length - 2; i++)
+                for (int i = 1; i < length - 1; i++)
                 {
                     hitCheckTiming.Add(summoner.BeatToSec(hold.whenSummonBeat + i) - summoner.BeatToSec(hold.whenSummonBeat));
                 }

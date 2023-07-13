@@ -41,7 +41,7 @@ public class NoteManager : MonoBehaviour
     {
         Application.targetFrameRate = 60;
 
-        /*new NoteSummoner(new SavedMapData()
+        new NoteSummoner(new SavedMapData()
         {
             startBpm = 120,
             notes = new SavedNoteData[]
@@ -49,23 +49,9 @@ public class NoteManager : MonoBehaviour
                 new SavedHoldNoteData(){whenSummonBeat=10,curveData=new SavedHoldNoteCurve[]
                 {
                     new SavedHoldNoteCurve(){spawnBeat=0,startX=2,endX=5},
-                    new SavedHoldNoteCurve(){spawnBeat=100,startX=5,endX=8},
+                    new SavedHoldNoteCurve(){spawnBeat=10,startX=5,endX=8},
                 }},
-                new SavedBPMChangeNoteData(){bpm=2400,whenSummonBeat=10}
-            }
-        }, field, userSettingNoteDownSpeed).SummmonMap();*/
-        
-        new NoteSummoner(new SavedMapData()
-        {
-            startBpm = 120,
-            notes = new SavedNoteData[]
-            {
-                new SavedBPMChangeNoteData(){bpm=240,whenSummonBeat=10},
-                new SavedBasicNoteData(){startX=3,endX=6,whenSummonBeat=9},
-                new SavedBasicNoteData(){startX=3,endX=6,whenSummonBeat=10},
-                new SavedBasicNoteData(){startX=3,endX=6,whenSummonBeat=11},
-                new SavedBasicNoteData(){startX=3,endX=6,whenSummonBeat=12},
-                new SavedBasicNoteData(){startX=3,endX=6,whenSummonBeat=13},
+                //new SavedBPMChangeNoteData(){bpm=2400,whenSummonBeat=10}
             }
         }, field, userSettingNoteDownSpeed).SummmonMap();
 
