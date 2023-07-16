@@ -121,7 +121,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1871013575463774214}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1538746955356811467}
+        m_TargetAssemblyTypeName: MapInfoShower, Assembly-CSharp
+        m_MethodName: DeleteMap
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8671350387416926839
 GameObject:
   m_ObjectHideFlags: 0
@@ -403,7 +415,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8671350387625761355}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1538746955356811467}
+        m_TargetAssemblyTypeName: MapInfoShower, Assembly-CSharp
+        m_MethodName: StartEditMap
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8671350388507264049
 GameObject:
   m_ObjectHideFlags: 0
@@ -415,6 +439,7 @@ GameObject:
   - component: {fileID: 8671350388507264048}
   - component: {fileID: 8671350388507264054}
   - component: {fileID: 8671350388507264055}
+  - component: {fileID: 1538746955356811467}
   m_Layer: 5
   m_Name: Map Info
   m_TagString: Untagged
@@ -486,6 +511,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1538746955356811467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8671350388507264049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f72338167c28edf4d977efc472512bf8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  titleText: {fileID: 8671350387582748090}
+  artistText: {fileID: 8671350389062480718}
+  thumnail: {fileID: 8671350388517115784}
 --- !u!1 &8671350388517115786
 GameObject:
   m_ObjectHideFlags: 0
@@ -843,7 +883,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8671350389334298936}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1538746955356811467}
+        m_TargetAssemblyTypeName: MapInfoShower, Assembly-CSharp
+        m_MethodName: PlayMap
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8867932223227071907
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,11 +11,33 @@ public class NoteManager : MonoBehaviour
     public const float NOTE_Y_SIZE = 1f;
 
     public static NoteManager instance;
+    public static float UserSettingNoteDownSpeed
+    {
+        get
+        {
+            return PlayerPrefs.GetFloat("UserSettingNoteDownSpeed");
+        }
+        set
+        {
+            PlayerPrefs.SetFloat("UserSettingNoteDownSpeed", value);
+        }
+    }
+    
+    public static float UserSettingOffset
+    {
+        get
+        {
+            return PlayerPrefs.GetFloat("UserSettingOffset");
+        }
+        set
+        {
+            PlayerPrefs.SetFloat("UserSettingOffset", value);
+        }
+    }
+    public static SavedMapData selectedMap;
 
     public Transform field;
-    public float noteDownSpeed => noteDownSpeedRate * userSettingNoteDownSpeed;
     public float noteDownSpeedRate { private get; set; } = 1f;
-    public float userSettingNoteDownSpeed => 10f;
     public GameObject basicNotePrefab;
     public GameObject criticalBasicNotePrefab;
     public GameObject holdStartNotePrefab;
@@ -30,6 +52,7 @@ public class NoteManager : MonoBehaviour
     public float mapTimer => Time.time - mapStartTime;
 
     float mapStartTime;
+    float cachedUserSettingNoteDownSpeed;
     List<Transform> noteListeners = new List<Transform>();
 
     private void Awake()
@@ -40,20 +63,9 @@ public class NoteManager : MonoBehaviour
     void Start()
     {
         Application.targetFrameRate = 60;
+        cachedUserSettingNoteDownSpeed = UserSettingNoteDownSpeed;
 
-        new NoteSummoner(new SavedMapData()
-        {
-            startBpm = 120,
-            notes = new SavedNoteData[]
-            {
-                new SavedHoldNoteData(){whenSummonBeat=10,curveData=new SavedHoldNoteCurve[]
-                {
-                    new SavedHoldNoteCurve(){spawnBeat=0,startX=2,endX=5},
-                    new SavedHoldNoteCurve(){spawnBeat=10,startX=5,endX=8},
-                }},
-                //new SavedBPMChangeNoteData(){bpm=2400,whenSummonBeat=10}
-            }
-        }, field, userSettingNoteDownSpeed).SummmonMap();
+        new NoteSummoner(selectedMap, field, cachedUserSettingNoteDownSpeed).SummmonMap();
 
 
         //new NoteSummoner(SUSConveter.ConvertMapData(SUSConveter.ReadTxt("map")), field, userSettingNoteDownSpeed).SummmonMap();
@@ -70,7 +82,7 @@ public class NoteManager : MonoBehaviour
         noteListeners.RemoveAll((x) => x == null);
         foreach (Transform t in noteListeners)
         {
-            t.localPosition += Time.deltaTime * noteDownSpeed * Vector3.down;
+            t.localPosition += Time.deltaTime * noteDownSpeedRate * cachedUserSettingNoteDownSpeed * Vector3.down;
         }
     }
 
