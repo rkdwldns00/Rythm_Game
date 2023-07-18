@@ -5,8 +5,7 @@ using System.IO;
 using System;
 using UnityEngine.UI;
 
-[CreateAssetMenu(fileName = "Map", menuName = "Scriptable Object/Map Data", order = int.MinValue)]
-public class SavedMapData : ScriptableObject
+public class SavedMapData : UnityEngine.Object
 {
     public string title;
 
