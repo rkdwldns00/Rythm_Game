@@ -119,25 +119,6 @@ public class NoteManager : MonoBehaviour
     }
 }
 
-public class SavedMapData
-{
-    public string title;
-
-    public string artistName;
-    public string designerName;
-
-    public float startOffset;
-    public float startBpm;
-    public SavedNoteData[] notes;
-}
-
-public abstract class SavedNoteData
-{
-    public int whenSummonBeat;
-
-    public abstract Note Summon(NoteSummoner summoner, SavedNoteData data);
-}
-
 public abstract class Note : MonoBehaviour
 {
     public float whenExecuteTime { get; set; }

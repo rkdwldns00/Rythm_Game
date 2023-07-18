@@ -723,7 +723,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8d90109cfe519545b803a9cb300d9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mapInfoPrefab: {fileID: 8671350388507264049, guid: 52cc76aaa9746c04ea1545635ff201a1, type: 3}
+  mapInfoScrollView: {fileID: 1243274023}
   startMenu: {fileID: 1831331695}
+  nickNameInputField: {fileID: 2043143490}
   volumeSlider: {fileID: 1617707462}
   noteSpeedSlider: {fileID: 1019405844}
   offsetSlider: {fileID: 2084068122}
@@ -3953,7 +3956,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1831331696
 RectTransform:
   m_ObjectHideFlags: 0

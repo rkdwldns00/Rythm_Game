@@ -6,27 +6,38 @@ using UnityEngine.UI;
 
 public class MapInfoShower : MonoBehaviour
 {
-    public SavedMapData SavedMapData { get; set; }
+    SavedMapData savedMapData;
 
-    public Text titleText;
-    public Text artistText;
-    public Image thumnail;
+    [SerializeField] Text titleText;
+    [SerializeField] Text artistText;
+    [SerializeField] Image thumnailImage;
 
     void Start()
     {
-        if(SavedMapData == null)
+        if (savedMapData == null)
         {
             return;
         }
+    }
 
+    public void SetMapData(SavedMapData mapData)
+    {
+        savedMapData = mapData;
+        titleText.text = mapData.title;
+        artistText.text = mapData.artistName;
+        if (mapData.thumnail != null)
+        {
+            thumnailImage.sprite = mapData.thumnail;
+        }
     }
 
     public void PlayMap()
     {
-        if(SavedMapData == null) { 
+        if (savedMapData == null)
+        {
             return;
         }
-        NoteManager.selectedMap = SavedMapData;
+        NoteManager.selectedMap = savedMapData;
         SceneManager.LoadScene("GamePlayScene");
     }
 
