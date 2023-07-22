@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -71,18 +72,26 @@ public class MenuManager : MonoBehaviour
 
     public void LoadNewMap()
     {
-        SavedMapData[] maps = Resources.LoadAll<SavedMapData>("MapDatas/");
-        for(int i=0;i<mapInfoScrollView.childCount;i++)
+        TextAsset[] maps = Resources.LoadAll<TextAsset>("MapDatas/");
+        for (int i = 0; i < mapInfoScrollView.childCount; i++)
         {
             Destroy(mapInfoScrollView.GetChild(0).gameObject);
         }
 
-        foreach (SavedMapData map in maps)
+        foreach (TextAsset map in maps)
         {
             if (map != null)
             {
                 MapInfoShower shower = Instantiate(mapInfoPrefab, mapInfoScrollView).GetComponent<MapInfoShower>();
-                shower.SetMapData(map);
+                SavedMapData mapData = SUSConveter.ConvertMapData(map.text);
+                Debug.Log("MapDatas/" + map.name + ".jpg");
+                Sprite thumnail = Resources.Load<Sprite>("MapDatas/" + map.name + ".jpg");
+                if (thumnail != null)
+                {
+                    mapData.thumnail = thumnail;
+                }
+
+                shower.SetMapData(mapData);
             }
         }
     }
