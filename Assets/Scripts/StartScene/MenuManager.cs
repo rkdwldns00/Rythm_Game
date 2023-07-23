@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class MenuManager : MonoBehaviour
 {
+    const string MAP_RESOURCE_PATH = "MapDatas/";
     static GameObject currentMenu;
 
     [SerializeField] GameObject mapInfoPrefab;
@@ -72,7 +73,7 @@ public class MenuManager : MonoBehaviour
 
     public void LoadNewMap()
     {
-        TextAsset[] maps = Resources.LoadAll<TextAsset>("MapDatas/");
+        TextAsset[] maps = Resources.LoadAll<TextAsset>(MAP_RESOURCE_PATH);
         for (int i = 0; i < mapInfoScrollView.childCount; i++)
         {
             Destroy(mapInfoScrollView.GetChild(0).gameObject);
@@ -84,12 +85,11 @@ public class MenuManager : MonoBehaviour
             {
                 MapInfoShower shower = Instantiate(mapInfoPrefab, mapInfoScrollView).GetComponent<MapInfoShower>();
                 SavedMapData mapData = SUSConveter.ConvertMapData(map.text);
-                Debug.Log("MapDatas/" + map.name + ".jpg");
-                Sprite thumnail = Resources.Load<Sprite>("MapDatas/" + map.name + ".jpg");
-                if (thumnail != null)
-                {
-                    mapData.thumnail = thumnail;
-                }
+                Sprite thumnail = Resources.Load<Sprite>(MAP_RESOURCE_PATH + map.name);
+                AudioClip bgm = Resources.Load<AudioClip>(MAP_RESOURCE_PATH + map.name);
+                mapData.thumnail = thumnail;
+                mapData.bgm = bgm;
+
 
                 shower.SetMapData(mapData);
             }

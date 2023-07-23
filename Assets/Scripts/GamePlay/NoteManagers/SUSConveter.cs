@@ -465,8 +465,6 @@ public class SUSConveter
         holdEndDatas.Sort((a, b) => a.beat - b.beat);
         holdCurveDatas.Sort((a, b) => a.beat - b.beat);
 
-        holdCurveDatas.ForEach((a) => Debug.Log("type : " + a.tickType));
-
         for (int readingHoldStartDataIndex = 0; readingHoldStartDataIndex < holdStartDatas.Count; readingHoldStartDataIndex++)
         {
             int id = holdStartDatas[0].id;
@@ -558,7 +556,7 @@ public class SUSConveter
 
         newNoteDatas.Sort((a, b) => a.whenSummonBeat - b.whenSummonBeat);
 
-        for (int readingNoteIndex = 0; readingNoteIndex < newNoteDatas.Count; readingNoteIndex++)
+        /*for (int readingNoteIndex = 0; readingNoteIndex < newNoteDatas.Count; readingNoteIndex++)
         {
             string message = newNoteDatas[readingNoteIndex].whenSummonBeat + "-" + newNoteDatas[readingNoteIndex].GetType() + ":";
             if (newNoteDatas[readingNoteIndex] is SavedMeterChangerNoteData)
@@ -570,7 +568,7 @@ public class SUSConveter
                 message += ((SavedBPMChangeNoteData)newNoteDatas[readingNoteIndex]).bpm;
             }
             Debug.Log(message);
-        }
+        }*/
 
         newMapData.notes = newNoteDatas.ToArray();
         return newMapData;
