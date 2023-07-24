@@ -29,12 +29,14 @@ public class MapInfoShower : MonoBehaviour
         {
             thumnailImage.sprite = mapData.thumnail;
         }
+        savedMapData = mapData;
     }
 
     public void PlayMap()
     {
         if (savedMapData == null)
         {
+            Debug.Log("할당된 맵데이터가 존재하지 않습니다.");
             return;
         }
         NoteManager.selectedMap = savedMapData;

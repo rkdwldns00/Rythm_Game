@@ -63,12 +63,17 @@ public class NoteManager : MonoBehaviour
     void Start()
     {
         Application.targetFrameRate = 60;
-        cachedUserSettingNoteDownSpeed = UserSettingNoteDownSpeed;
+        cachedUserSettingNoteDownSpeed = UserSettingNoteDownSpeed * 3;
 
+        //StartCoroutine(StartMap());
+
+        new NoteSummoner(SUSConveter.ConvertMapData(SUSConveter.ReadTxt("MapDatas/map")), field, cachedUserSettingNoteDownSpeed).SummmonMap();
+    }
+
+    IEnumerator StartMap()
+    {
+        yield return new WaitForSeconds(2);
         new NoteSummoner(selectedMap, field, cachedUserSettingNoteDownSpeed).SummmonMap();
-
-
-        //new NoteSummoner(SUSConveter.ConvertMapData(SUSConveter.ReadTxt("map")), field, userSettingNoteDownSpeed).SummmonMap();
     }
 
     void Update()

@@ -9,7 +9,7 @@ public class SUSConveter
     {
         //반환용 맵 데이터 생성
         SavedMapData newMapData = new();
-
+        Debug.Log("컨버터 결과:" + newMapData);
         SUSData = SUSData.Replace("\r", "");
 
         //줄바꿈을 기준으로 데이터 분할
@@ -556,7 +556,7 @@ public class SUSConveter
 
         newNoteDatas.Sort((a, b) => a.whenSummonBeat - b.whenSummonBeat);
 
-        /*for (int readingNoteIndex = 0; readingNoteIndex < newNoteDatas.Count; readingNoteIndex++)
+        for (int readingNoteIndex = 0; readingNoteIndex < newNoteDatas.Count; readingNoteIndex++)
         {
             string message = newNoteDatas[readingNoteIndex].whenSummonBeat + "-" + newNoteDatas[readingNoteIndex].GetType() + ":";
             if (newNoteDatas[readingNoteIndex] is SavedMeterChangerNoteData)
@@ -568,7 +568,7 @@ public class SUSConveter
                 message += ((SavedBPMChangeNoteData)newNoteDatas[readingNoteIndex]).bpm;
             }
             Debug.Log(message);
-        }*/
+        }
 
         newMapData.notes = newNoteDatas.ToArray();
         return newMapData;

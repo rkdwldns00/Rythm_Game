@@ -5,7 +5,7 @@ using System.IO;
 using System;
 using UnityEngine.UI;
 
-public class SavedMapData : UnityEngine.Object
+public class SavedMapData
 {
     public string title;
 
@@ -20,8 +20,7 @@ public class SavedMapData : UnityEngine.Object
     public SavedNoteData[] notes;
 }
 
-[Serializable]
-public abstract class SavedNoteData : UnityEngine.Object
+public abstract class SavedNoteData
 {
     public int whenSummonBeat;
 
