@@ -62,28 +62,23 @@ public class NoteManager : MonoBehaviour
 
     void Start()
     {
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 120;
         cachedUserSettingNoteDownSpeed = UserSettingNoteDownSpeed * 3;
 
-        //StartCoroutine(StartMap());
+        StartCoroutine(StartMap());
 
-        new NoteSummoner(SUSConveter.ConvertMapData(SUSConveter.ReadTxt("MapDatas/map")), field, cachedUserSettingNoteDownSpeed).SummmonMap();
+        //new NoteSummoner(SUSConveter.ConvertMapData(SUSConveter.ReadTxt("MapDatas/map")), field, cachedUserSettingNoteDownSpeed).SummmonMap();
     }
 
     IEnumerator StartMap()
     {
         yield return new WaitForSeconds(2);
+        mapStartTime = Time.time;
         new NoteSummoner(selectedMap, field, cachedUserSettingNoteDownSpeed).SummmonMap();
     }
 
     void Update()
     {
-        for (float i = 0; i < 1; i += 0.01f)
-        {
-            Vector2 s = MyUtil.BezierCalCulate(i, Vector2.zero, Vector2.up, Vector2.one, new Vector2(1, 2));
-            Vector2 e = MyUtil.BezierCalCulate(i + 0.01f, Vector2.zero, Vector2.up, Vector2.one, new Vector2(1, 2));
-            Debug.DrawLine(s, e);
-        }
         noteListeners.RemoveAll((x) => x == null);
         foreach (Transform t in noteListeners)
         {

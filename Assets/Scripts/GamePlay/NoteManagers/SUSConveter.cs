@@ -87,7 +87,7 @@ public class SUSConveter
         {
             string readingMeterString = meterStringData[readingMeterDataIndex];
             int barIndex = int.Parse(readingMeterString.Substring(1, 3));
-            float meter = float.Parse(readingMeterString.Substring(readingMeterString.IndexOf(":") + 1, readingMeterString.Length - readingMeterString.IndexOf(":") - 1));
+            float meter = float.Parse(readingMeterString.Substring(readingMeterString.IndexOf(":") + 1, readingMeterString.Length - readingMeterString.IndexOf(":") - 1)) / 4;
 
             barLengthDatas[readingMeterDataIndex] = new KeyValuePair<int, float>(barIndex, meter);
         }
@@ -130,10 +130,10 @@ public class SUSConveter
             {
                 if (mapDataLines[readingLineIndex].bar != lastAddedBarInBeatPerBar)
                 {
-                    if ((nomalizedBarLength % 2 == 0 || nomalizedBarLength == 1) && nomalizedBarLength < 16)
+                    /*if ((nomalizedBarLength % 2 == 0 || nomalizedBarLength == 1) && nomalizedBarLength < 16)
                     {
                         nomalizedBarLength = 16;
-                    }
+                    }*/
                     beatPerBarDatas.Add(new BeatPerBar(mapDataLines[readingLineIndex].bar, nomalizedBarLength, originBarLength));
                     lastAddedBarInBeatPerBar = mapDataLines[readingLineIndex].bar;
                 }
@@ -156,10 +156,20 @@ public class SUSConveter
         int sumBeat = 0;
         for (int readingBeatPerBarDataIndex = 0; readingBeatPerBarDataIndex < beatPerBarDatas.Count; readingBeatPerBarDataIndex++)
         {
+            float beatLengthRate = 1f;
+            for (int i = barLengthDatas.Length - 1; i >= 0; i--)
+            {
+                if (barLengthDatas[i].Key < beatPerBarDatas[readingBeatPerBarDataIndex].bar)
+                {
+                    beatLengthRate = barLengthDatas[i].Value;
+                    break;
+                }
+            }
             newNoteDatas.Add(new SavedMeterChangerNoteData()
             {
                 beatPerBar = beatPerBarDatas[readingBeatPerBarDataIndex].beatCount,
-                whenSummonBeat = sumBeat
+                whenSummonBeat = sumBeat,
+                beatLengthRate = beatLengthRate
             });
             if (readingBeatPerBarDataIndex < beatPerBarDatas.Count - 1)
             {
@@ -561,7 +571,7 @@ public class SUSConveter
             string message = newNoteDatas[readingNoteIndex].whenSummonBeat + "-" + newNoteDatas[readingNoteIndex].GetType() + ":";
             if (newNoteDatas[readingNoteIndex] is SavedMeterChangerNoteData)
             {
-                message += ((SavedMeterChangerNoteData)newNoteDatas[readingNoteIndex]).beatPerBar;
+                message += ((SavedMeterChangerNoteData)newNoteDatas[readingNoteIndex]).beatLengthRate + "/" + ((SavedMeterChangerNoteData)newNoteDatas[readingNoteIndex]).beatPerBar;
             }
             if (newNoteDatas[readingNoteIndex] is SavedBPMChangeNoteData)
             {
