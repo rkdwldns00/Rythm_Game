@@ -60,7 +60,7 @@ public class NoteSummoner
 
     float BeatPerBarLengthRate(float beat)
     {
-        float curruntBeatPerBar = 1;
+        float curruntBeatPerBar = 1f / 4f;
         List<SavedMeterChangerNoteData> meters = new List<SavedMeterChangerNoteData>();
         foreach (SavedNoteData note in map.notes)
         {

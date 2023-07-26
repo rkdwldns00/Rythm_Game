@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
 
@@ -22,7 +23,7 @@ public class NoteManager : MonoBehaviour
             PlayerPrefs.SetFloat("UserSettingNoteDownSpeed", value);
         }
     }
-    
+
     public static float UserSettingOffset
     {
         get
@@ -66,14 +67,13 @@ public class NoteManager : MonoBehaviour
         cachedUserSettingNoteDownSpeed = UserSettingNoteDownSpeed * 3;
 
         StartCoroutine(StartMap());
-
-        //new NoteSummoner(SUSConveter.ConvertMapData(SUSConveter.ReadTxt("MapDatas/map")), field, cachedUserSettingNoteDownSpeed).SummmonMap();
     }
 
     IEnumerator StartMap()
     {
         yield return new WaitForSeconds(2);
         mapStartTime = Time.time;
+
         new NoteSummoner(selectedMap, field, cachedUserSettingNoteDownSpeed).SummmonMap();
     }
 

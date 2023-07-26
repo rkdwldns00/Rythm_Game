@@ -37,6 +37,22 @@ public class MenuManager : MonoBehaviour
         nickNameInputField.text = NickName;
 
         currentMenu = startMenu;
+
+        /*MyUtil.SaveMapFile(new SavedMapData()
+        {
+            title = "map",
+            artistName = "강지운",
+            designerName = "강지",
+            startOffset = 0,
+            startBpm = 120,
+            notes = new SavedNoteData[]
+            {
+                new SavedBasicNoteData() {startX = 3,endX=6,whenSummonBeat=3},
+                new SavedBasicNoteData() {startX = 3,endX=6,whenSummonBeat=4},
+                new SavedBasicNoteData() {startX = 3,endX=6,whenSummonBeat=5},
+                new SavedBasicNoteData() {startX = 3,endX=6,whenSummonBeat=6},
+            }
+        });*/
     }
 
     public void SetMenu(GameObject menu)
@@ -84,14 +100,8 @@ public class MenuManager : MonoBehaviour
             if (map != null)
             {
                 MapInfoShower shower = Instantiate(mapInfoPrefab, mapInfoScrollView).GetComponent<MapInfoShower>();
-                SavedMapData mapData = SUSConveter.ConvertMapData(map.text);
-                Sprite thumnail = Resources.Load<Sprite>(MAP_RESOURCE_PATH + map.name);
-                AudioClip bgm = Resources.Load<AudioClip>(MAP_RESOURCE_PATH + map.name);
-                mapData.thumnail = thumnail;
-                mapData.bgm = bgm;
 
-
-                shower.SetMapData(mapData);
+                shower.SetMapData(MyUtil.LoadMapFile(map.name));
             }
         }
     }
