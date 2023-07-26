@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -5,6 +6,28 @@ using UnityEngine;
 
 public class MyUtil
 {
+    static Dictionary<Type, string> noteTypeKey = new Dictionary<Type, string>() {
+        {typeof(SavedBasicNoteData), "BN"},
+        {typeof(SavedFlickNoteData), "FN"},
+        {typeof(SavedHoldNoteData), "HN"},
+        {typeof (SavedHoldEndNoteData), "EN"},
+        {typeof(SavedBPMChangeNoteData), "BD"},
+        {typeof(SavedMeterChangerNoteData), "MD"},
+        {typeof(SavedSpeedChangerNoteData), "SD"}
+    };
+
+    public static Type NoteKeyToType(string key)
+    {
+        foreach (var keyValue in noteTypeKey)
+        {
+            if (keyValue.Value == key)
+            {
+                return keyValue.Key;
+            }
+        }
+        return null;
+    }
+
     public static Vector2 BezierCalCulate(float lerpValue, params Vector2[] points)
     {
         while (points.Length > 1)
@@ -33,7 +56,36 @@ public class MyUtil
         List<SavedNoteData> notes = new List<SavedNoteData>();
         for (int i = 1; i < jsonDatas.Length; i++)
         {
-            notes.Add(JsonUtility.FromJson<SavedBasicNoteData>(jsonDatas[i]));
+            Type t = NoteKeyToType(jsonDatas[i][..2]);
+            string noteJson = jsonDatas[i][2..];
+            if (t == typeof(SavedBasicNoteData))
+            {
+                notes.Add(JsonUtility.FromJson<SavedBasicNoteData>(noteJson));
+            }
+            else if (t == typeof(SavedFlickNoteData))
+            {
+                notes.Add(JsonUtility.FromJson<SavedFlickNoteData>(noteJson));
+            }
+            else if (t == typeof(SavedHoldNoteData))
+            {
+                notes.Add(JsonUtility.FromJson<SavedHoldNoteData>(noteJson));
+            }
+            else if (t == typeof(SavedHoldEndNoteData))
+            {
+                notes.Add(JsonUtility.FromJson<SavedHoldEndNoteData>(noteJson));
+            }
+            else if (t == typeof(SavedBPMChangeNoteData))
+            {
+                notes.Add(JsonUtility.FromJson<SavedBPMChangeNoteData>(noteJson));
+            }
+            else if (t == typeof(SavedMeterChangerNoteData))
+            {
+                notes.Add(JsonUtility.FromJson<SavedMeterChangerNoteData>(noteJson));
+            }
+            else if (t == typeof(SavedSpeedChangerNoteData))
+            {
+                notes.Add(JsonUtility.FromJson<SavedSpeedChangerNoteData>(noteJson));
+            }
         }
         data.notes = notes.ToArray();
         return data;
@@ -45,10 +97,9 @@ public class MyUtil
         file += JsonUtility.ToJson(data);
         foreach (var note in data.notes)
         {
-            file += "\n" + JsonUtility.ToJson(note);
+            file += "\n" + noteTypeKey[note.GetType()] + JsonUtility.ToJson(note);
         }
 
         File.WriteAllText("Assets/Resources/MapDatas/" + data.title + ".txt", file);
-
     }
 }

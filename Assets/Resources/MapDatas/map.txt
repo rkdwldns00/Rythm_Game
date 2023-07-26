@@ -1,5 +1,5 @@
 {"title":"map","artistName":"강지운","designerName":"강지","bgm":{"instanceID":0},"thumnail":{"instanceID":0},"startOffset":0.0,"startBpm":120.0}
-{"whenSummonBeat":3,"startX":3.0,"endX":6.0,"isHoldStartNote":false,"isCriticalNote":false}
-{"whenSummonBeat":4,"startX":3.0,"endX":6.0,"isHoldStartNote":false,"isCriticalNote":false}
-{"whenSummonBeat":5,"startX":3.0,"endX":6.0,"isHoldStartNote":false,"isCriticalNote":false}
-{"whenSummonBeat":6,"startX":3.0,"endX":6.0,"isHoldStartNote":false,"isCriticalNote":false}
+BN{"whenSummonBeat":3,"startX":3.0,"endX":6.0,"isHoldStartNote":false,"isCriticalNote":false}
+BN{"whenSummonBeat":4,"startX":3.0,"endX":6.0,"isHoldStartNote":false,"isCriticalNote":false}
+BN{"whenSummonBeat":5,"startX":3.0,"endX":6.0,"isHoldStartNote":false,"isCriticalNote":false}
+BN{"whenSummonBeat":6,"startX":3.0,"endX":6.0,"isHoldStartNote":false,"isCriticalNote":false}
