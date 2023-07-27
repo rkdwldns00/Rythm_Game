@@ -14,10 +14,7 @@ public class MapInfoShower : MonoBehaviour
 
     void Start()
     {
-        if (savedMapData == null)
-        {
-            return;
-        }
+     
     }
 
     public void SetMapData(SavedMapData mapData)
@@ -30,6 +27,7 @@ public class MapInfoShower : MonoBehaviour
             thumnailImage.sprite = mapData.thumnail;
         }
         savedMapData = mapData;
+        SpriteExporter.ExportSpriteToFile(thumnailImage.sprite, "Assets/Resources/cap.png");
     }
 
     public void PlayMap()
