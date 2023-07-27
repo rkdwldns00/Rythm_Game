@@ -727,9 +727,6 @@ MonoBehaviour:
   mapInfoScrollView: {fileID: 1243274023}
   startMenu: {fileID: 1831331695}
   nickNameInputField: {fileID: 2043143490}
-  volumeSlider: {fileID: 1617707462}
-  noteSpeedSlider: {fileID: 1019405844}
-  offsetSlider: {fileID: 2084068122}
 --- !u!1 &279663816
 GameObject:
   m_ObjectHideFlags: 0
@@ -1742,7 +1739,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1019405840}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d059fe8e85b5bd468a95bb120374bb5, type: 3}
+  m_Script: {fileID: 11500000, guid: 0a1a4c526f43d83488e94dfccc5de785, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 1557244903}
@@ -2196,7 +2193,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 360}
+  m_SizeDelta: {x: 0, y: 60}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1243274024
 MonoBehaviour:
@@ -3035,19 +3032,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1019405844}
-        m_TargetAssemblyTypeName: SliderValueShower, Assembly-CSharp
-        m_MethodName: ShowValue
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 236179273}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: NoteSpeedSlider, Assembly-CSharp
         m_MethodName: SetNoteSpeed
         m_Mode: 0
         m_Arguments:
@@ -3331,7 +3316,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1617707458}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d059fe8e85b5bd468a95bb120374bb5, type: 3}
+  m_Script: {fileID: 11500000, guid: 9ddc4b50515ba3d4e95aaf1cfc5700bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 2108699218}
@@ -3912,19 +3897,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2084068122}
-        m_TargetAssemblyTypeName: SliderValueShower, Assembly-CSharp
-        m_MethodName: ShowValue
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 236179273}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: OffsetSlider, Assembly-CSharp
         m_MethodName: SetOffset
         m_Mode: 0
         m_Arguments:
@@ -4543,7 +4516,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2084068118}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d059fe8e85b5bd468a95bb120374bb5, type: 3}
+  m_Script: {fileID: 11500000, guid: 464ccedcddec58f4aa3d81c64b3d485c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   slider: {fileID: 1829350994}
@@ -4639,19 +4612,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1617707462}
-        m_TargetAssemblyTypeName: SliderValueShower, Assembly-CSharp
-        m_MethodName: ShowValue
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 236179273}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_TargetAssemblyTypeName: VolumeSlider, Assembly-CSharp
         m_MethodName: SetVolume
         m_Mode: 0
         m_Arguments:

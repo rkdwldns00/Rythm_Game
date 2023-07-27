@@ -13,7 +13,7 @@ public class SliderValueShower : MonoBehaviour
         shower.text = (Mathf.Floor(slider.value * 10) / 10).ToString();
     }
 
-    public void SetValue(float value)
+    public void SetSliderValue(float value)
     {
         slider.value = Mathf.Floor(value * 10) / 10;
         ShowValue();
