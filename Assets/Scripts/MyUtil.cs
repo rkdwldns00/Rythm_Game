@@ -102,4 +102,27 @@ public class MyUtil
 
         File.WriteAllText("Assets/Resources/MapDatas/" + data.title + ".txt", file);
     }
+
+    public static void DeleteMapFile(string mapTitle)
+    {
+        string path = "Assets/Resources/MapDatas/" + mapTitle;
+        if (File.Exists(path + ".txt"))
+        {
+            File.Delete(path + ".txt");
+        }
+
+        if (File.Exists(path + ".png"))
+        {
+            File.Delete(path + ".png");
+        }
+        else if (File.Exists(path + ".jpg"))
+        {
+            File.Delete(path + ".jpg");
+        }
+
+        if (File.Exists(path + ".mp3"))
+        {
+            File.Delete(path + ".mp3");
+        }
+    }
 }
