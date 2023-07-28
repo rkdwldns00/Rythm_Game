@@ -1,45 +1,64 @@
 using UnityEngine;
 using System.IO;
 
-public class SpriteExporter : MonoBehaviour
+public static class SpriteExporter
 {
-    public static void ExportSpriteToFile(Sprite sprite,string filePath)
+    /// <summary>
+    /// 원하는 스프라이트를 지정된 경로에 png파일로 내보냅니다.
+    /// </summary>
+    /// <param name="sprite">내보낼 스프라이트</param>
+    /// <param name="filePath">파일을 저장할 경로</param>
+    /// <returns>내보내기 성공여부</returns>
+    public static bool ExportSpriteToFile(Sprite sprite,string filePath)
     {
         if (sprite == null)
         {
-            Debug.LogWarning("No SpriteRenderer or Sprite assigned!");
-            return;
+            return false;
         }
 
-        Texture2D spriteTexture = sprite.texture;
+        return ExportTextureToFile(sprite.texture, filePath);
+    }
 
-        // Create a temporary RenderTexture to copy the sprite's texture
-        //RenderTexture rt = new RenderTexture(spriteTexture.width, spriteTexture.height, 0, RenderTextureFormat.ARGB32);
-        //RenderTexture.active = rt;
-        //Graphics.Blit(spriteTexture, rt);
+    /// <summary>
+    /// 원하는 텍스쳐를 지정된 경로에 png파일로 내보냅니다.
+    /// </summary>
+    /// <param name="texture">내보낼 텍스쳐</param>
+    /// <param name="filePath">파일을 저장할 경로</param>
+    /// <returns>내보내기 성공여부</returns>
+    public static bool ExportTextureToFile(Texture2D texture, string filePath)
+    {
+        if(texture == null)
+        {
+            return false;
+        }
 
-        // Create a new Texture2D to save the copy
-        Texture2D copyTexture = new Texture2D(spriteTexture.width, spriteTexture.height, TextureFormat.ARGB32, false);
-        copyTexture.ReadPixels(new Rect(0, 0, spriteTexture.width, spriteTexture.height), 0, 0);
+        //새로운 렌더텍스쳐에 스프라이트 복사
+        RenderTexture renderTexture = new RenderTexture(texture.width, texture.height, 0, RenderTextureFormat.ARGB32);
+        RenderTexture.active = renderTexture;
+        Graphics.Blit(texture, renderTexture);
+
+        //원본 스프라이트와 똑같은 규격의 텍스쳐 생성
+        Texture2D copyTexture = new Texture2D(texture.width, texture.height, TextureFormat.ARGB32, false);
+        //렌더텍스쳐의 텍스쳐를 복사해오기
+        copyTexture.ReadPixels(new Rect(0, 0, texture.width, texture.height), 0, 0);
         copyTexture.Apply();
 
-        // Release the temporary RenderTexture
+        //메모리 해제
         RenderTexture.active = null;
-        //rt.Release();
-        //Destroy(rt);
+        renderTexture.Release();
+        Object.Destroy(renderTexture);
 
-        // Encode the copyTexture to a PNG file
+        //텍스쳐를 PNG로 인코딩 시도
         byte[] pngBytes = copyTexture.EncodeToPNG();
-        Destroy(copyTexture); // Clean up the temporary Texture2D
+        Object.Destroy(copyTexture);
 
         if (pngBytes != null)
         {
+            //지정된 경로에 파일저장
             File.WriteAllBytes(filePath, pngBytes);
-            Debug.Log("스프라이트 내보내기 성공\n저장된 파일 : " + filePath);
+            return true;
         }
-        else
-        {
-            Debug.LogError("Failed to encode sprite to PNG!");
-        }
+
+        return false;
     }
 }

@@ -27,7 +27,6 @@ public class MapInfoShower : MonoBehaviour
             thumnailImage.sprite = mapData.thumnail;
         }
         savedMapData = mapData;
-        SpriteExporter.ExportSpriteToFile(thumnailImage.sprite, "Assets/Resources/cap.png");
     }
 
     public void PlayMap()

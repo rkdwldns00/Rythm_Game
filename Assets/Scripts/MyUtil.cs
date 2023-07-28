@@ -101,6 +101,7 @@ public class MyUtil
         }
 
         File.WriteAllText("Assets/Resources/MapDatas/" + data.title + ".txt", file);
+        SpriteExporter.ExportTextureToFile(data.thumnail.texture, "Assets/Resources/MapDatas/" + data.title + ".png");
     }
 
     public static void DeleteMapFile(string mapTitle)
