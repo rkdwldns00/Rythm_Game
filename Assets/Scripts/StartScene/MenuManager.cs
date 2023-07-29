@@ -67,7 +67,7 @@ public class MenuManager : MonoBehaviour
         NickName = nickName;
     }
 
-    public void LoadNewMap()
+    public void RefreshMapList()
     {
         TextAsset[] maps = Resources.LoadAll<TextAsset>(MAP_RESOURCE_PATH);
         for (int i = 0; i < mapInfoScrollView.childCount; i++)
@@ -84,5 +84,10 @@ public class MenuManager : MonoBehaviour
                 shower.SetMapData(MapFileUtil.LoadMapFile(map.name));
             }
         }
+    }
+
+    public void LoadNewMap()
+    {
+
     }
 }
