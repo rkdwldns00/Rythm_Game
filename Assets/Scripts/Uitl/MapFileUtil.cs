@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 public static class MapFileUtil
@@ -170,6 +171,25 @@ public static class MapFileUtil
         if (File.Exists(path + ".mp3"))
         {
             File.Delete(path + ".mp3");
+        }
+    }
+
+    public static string OpenFileBrowser()
+    {
+        string initialDirectory = "";
+        string fileFilter = "";
+
+        string filePath = EditorUtility.OpenFilePanel("맵 파일 선택", initialDirectory, fileFilter);
+
+        if (!string.IsNullOrEmpty(filePath))
+        {
+            Debug.Log("선택된 경로 : "+filePath);
+            return filePath;
+        }
+        else
+        {
+            Debug.LogWarning("파일 선택이 취소되었습니다.");
+            return "";
         }
     }
 }
