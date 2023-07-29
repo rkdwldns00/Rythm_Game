@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.IO;
 
+//이 코드는 Chat gpt의 코드를 개선한 버전입니다!
 public static class SpriteExporter
 {
     /// <summary>
@@ -9,14 +10,14 @@ public static class SpriteExporter
     /// <param name="sprite">내보낼 스프라이트</param>
     /// <param name="filePath">파일을 저장할 경로</param>
     /// <returns>내보내기 성공여부</returns>
-    public static bool ExportSpriteToFile(Sprite sprite,string filePath)
+    public static bool ExportSpriteToPNG(Sprite sprite,string filePath)
     {
         if (sprite == null)
         {
             return false;
         }
 
-        return ExportTextureToFile(sprite.texture, filePath);
+        return ExportTextureToPNG(sprite.texture, filePath);
     }
 
     /// <summary>
@@ -25,7 +26,7 @@ public static class SpriteExporter
     /// <param name="texture">내보낼 텍스쳐</param>
     /// <param name="filePath">파일을 저장할 경로</param>
     /// <returns>내보내기 성공여부</returns>
-    public static bool ExportTextureToFile(Texture2D texture, string filePath)
+    public static bool ExportTextureToPNG(Texture2D texture, string filePath)
     {
         if(texture == null)
         {

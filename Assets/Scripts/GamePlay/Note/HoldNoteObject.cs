@@ -118,8 +118,8 @@ public class HoldNoteObject : Note
                     }
                     newCurveList.Add(new RuntimeHoldNoteCurve()
                     {
-                        startX = MyUtil.BezierCalCulate(lerpValue, leftStartPos, leftViaPos, leftEndPos).x,
-                        endX = MyUtil.BezierCalCulate(lerpValue, rightStartPos, rightViaPos, rightEndPos).x,
+                        startX = MapFileUtil.BezierCalCulate(lerpValue, leftStartPos, leftViaPos, leftEndPos).x,
+                        endX = MapFileUtil.BezierCalCulate(lerpValue, rightStartPos, rightViaPos, rightEndPos).x,
                         yPos = curveYpos,
                     });
                 }

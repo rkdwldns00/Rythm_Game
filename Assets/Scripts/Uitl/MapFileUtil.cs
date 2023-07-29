@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class MyUtil
+public static class MapFileUtil
 {
+    const string MAP_DATA_PATH = "Assets/Resources/MapDatas/";
+
     static Dictionary<Type, string> noteTypeKey = new Dictionary<Type, string>() {
         {typeof(SavedBasicNoteData), "BN"},
         {typeof(SavedFlickNoteData), "FN"},
@@ -100,8 +102,9 @@ public class MyUtil
             file += "\n" + noteTypeKey[note.GetType()] + JsonUtility.ToJson(note);
         }
 
-        File.WriteAllText("Assets/Resources/MapDatas/" + data.title + ".txt", file);
-        SpriteExporter.ExportTextureToFile(data.thumnail.texture, "Assets/Resources/MapDatas/" + data.title + ".png");
+        File.WriteAllText(MAP_DATA_PATH + data.title + ".txt", file);
+        SpriteExporter.ExportTextureToPNG(data.thumnail.texture, MAP_DATA_PATH + data.title + ".png");
+        AudioClipExporter.ExportAudioClipToWAV(data.bgm, MAP_DATA_PATH + data.title + ".wav");
     }
 
     public static void DeleteMapFile(string mapTitle)

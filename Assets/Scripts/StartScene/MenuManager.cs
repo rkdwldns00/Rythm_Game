@@ -81,7 +81,7 @@ public class MenuManager : MonoBehaviour
             {
                 MapInfoShower shower = Instantiate(mapInfoPrefab, mapInfoScrollView).GetComponent<MapInfoShower>();
 
-                shower.SetMapData(MyUtil.LoadMapFile(map.name));
+                shower.SetMapData(MapFileUtil.LoadMapFile(map.name));
             }
         }
     }

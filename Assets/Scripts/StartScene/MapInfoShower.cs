@@ -14,7 +14,7 @@ public class MapInfoShower : MonoBehaviour
 
     void Start()
     {
-     
+
     }
 
     public void SetMapData(SavedMapData mapData)
@@ -47,7 +47,7 @@ public class MapInfoShower : MonoBehaviour
 
     public void DeleteMap()
     {
-        MyUtil.DeleteMapFile(savedMapData.title);
+        MapFileUtil.DeleteMapFile(savedMapData.title);
         Destroy(gameObject);
     }
 }
