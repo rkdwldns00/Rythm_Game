@@ -723,10 +723,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8d90109cfe519545b803a9cb300d9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapInfoPrefab: {fileID: 8671350388507264049, guid: 52cc76aaa9746c04ea1545635ff201a1, type: 3}
-  mapInfoScrollView: {fileID: 1243274023}
   startMenu: {fileID: 1831331695}
-  nickNameInputField: {fileID: 2043143490}
 --- !u!1 &279663816
 GameObject:
   m_ObjectHideFlags: 0
@@ -817,6 +814,7 @@ GameObject:
   - component: {fileID: 401053022}
   - component: {fileID: 401053021}
   - component: {fileID: 401053020}
+  - component: {fileID: 401053023}
   m_Layer: 5
   m_Name: Quit
   m_TagString: Untagged
@@ -889,8 +887,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 236179273}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+      - m_Target: {fileID: 401053023}
+        m_TargetAssemblyTypeName: QuitGameButton, Assembly-CSharp
         m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:
@@ -939,6 +937,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 401053018}
   m_CullTransparentMesh: 1
+--- !u!114 &401053023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401053018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2295d41ed8903a645a92a4992c6fde2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &409489327
 GameObject:
   m_ObjectHideFlags: 0
@@ -1027,6 +1037,7 @@ GameObject:
   - component: {fileID: 552029813}
   - component: {fileID: 552029812}
   - component: {fileID: 552029811}
+  - component: {fileID: 552029814}
   m_Layer: 5
   m_Name: Load Map
   m_TagString: Untagged
@@ -1099,9 +1110,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 236179273}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
-        m_MethodName: RefreshMapList
+      - m_Target: {fileID: 552029814}
+        m_TargetAssemblyTypeName: LoadNewMapButton, Assembly-CSharp
+        m_MethodName: LoadNewMap
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1149,6 +1160,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 552029809}
   m_CullTransparentMesh: 1
+--- !u!114 &552029814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 552029809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 195b77d61d63dec4ab999a4bc585526b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &608465131
 GameObject:
   m_ObjectHideFlags: 0
@@ -2327,7 +2350,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 60}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1243274024
 MonoBehaviour:
@@ -2464,7 +2487,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1300441200
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4253,6 +4276,7 @@ GameObject:
   - component: {fileID: 2017375913}
   - component: {fileID: 2017375912}
   - component: {fileID: 2017375911}
+  - component: {fileID: 2017375914}
   m_Layer: 5
   m_Name: Refresh
   m_TagString: Untagged
@@ -4325,8 +4349,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 236179273}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+      - m_Target: {fileID: 2017375914}
+        m_TargetAssemblyTypeName: RefreshMapListButton, Assembly-CSharp
         m_MethodName: RefreshMapList
         m_Mode: 1
         m_Arguments:
@@ -4375,6 +4399,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2017375909}
   m_CullTransparentMesh: 1
+--- !u!114 &2017375914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2017375909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93fca41a5aa28574d897ed9861ce53d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapInfoScrollView: {fileID: 1243274023}
+  mapInfoPrefab: {fileID: 8671350388507264049, guid: 52cc76aaa9746c04ea1545635ff201a1, type: 3}
 --- !u!1 &2029158416
 GameObject:
   m_ObjectHideFlags: 0
@@ -4495,6 +4533,7 @@ GameObject:
   - component: {fileID: 2043143492}
   - component: {fileID: 2043143491}
   - component: {fileID: 2043143490}
+  - component: {fileID: 2043143493}
   m_Layer: 5
   m_Name: InputField (Legacy)
   m_TagString: Untagged
@@ -4578,8 +4617,8 @@ MonoBehaviour:
   m_OnSubmit:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 236179273}
-        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+      - m_Target: {fileID: 2043143493}
+        m_TargetAssemblyTypeName: NickNameInputField, Assembly-CSharp
         m_MethodName: SetNickName
         m_Mode: 0
         m_Arguments:
@@ -4642,6 +4681,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2043143488}
   m_CullTransparentMesh: 1
+--- !u!114 &2043143493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2043143488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a13ae153c3370b49a68125f510a208f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nickNameInputField: {fileID: 2043143490}
 --- !u!1 &2084068118
 GameObject:
   m_ObjectHideFlags: 0

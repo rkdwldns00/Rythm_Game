@@ -47,7 +47,7 @@ public class MapInfoShower : MonoBehaviour
 
     public void DeleteMap()
     {
-        MapFileUtil.DeleteMapFile(savedMapData.title);
+        MapFileUtil.DeleteMapResource(savedMapData.title);
         Destroy(gameObject);
     }
 }

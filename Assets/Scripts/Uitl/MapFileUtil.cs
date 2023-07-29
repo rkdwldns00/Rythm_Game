@@ -44,14 +44,46 @@ public static class MapFileUtil
         return points[0];
     }
 
-    public static SavedMapData LoadMapFile(string mapName)
+    public static SavedMapData[] LoadAllMapResource()
+    {
+        TextAsset[] maps = Resources.LoadAll<TextAsset>("MapDatas/");
+        List<SavedMapData> result = new List<SavedMapData>();
+
+        foreach (TextAsset map in maps)
+        {
+            if (map != null)
+            {
+                SavedMapData loadedMap = LoadMapResource(map.name);
+                if(loadedMap != null)
+                {
+                    result.Add(loadedMap);
+                }
+            }
+        }
+
+        return result.ToArray();
+    }
+
+    public static SavedMapData LoadMapResource(string mapName)
     {
         string mapInfoData = Resources.Load<TextAsset>("MapDatas/" + mapName).text;
 
         mapInfoData.Replace("\r", "\n");
         string[] jsonDatas = mapInfoData.Split("\n");
 
-        SavedMapData data = JsonUtility.FromJson<SavedMapData>(jsonDatas[0]);
+        SavedMapData data = null;
+        if(jsonDatas.Length > 0)
+        {
+            data = JsonUtility.FromJson<SavedMapData>(jsonDatas[0]);
+        }
+        
+        if(data == null)
+        {
+            Debug.LogWarning("유효하지않은 맵 파일을 불러오려고 시도했습니다, 맵 이름 : " + mapName);
+            return null;
+        }
+
+
         data.thumnail = Resources.Load<Sprite>("MapDatas/" + mapName);
         data.bgm = Resources.Load<AudioClip>("MapDatas/" + mapName);
 
@@ -93,8 +125,14 @@ public static class MapFileUtil
         return data;
     }
 
-    public static void SaveMapFile(SavedMapData data)
+    public static void SaveMapResource(SavedMapData data)
     {
+        if(data == null)
+        {
+            Debug.LogWarning("저장하려는 맵이 null 입니다.");
+            return;
+        }
+
         string file = "";
         file += JsonUtility.ToJson(data);
         foreach (var note in data.notes)
@@ -107,12 +145,17 @@ public static class MapFileUtil
         AudioClipExporter.ExportAudioClipToWAV(data.bgm, MAP_DATA_PATH + data.title + ".wav");
     }
 
-    public static void DeleteMapFile(string mapTitle)
+    public static void DeleteMapResource(string mapTitle)
     {
         string path = "Assets/Resources/MapDatas/" + mapTitle;
         if (File.Exists(path + ".txt"))
         {
             File.Delete(path + ".txt");
+        }
+        else
+        {
+            Debug.LogWarning("삭제하려는 맵이 존재하지않습니다.");
+            return;
         }
 
         if (File.Exists(path + ".png"))
