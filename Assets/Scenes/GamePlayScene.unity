@@ -2284,6 +2284,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   field: {fileID: 1811769808}
+  audioSource: {fileID: 1811769811}
   basicNotePrefab: {fileID: 980207650856122209, guid: 375b43102560704469d24f4dfd2bf553, type: 3}
   criticalBasicNotePrefab: {fileID: 980207650856122209, guid: 0873902f96c83694d8ee57e81a290a36, type: 3}
   holdStartNotePrefab: {fileID: 980207650856122209, guid: 0e001152a77702c459333af8cc10b78b, type: 3}

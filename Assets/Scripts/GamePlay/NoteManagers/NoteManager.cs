@@ -38,6 +38,8 @@ public class NoteManager : MonoBehaviour
     public static SavedMapData selectedMap;
 
     public Transform field;
+    public AudioSource audioSource;
+
     public float noteDownSpeedRate { private get; set; } = 1f;
     public GameObject basicNotePrefab;
     public GameObject criticalBasicNotePrefab;
@@ -74,6 +76,10 @@ public class NoteManager : MonoBehaviour
         yield return new WaitForSeconds(2);
         mapStartTime = Time.time;
 
+        if(selectedMap.bgm != null)
+        {
+            audioSource.PlayOneShot(selectedMap.bgm);
+        }
         new NoteSummoner(selectedMap, field, cachedUserSettingNoteDownSpeed).SummmonMap();
     }
 
