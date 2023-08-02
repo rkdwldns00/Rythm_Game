@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 public static class MapFileUtil
 {
     const string MAP_DATA_PATH = "Assets/Resources/MapDatas/";
+    const string EXPORTED_MAP_FILE_TYPE = ".rgm";
 
     static Dictionary<Type, string> noteTypeKey = new Dictionary<Type, string>() {
         {typeof(SavedBasicNoteData), "BN"},
@@ -41,7 +43,7 @@ public static class MapFileUtil
             if (map != null)
             {
                 SavedMapData loadedMap = LoadMapResource(map.name);
-                if(loadedMap != null)
+                if (loadedMap != null)
                 {
                     result.Add(loadedMap);
                 }
@@ -59,12 +61,12 @@ public static class MapFileUtil
         string[] jsonDatas = mapInfoData.Split("\n");
 
         SavedMapData data = null;
-        if(jsonDatas.Length > 0)
+        if (jsonDatas.Length > 0)
         {
             data = JsonUtility.FromJson<SavedMapData>(jsonDatas[0]);
         }
-        
-        if(data == null)
+
+        if (data == null)
         {
             Debug.LogWarning("유효하지않은 맵 파일을 불러오려고 시도했습니다, 맵 이름 : " + mapName);
             return null;
@@ -114,7 +116,7 @@ public static class MapFileUtil
 
     public static void SaveMapResource(SavedMapData data)
     {
-        if(data == null)
+        if (data == null)
         {
             Debug.LogWarning("저장하려는 맵이 null 입니다.");
             return;
@@ -124,12 +126,17 @@ public static class MapFileUtil
         file += JsonUtility.ToJson(data);
         foreach (var note in data.notes)
         {
-            file += "\n" + noteTypeKey[note.GetType()] + JsonUtility.ToJson(note);
+            file += "\n" + NoteToTXT(note);
         }
 
         File.WriteAllText(MAP_DATA_PATH + data.title + ".txt", file);
         SpriteUtil.ExportTextureToPNG(data.thumnail.texture, MAP_DATA_PATH + data.title + ".png");
         AudioClipUtil.ExportAudioClipToWAV(data.bgm, MAP_DATA_PATH + data.title + ".wav");
+    }
+
+    static string NoteToTXT(SavedNoteData noteData)
+    {
+        return noteTypeKey[noteData.GetType()] + JsonUtility.ToJson(noteData);
     }
 
     public static void DeleteMapResource(string mapTitle)
@@ -158,5 +165,24 @@ public static class MapFileUtil
         {
             File.Delete(path + ".mp3");
         }
+    }
+
+    public static void ExportMap(SavedMapData mapData)
+    {
+        const char parsingText = '|';
+
+        string fileText = "";
+        fileText += JsonUtility.ToJson(mapData) + parsingText;
+        foreach (var note in mapData.notes)
+        {
+            fileText += "\n" + NoteToTXT(note);
+        }
+        fileText += parsingText;
+        fileText += SpriteUtil.TextureToJSON(mapData.thumnail.texture) + parsingText;
+        fileText += AudioClipUtil.AudioClipToJSON(mapData.bgm);
+
+        string filePath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile), "Downloads/" + mapData.title + EXPORTED_MAP_FILE_TYPE);
+
+        File.WriteAllText(filePath, fileText);
     }
 }

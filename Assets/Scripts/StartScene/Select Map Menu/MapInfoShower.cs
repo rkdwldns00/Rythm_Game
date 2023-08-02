@@ -50,4 +50,9 @@ public class MapInfoShower : MonoBehaviour
         MapFileUtil.DeleteMapResource(savedMapData.title);
         Destroy(gameObject);
     }
+
+    public void ExportMap()
+    {
+        MapFileUtil.ExportMap(savedMapData);
+    }
 }
