@@ -2,8 +2,7 @@ using System;
 using System.IO;
 using UnityEngine;
 
-//이 코드는 Chat gpt의 코드를 개선한 버전입니다!
-public static class AudioClipExporter
+public static class AudioClipUtil
 {
     public static void ExportAudioClipToWAV(AudioClip audioClip, string filePath)
     {

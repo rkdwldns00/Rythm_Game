@@ -31,20 +31,6 @@ public static class MapFileUtil
         return null;
     }
 
-    public static Vector2 BezierCalCulate(float lerpValue, params Vector2[] points)
-    {
-        while (points.Length > 1)
-        {
-            Vector2[] newPoints = new Vector2[points.Length - 1];
-            for (int i = 0; i < newPoints.Length; i++)
-            {
-                newPoints[i] = Vector2.Lerp(points[i], points[i + 1], lerpValue);
-            }
-            points = newPoints;
-        }
-        return points[0];
-    }
-
     public static SavedMapData[] LoadAllMapResource()
     {
         TextAsset[] maps = Resources.LoadAll<TextAsset>("MapDatas/");
@@ -142,8 +128,8 @@ public static class MapFileUtil
         }
 
         File.WriteAllText(MAP_DATA_PATH + data.title + ".txt", file);
-        SpriteExporter.ExportTextureToPNG(data.thumnail.texture, MAP_DATA_PATH + data.title + ".png");
-        AudioClipExporter.ExportAudioClipToWAV(data.bgm, MAP_DATA_PATH + data.title + ".wav");
+        SpriteUtil.ExportTextureToPNG(data.thumnail.texture, MAP_DATA_PATH + data.title + ".png");
+        AudioClipUtil.ExportAudioClipToWAV(data.bgm, MAP_DATA_PATH + data.title + ".wav");
     }
 
     public static void DeleteMapResource(string mapTitle)
@@ -171,25 +157,6 @@ public static class MapFileUtil
         if (File.Exists(path + ".mp3"))
         {
             File.Delete(path + ".mp3");
-        }
-    }
-
-    public static string OpenFileBrowser()
-    {
-        string initialDirectory = "";
-        string fileFilter = "";
-
-        string filePath = EditorUtility.OpenFilePanel("맵 파일 선택", initialDirectory, fileFilter);
-
-        if (!string.IsNullOrEmpty(filePath))
-        {
-            Debug.Log("선택된 경로 : "+filePath);
-            return filePath;
-        }
-        else
-        {
-            Debug.LogWarning("파일 선택이 취소되었습니다.");
-            return "";
         }
     }
 }

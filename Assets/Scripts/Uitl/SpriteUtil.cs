@@ -2,8 +2,7 @@ using UnityEngine;
 using System.IO;
 using System;
 
-//이 코드는 Chat gpt의 코드를 개선한 버전입니다!
-public static class SpriteExporter
+public static class SpriteUtil
 {
     /// <summary>
     /// 원하는 스프라이트를 지정된 경로에 png파일로 내보냅니다.
