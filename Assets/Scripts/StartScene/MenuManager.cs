@@ -23,6 +23,8 @@ public class MenuManager : MonoBehaviour
         }
     }
 
+    public Texture2D texture;
+
     private void Start()
     {
         currentMenu = startMenu;

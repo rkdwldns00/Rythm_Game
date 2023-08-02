@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.IO;
+using System;
 
 //이 코드는 Chat gpt의 코드를 개선한 버전입니다!
 public static class SpriteExporter
@@ -10,7 +11,7 @@ public static class SpriteExporter
     /// <param name="sprite">내보낼 스프라이트</param>
     /// <param name="filePath">파일을 저장할 경로</param>
     /// <returns>내보내기 성공여부</returns>
-    public static bool ExportSpriteToPNG(Sprite sprite,string filePath)
+    public static bool ExportSpriteToPNG(Sprite sprite, string filePath)
     {
         if (sprite == null)
         {
@@ -28,12 +29,39 @@ public static class SpriteExporter
     /// <returns>내보내기 성공여부</returns>
     public static bool ExportTextureToPNG(Texture2D texture, string filePath)
     {
-        if(texture == null)
+        byte[] pngBytes = TextureToByte(texture);
+
+        if (pngBytes != null)
         {
-            return false;
+            //지정된 경로에 파일저장
+            File.WriteAllBytes(filePath, pngBytes);
+            return true;
         }
 
-        //새로운 렌더텍스쳐에 스프라이트 복사
+        return false;
+    }
+
+    public static bool ExportJSONToPNG(string jsonData, string fliePath)
+    {
+        PNG_JSON converted = JsonUtility.FromJson<PNG_JSON>(jsonData);
+        if (converted.data == null) return false;
+        File.WriteAllBytes(fliePath, converted.data);
+        return true;
+    }
+
+    public static string TextureToJSON(Texture2D texture)
+    {
+        if(texture == null)
+        {
+            return null;
+        }
+        return JsonUtility.ToJson(new PNG_JSON(TextureToByte(texture)));
+    }
+
+    static byte[] TextureToByte(Texture2D texture)
+    {
+        if(texture == null) { return null; }
+
         RenderTexture renderTexture = new RenderTexture(texture.width, texture.height, 0, RenderTextureFormat.ARGB32);
         RenderTexture.active = renderTexture;
         Graphics.Blit(texture, renderTexture);
@@ -47,19 +75,24 @@ public static class SpriteExporter
         //메모리 해제
         RenderTexture.active = null;
         renderTexture.Release();
-        Object.Destroy(renderTexture);
+        UnityEngine.Object.Destroy(renderTexture);
 
         //텍스쳐를 PNG로 인코딩 시도
         byte[] pngBytes = copyTexture.EncodeToPNG();
-        Object.Destroy(copyTexture);
+        UnityEngine.Object.Destroy(copyTexture);
 
-        if (pngBytes != null)
+        return pngBytes;
+    }
+
+    [Serializable]
+    struct PNG_JSON
+    {
+        [SerializeField]
+        public byte[] data;
+
+        public PNG_JSON(byte[] data)
         {
-            //지정된 경로에 파일저장
-            File.WriteAllBytes(filePath, pngBytes);
-            return true;
+            this.data = data;
         }
-
-        return false;
     }
 }
