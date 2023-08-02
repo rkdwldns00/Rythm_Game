@@ -725,6 +725,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startMenu: {fileID: 1831331695}
   texture: {fileID: 2800000, guid: d7756cf7396e95844879d3229bf652d0, type: 3}
+  clip: {fileID: 8300000, guid: 246fcdf2699dae948b526bfcfdd66f15, type: 3}
 --- !u!1 &279663816
 GameObject:
   m_ObjectHideFlags: 0
