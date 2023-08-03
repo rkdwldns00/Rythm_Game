@@ -2,10 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using SimpleFileBrowser;
 
 public static class FileUtil
 {
-    public static string OpenFileBrowser(string browserTitle, string initialDirectory, string fileFilter)
+    /*public static string OpenFileBrowser(string browserTitle, string initialDirectory, string fileFilter)
     {
         string filePath = EditorUtility.OpenFilePanel(browserTitle, initialDirectory, fileFilter);
 
@@ -19,5 +20,5 @@ public static class FileUtil
             Debug.LogWarning("파일 선택이 취소되었습니다.");
             return null;
         }
-    }
+    }*/
 }
