@@ -42,7 +42,7 @@ public class MapInfoShower : MonoBehaviour
 
     public void StartEditMap()
     {
-
+        MapEditManager.StartMapEditScene(savedMapData);
     }
 
     public void DeleteMap()
