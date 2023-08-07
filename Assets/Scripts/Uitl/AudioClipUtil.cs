@@ -1,9 +1,12 @@
 using System;
+using System.Collections;
 using System.IO;
 using UnityEngine;
 
 public static class AudioClipUtil
 {
+    public static readonly string[] AUDIO_CLIP_FILE_TYPE = new string[] { ".mp3", ".wav" };
+
     public static void ExportAudioClipToWAV(AudioClip audioClip, string filePath)
     {
         var clipData = ExtractionAudioClipData(audioClip);
@@ -114,6 +117,25 @@ public static class AudioClipUtil
             this.subchunk2Size = subchunk2Size;
             this.bytesData = bytesData;
         }
+    }
+
+    public static void LoadAudioClip(SavedMapData mapData)
+    {
+        foreach (var fileType in AUDIO_CLIP_FILE_TYPE)
+        {
+            if (File.Exists(MapFileUtil.MAP_DATA_PATH + mapData.title + fileType))
+            {
+                UnityEngine.Object.FindObjectOfType<MonoBehaviour>().StartCoroutine(Load(MapFileUtil.MAP_DATA_PATH + mapData.title + fileType, mapData));
+                break;
+            }
+        }
+    }
+
+    static IEnumerator Load(string path, SavedMapData mapData)
+    {
+        WWW www = new WWW(path);
+        yield return www;
+        mapData.bgm = www.GetAudioClip();
     }
 }
 

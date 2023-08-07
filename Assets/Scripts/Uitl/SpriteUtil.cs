@@ -4,6 +4,8 @@ using System;
 
 public static class SpriteUtil
 {
+    public static readonly string[] TEXTURE_FILE_TYPE = new string[] { ".png", ".jpg" };
+
     /// <summary>
     /// 원하는 스프라이트를 지정된 경로에 png파일로 내보냅니다.
     /// </summary>
@@ -50,7 +52,7 @@ public static class SpriteUtil
 
     public static string TextureToJSON(Texture2D texture)
     {
-        if(texture == null)
+        if (texture == null)
         {
             return null;
         }
@@ -59,7 +61,7 @@ public static class SpriteUtil
 
     static byte[] TextureToByte(Texture2D texture)
     {
-        if(texture == null) { return null; }
+        if (texture == null) { return null; }
 
         RenderTexture renderTexture = new RenderTexture(texture.width, texture.height, 0, RenderTextureFormat.ARGB32);
         RenderTexture.active = renderTexture;
@@ -93,5 +95,20 @@ public static class SpriteUtil
         {
             this.data = data;
         }
+    }
+
+    public static Texture2D LoadTexture(string path)
+    {
+        byte[] texture = File.ReadAllBytes(path);
+        Texture2D texture2D = new Texture2D(2, 2); // Use placeholder size
+        texture2D.LoadImage(texture);
+        return texture2D;
+    }
+
+    public static Sprite LoadSprite(string path)
+    {
+        Texture2D texture = LoadTexture(path);
+        Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector3.zero);
+        return sprite;
     }
 }

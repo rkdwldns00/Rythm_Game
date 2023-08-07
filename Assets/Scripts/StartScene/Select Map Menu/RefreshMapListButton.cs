@@ -9,9 +9,9 @@ public class RefreshMapListButton : MonoBehaviour
 
     public void RefreshMapList()
     {
-        for (int i = 0; i < mapInfoScrollView.childCount; i++)
+        foreach(MapInfoShower shower in mapInfoScrollView.GetComponentsInChildren<MapInfoShower>())
         {
-            Destroy(mapInfoScrollView.GetChild(0).gameObject);
+            Destroy(shower.gameObject);
         }
 
         foreach (SavedMapData map in MapFileUtil.LoadAllMapResource())

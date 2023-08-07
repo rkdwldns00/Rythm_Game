@@ -2,13 +2,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 public static class MapFileUtil
 {
-    const string MAP_DATA_PATH = "Assets/Resources/MapDatas/";
+    public static readonly string MAP_DATA_PATH = Application.persistentDataPath + "/MapDatas/";
+    static readonly string MAP_LIST_PATH = Application.persistentDataPath + "/MapList.txt";
     const string EXPORTED_MAP_FILE_TYPE = ".rgm";
     const char RGM_PARSING_TEXT = '|';
+    const char MAP_LIST_PARSING_TEXT = '\n';
 
     static Dictionary<Type, string> noteTypeKey = new Dictionary<Type, string>() {
         {typeof(SavedBasicNoteData), "BN"},
@@ -34,14 +37,15 @@ public static class MapFileUtil
 
     public static SavedMapData[] LoadAllMapResource()
     {
-        TextAsset[] maps = Resources.LoadAll<TextAsset>("MapDatas/");
+        string[] mapTitles = File.ReadAllText(MAP_LIST_PATH).Split(MAP_LIST_PARSING_TEXT);
+
         List<SavedMapData> result = new List<SavedMapData>();
 
-        foreach (TextAsset map in maps)
+        foreach (string title in mapTitles)
         {
-            if (map != null)
+            if (!string.IsNullOrEmpty(title))
             {
-                SavedMapData loadedMap = LoadMapResource(map.name);
+                SavedMapData loadedMap = LoadMapResource(title);
                 if (loadedMap != null)
                 {
                     result.Add(loadedMap);
@@ -54,7 +58,8 @@ public static class MapFileUtil
 
     public static SavedMapData LoadMapResource(string mapName)
     {
-        string mapInfoData = Resources.Load<TextAsset>("MapDatas/" + mapName).text;
+        if (!File.Exists(MAP_DATA_PATH + mapName + ".txt")) return null;
+        string mapInfoData = File.ReadAllText(MAP_DATA_PATH + mapName + ".txt");
 
         mapInfoData.Replace("\r", "\n");
         string[] jsonDatas = mapInfoData.Split("\n");
@@ -72,8 +77,8 @@ public static class MapFileUtil
         }
 
 
-        data.thumnail = Resources.Load<Sprite>("MapDatas/" + mapName);
-        data.bgm = Resources.Load<AudioClip>("MapDatas/" + mapName);
+        data.thumnail = SpriteUtil.LoadSprite(MAP_DATA_PATH + mapName + ".png");
+        AudioClipUtil.LoadAudioClip(data);
 
         List<SavedNoteData> notes = new List<SavedNoteData>();
         for (int i = 1; i < jsonDatas.Length; i++)
@@ -143,6 +148,12 @@ public static class MapFileUtil
         {
             AudioClipUtil.ExportAudioClipToWAV(data.bgm, MAP_DATA_PATH + data.title + ".wav");
         }
+
+        string[] mapList = File.ReadAllText(MAP_LIST_PATH).Split(MAP_LIST_PARSING_TEXT);
+        if (!mapList.Contains(data.title))
+        {
+            File.AppendAllText(MAP_LIST_PATH, "\n" + data.title);
+        }
     }
 
     static string NoteToTXT(SavedNoteData noteData)
@@ -152,7 +163,7 @@ public static class MapFileUtil
 
     public static void DeleteMapResource(string mapTitle)
     {
-        string path = "Assets/Resources/MapDatas/" + mapTitle;
+        string path = MAP_DATA_PATH + mapTitle;
         if (File.Exists(path + ".txt"))
         {
             File.Delete(path + ".txt");
@@ -163,19 +174,31 @@ public static class MapFileUtil
             return;
         }
 
-        if (File.Exists(path + ".png"))
-        {
-            File.Delete(path + ".png");
-        }
-        else if (File.Exists(path + ".jpg"))
-        {
-            File.Delete(path + ".jpg");
+        foreach (var textureType in SpriteUtil.TEXTURE_FILE_TYPE) {
+            if (File.Exists(path + textureType))
+            {
+                File.Delete(path + textureType);
+            }
         }
 
-        if (File.Exists(path + ".mp3"))
+        foreach (var audioType in AudioClipUtil.AUDIO_CLIP_FILE_TYPE)
         {
-            File.Delete(path + ".mp3");
+            if (File.Exists(path + audioType))
+            {
+                File.Delete(path + audioType);
+            }
         }
+
+        string[] mapList = File.ReadAllText(MAP_LIST_PATH).Split(MAP_LIST_PARSING_TEXT);
+        string newMapList = "";
+        foreach (string listTitle in mapList)
+        {
+            if (listTitle != mapTitle)
+            {
+                newMapList += listTitle + "\n";
+            }
+        }
+        File.WriteAllText(MAP_LIST_PATH, newMapList);
     }
 
     public static void ExportMap(SavedMapData mapData)
