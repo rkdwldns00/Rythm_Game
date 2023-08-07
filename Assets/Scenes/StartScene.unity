@@ -724,8 +724,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startMenu: {fileID: 1831331695}
-  texture: {fileID: 2800000, guid: d7756cf7396e95844879d3229bf652d0, type: 3}
-  clip: {fileID: 8300000, guid: 246fcdf2699dae948b526bfcfdd66f15, type: 3}
 --- !u!1 &279663816
 GameObject:
   m_ObjectHideFlags: 0
@@ -1039,7 +1037,6 @@ GameObject:
   - component: {fileID: 552029813}
   - component: {fileID: 552029812}
   - component: {fileID: 552029811}
-  - component: {fileID: 552029814}
   m_Layer: 5
   m_Name: Load Map
   m_TagString: Untagged
@@ -1112,8 +1109,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 552029814}
-        m_TargetAssemblyTypeName: LoadNewMapButton, Assembly-CSharp
+      - m_Target: {fileID: 1300441201}
+        m_TargetAssemblyTypeName: SelectMapMenuManager, Assembly-CSharp
         m_MethodName: LoadNewMap
         m_Mode: 1
         m_Arguments:
@@ -1162,18 +1159,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 552029809}
   m_CullTransparentMesh: 1
---- !u!114 &552029814
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 552029809}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 195b77d61d63dec4ab999a4bc585526b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &608465131
 GameObject:
   m_ObjectHideFlags: 0
@@ -2483,6 +2468,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1300441200}
+  - component: {fileID: 1300441201}
   m_Layer: 5
   m_Name: Select Map Menu
   m_TagString: Untagged
@@ -2515,6 +2501,20 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1300441201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1300441199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd16d40edcbdfe5479a15b538668bee8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapInfoScrollView: {fileID: 1243274023}
+  mapInfoPrefab: {fileID: 8671350388507264049, guid: 52cc76aaa9746c04ea1545635ff201a1, type: 3}
 --- !u!1 &1377587758
 GameObject:
   m_ObjectHideFlags: 0
@@ -4278,7 +4278,6 @@ GameObject:
   - component: {fileID: 2017375913}
   - component: {fileID: 2017375912}
   - component: {fileID: 2017375911}
-  - component: {fileID: 2017375914}
   m_Layer: 5
   m_Name: Refresh
   m_TagString: Untagged
@@ -4351,8 +4350,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2017375914}
-        m_TargetAssemblyTypeName: RefreshMapListButton, Assembly-CSharp
+      - m_Target: {fileID: 1300441201}
+        m_TargetAssemblyTypeName: SelectMapMenuManager, Assembly-CSharp
         m_MethodName: RefreshMapList
         m_Mode: 1
         m_Arguments:
@@ -4401,20 +4400,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2017375909}
   m_CullTransparentMesh: 1
---- !u!114 &2017375914
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2017375909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93fca41a5aa28574d897ed9861ce53d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mapInfoScrollView: {fileID: 1243274023}
-  mapInfoPrefab: {fileID: 8671350388507264049, guid: 52cc76aaa9746c04ea1545635ff201a1, type: 3}
 --- !u!1 &2029158416
 GameObject:
   m_ObjectHideFlags: 0
