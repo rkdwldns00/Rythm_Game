@@ -23,6 +23,12 @@ public static class MapFileUtil
         {typeof(SavedSpeedChangerNoteData), "SD"}
     };
 
+    public static string Export_Path
+    {
+        get { return PlayerPrefs.GetString("Export_Path"); }
+        set { PlayerPrefs.SetString("Export_Path", value); }
+    }
+
     static Type NoteKeyToType(string key)
     {
         foreach (var keyValue in noteTypeKey)
@@ -174,7 +180,8 @@ public static class MapFileUtil
             return;
         }
 
-        foreach (var textureType in SpriteUtil.TEXTURE_FILE_TYPE) {
+        foreach (var textureType in SpriteUtil.TEXTURE_FILE_TYPE)
+        {
             if (File.Exists(path + textureType))
             {
                 File.Delete(path + textureType);
@@ -213,9 +220,12 @@ public static class MapFileUtil
         fileText += SpriteUtil.TextureToJSON(mapData.thumnail.texture) + RGM_PARSING_TEXT;
         fileText += AudioClipUtil.AudioClipToJSON(mapData.bgm);
 
-        string filePath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile), "Downloads/" + mapData.title + EXPORTED_MAP_FILE_TYPE);
-
-        File.WriteAllText(filePath, fileText);
+        string filePath = Export_Path + mapData.title + EXPORTED_MAP_FILE_TYPE;
+        Debug.Log(filePath);
+        if (Directory.Exists(Export_Path))
+        {
+            File.WriteAllText(filePath, fileText);
+        }
     }
 
     public static void ReadRGM(string fileText)
