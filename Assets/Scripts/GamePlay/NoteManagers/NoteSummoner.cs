@@ -2,17 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NoteSummoner
+public class NoteSummoner : NotePosCalculator
 {
-    readonly SavedMapData map;
     readonly Transform field;
-    readonly float userSettingNoteDownSpeed;
 
-    public NoteSummoner(SavedMapData map, Transform field, float noteDownSpeed)
+    public NoteSummoner(SavedMapData map, Transform field, float noteDownSpeed) : base(noteDownSpeed, map)
     {
-        this.map = map;
         this.field = field;
-        userSettingNoteDownSpeed = noteDownSpeed;
     }
 
     public void SummmonMap()
@@ -27,6 +23,26 @@ public class NoteSummoner
             }
 
         }
+    }
+
+    public GameObject InstantiateNote(GameObject prefab, float xPos, float yPos)
+    {
+        GameObject g = Object.Instantiate(prefab, field);
+        g.transform.localPosition = new Vector3(xPos - 7, yPos + NoteManager.NOTE_CHECK_YPOS, -0.01f);
+        NoteManager.instance.AddNoteDownListener(g.transform);
+        return g;
+    }
+}
+
+public class NotePosCalculator
+{
+    public readonly float spacing;
+    public readonly SavedMapData map;
+
+    public NotePosCalculator(float spacing, SavedMapData map)
+    {
+        this.spacing = spacing;
+        this.map = map;
     }
 
     public float BeatToSec(float beat)
@@ -122,24 +138,16 @@ public class NoteSummoner
             float sumTime = 0;
             for (int i = 0; i < lastBpmChangerIndex + 1; i++)
             {
-                sumTime += (BeatToSec(speedChangers[i].whenSummonBeat) - BeatToSec(beatHis)) * curruntSpeed * userSettingNoteDownSpeed;
+                sumTime += (BeatToSec(speedChangers[i].whenSummonBeat) - BeatToSec(beatHis)) * curruntSpeed * spacing;
                 beatHis = speedChangers[i].whenSummonBeat;
                 curruntSpeed = speedChangers[i].noteDownSpeedRate;
             }
-            sumTime += (BeatToSec(beat) - BeatToSec(beatHis)) * curruntSpeed * userSettingNoteDownSpeed;
+            sumTime += (BeatToSec(beat) - BeatToSec(beatHis)) * curruntSpeed * spacing;
             return sumTime;
         }
         else
         {
-            return BeatToSec(beat) * curruntSpeed * userSettingNoteDownSpeed;
+            return BeatToSec(beat) * curruntSpeed * spacing;
         }
-    }
-
-    public GameObject InstantiateNote(GameObject prefab, float xPos, float yPos)
-    {
-        GameObject g = UnityEngine.Object.Instantiate(prefab, field);
-        g.transform.localPosition = new Vector3(xPos - 7, yPos + NoteManager.NOTE_CHECK_YPOS, -0.01f);
-        NoteManager.instance.AddNoteDownListener(g.transform);
-        return g;
     }
 }
