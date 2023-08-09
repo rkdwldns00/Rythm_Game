@@ -26,6 +26,7 @@ public class MenuManager : MonoBehaviour
     private void Start()
     {
         currentMenu = startMenu;
+        Screen.orientation = ScreenOrientation.LandscapeRight;
     }
 
     public void SetMenu(GameObject menu)

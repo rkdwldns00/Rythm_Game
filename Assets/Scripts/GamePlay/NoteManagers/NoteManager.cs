@@ -66,6 +66,7 @@ public class NoteManager : MonoBehaviour
     void Start()
     {
         Application.targetFrameRate = 120;
+        Screen.orientation = ScreenOrientation.LandscapeRight;
         cachedUserSettingNoteDownSpeed = UserSettingNoteDownSpeed * 3;
 
         StartCoroutine(StartMap());

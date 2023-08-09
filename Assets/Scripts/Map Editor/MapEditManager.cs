@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,5 +21,6 @@ public class MapEditManager : MonoBehaviour
         {
             Debug.LogError("편집할 맵이 존재하지 않습니다!");
         }
+        Screen.orientation = ScreenOrientation.Portrait;
     }
 }
