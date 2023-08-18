@@ -299,6 +299,7 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
     }
 }
 
+[Serializable]
 public struct SavedHoldNoteCurve
 {
     public float startX;

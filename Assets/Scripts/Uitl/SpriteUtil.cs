@@ -99,6 +99,7 @@ public static class SpriteUtil
 
     public static Texture2D LoadTexture(string path)
     {
+        if(!File.Exists(path)) { return null; }
         byte[] texture = File.ReadAllBytes(path);
         Texture2D texture2D = new Texture2D(2, 2); // Use placeholder size
         texture2D.LoadImage(texture);
@@ -107,6 +108,7 @@ public static class SpriteUtil
 
     public static Sprite LoadSprite(string path)
     {
+        if (!File.Exists(path)) { return null; }
         Texture2D texture = LoadTexture(path);
         Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), Vector3.zero);
         return sprite;
