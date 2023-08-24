@@ -1,7 +1,11 @@
+using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class NotePosCalculator
 {
+    const int STARTING_BEAT_PER_BAR = 4;
+
     public readonly float spacing;
     public readonly SavedMapData map;
 
@@ -40,9 +44,45 @@ public class NotePosCalculator
         return sumTime;
     }
 
+    public int BeatOfBar(int barIndex)
+    {
+        if (barIndex == 0) { return 0; }
+
+        List<SavedMeterChangerNoteData> meters = new List<SavedMeterChangerNoteData>();
+        foreach (SavedNoteData note in map.notes)
+        {
+            SavedMeterChangerNoteData meter = note as SavedMeterChangerNoteData;
+            if (meter is not null)
+            {
+                meters.Add(meter);
+            }
+        }
+        if (meters.Count == 0 || meters[0].whenSummonBeat == 0)
+        {
+            meters.Add(new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, beatLengthRate = 1, whenSummonBeat = 0 });
+        }
+
+        int checkingBeat = 0;
+        int bar = 0;
+        for (int i = 0; i < meters.Count - 1; i++)
+        {
+            int meterRangeLength = meters[i + 1].whenSummonBeat - meters[i].whenSummonBeat;
+            for (int j = meters[i].whenSummonBeat; j < meterRangeLength; j = Mathf.Min(j + meters[i].beatPerBar, meters[i + 1].whenSummonBeat))
+            {
+                bar++;
+                if (bar == barIndex)
+                {
+                    return meters[i].whenSummonBeat + j;
+                }
+            }
+        }
+
+        return bar + meters[meters.Count - 1].whenSummonBeat + meters[meters.Count - 1].beatPerBar * (barIndex - bar);
+    }
+
     float BeatPerBarLengthRate(float beat)
     {
-        float curruntBeatPerBar = 1f / 4f;
+        float curruntBeatPerBarLength = 1f / 4f;
         List<SavedMeterChangerNoteData> meters = new List<SavedMeterChangerNoteData>();
         foreach (SavedNoteData note in map.notes)
         {
@@ -68,10 +108,10 @@ public class NotePosCalculator
 
             if (lastMeterChangerIndex >= 0)
             {
-                curruntBeatPerBar = meters[lastMeterChangerIndex].beatLengthRate / meters[lastMeterChangerIndex].beatPerBar;
+                curruntBeatPerBarLength = meters[lastMeterChangerIndex].beatLengthRate / meters[lastMeterChangerIndex].beatPerBar;
             }
         }
-        return curruntBeatPerBar;
+        return curruntBeatPerBarLength;
     }
 
     public float BeatToYpos(float beat)

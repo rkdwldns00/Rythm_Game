@@ -14,10 +14,13 @@ public class MapEditManager : MonoBehaviour
     [SerializeField] Transform mapScrollViewContent;
     [SerializeField] Transform mapScrollInLine;
     [Header("마디선 프리펩")]
+    [SerializeField] GameObject beatLinePrefab;
     [SerializeField] GameObject barLinePrefab;
     [Header("기타 설정")]
     public float spacing;
     public float firstBarLineYPos = -1800;
+
+    public NotePosCalculator notePosCalculator;
 
     public static void StartMapEditScene(SavedMapData mapData)
     {
@@ -34,10 +37,17 @@ public class MapEditManager : MonoBehaviour
         }
         Screen.orientation = ScreenOrientation.Portrait;
 
-        for(int i = 0; i < 100; i++)
+        notePosCalculator = new NotePosCalculator(spacing, EditingMap);
+
+        for(int i = 0; i < notePosCalculator.BeatOfBar(100); i++)
+        {
+            GameObject bar = Instantiate(beatLinePrefab, mapScrollInLine);
+            bar.transform.localPosition = new Vector3(bar.transform.localPosition.x, firstBarLineYPos + notePosCalculator.BeatToYpos(i), 0);
+        }
+        for (int i = 0; i < 100; i++)
         {
             GameObject bar = Instantiate(barLinePrefab, mapScrollInLine);
-            bar.transform.localPosition = new Vector3(bar.transform.localPosition.x, firstBarLineYPos + i * spacing, 0);
+            bar.transform.localPosition = new Vector3(bar.transform.localPosition.x, firstBarLineYPos + notePosCalculator.BeatToYpos(notePosCalculator.BeatOfBar(i)), 0);
         }
     }
 
