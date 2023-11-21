@@ -31,15 +31,26 @@ public class MapEditManager : MonoBehaviour
     private void Start()
     {
         Instance = this;
-        if(EditingMap == null)
+        if (EditingMap == null)
         {
-            Debug.LogError("편집할 맵이 존재하지 않습니다!");
+            EditingMap = new()
+            {
+                artistName = "디버거",
+                designerName = "디버거",
+                title = "디버그",
+                startBpm = 80,
+                startOffset = 0,
+                notes = new SavedNoteData[]{
+                    new SavedBasicNoteData(){startX = 0,endX = 1,whenSummonBeat=1}
+                }
+            };
+            Debug.LogWarning("편집할 맵이 존재하지 않습니다!");
         }
         Screen.orientation = ScreenOrientation.Portrait;
 
         notePosCalculator = new NotePosCalculator(spacing, EditingMap);
 
-        for(int i = 0; i < notePosCalculator.BeatOfBar(100); i++)
+        for (int i = 0; i < notePosCalculator.BeatOfBar(100); i++)
         {
             GameObject bar = Instantiate(beatLinePrefab, mapScrollInLine);
             bar.transform.localPosition = new Vector3(bar.transform.localPosition.x, firstBarLineYPos + notePosCalculator.BeatToYpos(i), 0);
@@ -53,7 +64,7 @@ public class MapEditManager : MonoBehaviour
 
     public void OnScrollMapScrollView()
     {
-        if(mapScrollViewContent.transform.localPosition.y >= 0)
+        if (mapScrollViewContent.transform.localPosition.y >= 0)
         {
             mapScrollViewContent.transform.localPosition = Vector3.zero;
         }
