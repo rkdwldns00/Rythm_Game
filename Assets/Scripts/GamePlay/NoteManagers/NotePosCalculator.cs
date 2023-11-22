@@ -156,4 +156,24 @@ public class NotePosCalculator
             return BeatToSec(beat) * curruntSpeed * spacing;
         }
     }
+
+    public (float beat, float yPos) YposCloseToBeat(float y)
+    {
+        float h = 0;
+        float h2 = 0;
+
+        int index = 0;
+        do
+        {
+            h = h2;
+            h2 = BeatToYpos(index++);
+        } while (h2 < y);
+
+        return (index - 1, h);
+    }
+
+    public float XposCloseToLine(float x)
+    {
+        return Mathf.Floor(x);
+    }
 }

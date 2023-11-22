@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -21,6 +22,9 @@ public class MapEditManager : MonoBehaviour
     public float firstBarLineYPos = -1800;
 
     public NotePosCalculator notePosCalculator;
+    List<(MapEditorNote note, Vector2 pos)> holdingNotes = new();
+
+    MapEditorInputManager input;
 
     public static void StartMapEditScene(SavedMapData mapData)
     {
@@ -47,6 +51,7 @@ public class MapEditManager : MonoBehaviour
             Debug.LogWarning("편집할 맵이 존재하지 않습니다!");
         }
         Screen.orientation = ScreenOrientation.Portrait;
+        input = GetComponent<MapEditorInputManager>();
 
         notePosCalculator = new NotePosCalculator(spacing, EditingMap);
 
@@ -63,11 +68,46 @@ public class MapEditManager : MonoBehaviour
         }
     }
 
+    public void Update()
+    {
+        Debug.Log(holdingNotes.Count);
+        TouchData[] touches = input.GetTouchPoints();
+        if (touches.Length > 0)
+        {
+            Vector2 touchPos = touches[0].position;
+            for (int i = 0; i < holdingNotes.Count; i++)
+            {
+                holdingNotes[i].note.SetPos(touchPos + holdingNotes[i].pos);
+            }
+
+            if (touches[0].mode == TouchMode.End)
+            {
+                holdingNotes.Clear();
+            }
+        }
+    }
+
     public void OnScrollMapScrollView()
     {
         if (mapScrollViewContent.transform.localPosition.y >= 0)
         {
             mapScrollViewContent.transform.localPosition = Vector3.zero;
         }
+    }
+
+    public bool StartHoldNote(MapEditorNote noteObject, Vector2 pos)
+    {
+        if (Input.touchCount == 0)
+        {
+            holdingNotes.Add((noteObject, pos));
+            return true;
+        }
+        return false;
+    }
+
+    public void StartHoldNote(MapEditorNote noteObject)
+    {
+        StartHoldNote(noteObject, Vector2.zero);
+        noteObject.transform.parent = mapScrollViewContent.transform;
     }
 }

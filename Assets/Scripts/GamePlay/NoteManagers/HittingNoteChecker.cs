@@ -2,13 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum TouchMode
-{
-    None,
-    Start,
-    Hold,
-    End,
-}
 
 public class HittingNoteChecker : MonoBehaviour
 {
