@@ -14,6 +14,22 @@ public class InputManager : MonoBehaviour
                 TouchPhase.Ended => TouchMode.End,
                 _ => throw new ArgumentOutOfRangeException("TouchPhase값이 비정상적입니다.")
             };
+    
+    public int GetTouchCount()
+    {
+#if UNITY_EDITOR
+        if (Input.GetMouseButton(0))
+        {
+            return 1;
+        }
+        else
+        {
+            return 0;
+        }
+#else
+        return Input.touchCount;
+#endif
+    }
 
     public TouchData[] GetTouchPoints()
     {

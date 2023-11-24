@@ -11,6 +11,8 @@ public class MapEditManager : MonoBehaviour
 
     public static MapEditManager Instance { get; private set; }
 
+    public static int LineContourCount => Instance.verticalLine.Length;
+
     [Header("스크롤 관리용 참조")]
     [SerializeField] Transform mapScrollViewContent;
     [SerializeField] Transform mapScrollInLine;
@@ -20,6 +22,7 @@ public class MapEditManager : MonoBehaviour
     [Header("기타 설정")]
     public float spacing;
     public float firstBarLineYPos = -1800;
+    public RectTransform[] verticalLine;
 
     public NotePosCalculator notePosCalculator;
     List<(MapEditorNote note, Vector2 pos)> holdingNotes = new();
@@ -70,19 +73,21 @@ public class MapEditManager : MonoBehaviour
 
     public void Update()
     {
-        Debug.Log(holdingNotes.Count);
         TouchData[] touches = input.GetTouchPoints();
         if (touches.Length > 0)
         {
             Vector2 touchPos = touches[0].position;
-            for (int i = 0; i < holdingNotes.Count; i++)
-            {
-                holdingNotes[i].note.SetPos(touchPos + holdingNotes[i].pos);
-            }
 
             if (touches[0].mode == TouchMode.End)
             {
                 holdingNotes.Clear();
+            }
+            else
+            {
+                for (int i = 0; i < holdingNotes.Count; i++)
+                {
+                    holdingNotes[i].note.SetPos(touchPos + holdingNotes[i].pos);
+                }
             }
         }
     }
@@ -109,5 +114,34 @@ public class MapEditManager : MonoBehaviour
     {
         StartHoldNote(noteObject, Vector2.zero);
         noteObject.transform.parent = mapScrollViewContent.transform;
+    }
+
+    public int debug;
+
+    public float GetVerticalAnchorX(int index)
+    {
+        debug = index;
+        return verticalLine[Mathf.Min(index, verticalLine.Length - 1)].anchorMax.x;
+    }
+
+    public float GetVerticalXPos(int index)
+    {
+        return verticalLine[index].position.x;
+    }
+
+    public int GetInputVerticalLine()
+    {
+        if (input.GetTouchCount() > 0)
+        {
+            float x = input.GetTouchPoints()[0].position.x;
+            for (int i = 0; i < LineContourCount - 1; i++)
+            {
+                if (GetVerticalXPos(i) > x)
+                {
+                    return i;
+                }
+            }
+        }
+        return LineContourCount - 2;
     }
 }

@@ -171,9 +171,4 @@ public class NotePosCalculator
 
         return (index - 1, h);
     }
-
-    public float XposCloseToLine(float x)
-    {
-        return Mathf.Floor(x);
-    }
 }
