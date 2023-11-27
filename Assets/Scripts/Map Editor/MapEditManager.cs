@@ -61,7 +61,8 @@ public class MapEditManager : MonoBehaviour
         for (int i = 0; i < notePosCalculator.BeatOfBar(100); i++)
         {
             GameObject bar = Instantiate(beatLinePrefab, mapScrollInLine);
-            bar.transform.localPosition = new Vector3(bar.transform.localPosition.x, firstBarLineYPos + notePosCalculator.BeatToYpos(i), 0);
+            RectTransform t = bar.GetComponent<RectTransform>();
+            t.localPosition = new Vector3(t.localPosition.x, firstBarLineYPos + notePosCalculator.BeatToYpos(i), 0);
         }
         for (int i = 0; i < 100; i++)
         {
