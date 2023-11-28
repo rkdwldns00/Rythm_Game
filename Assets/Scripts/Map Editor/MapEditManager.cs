@@ -26,7 +26,7 @@ public class MapEditManager : MonoBehaviour
     public RectTransform[] verticalLine;
 
     public NotePosCalculator notePosCalculator;
-    List<(MapEditorNote note, Vector2 pos)> holdingNotes = new();
+    List<(MapEditorNote note, Vector2Int pos)> holdingNotes = new();
 
     MapEditorInputManager input;
 
@@ -82,14 +82,12 @@ public class MapEditManager : MonoBehaviour
 
             if (touches[0].mode == TouchMode.End)
             {
+                holdingNotes.ForEach(x => x.note.OnStopHolding());
                 holdingNotes.Clear();
             }
             else
             {
-                for (int i = 0; i < holdingNotes.Count; i++)
-                {
-                    holdingNotes[i].note.SetPos(touchPos + holdingNotes[i].pos);
-                }
+                holdingNotes.ForEach(x => x.note.OnHolding(touchPos, x.pos));
             }
         }
     }
@@ -101,8 +99,8 @@ public class MapEditManager : MonoBehaviour
             mapScrollViewContent.transform.localPosition = Vector3.zero;
         }
     }
-    
-    public bool StartHoldNote(MapEditorNote noteObject, Vector2 pos)
+
+    public bool StartHoldNote(MapEditorNote noteObject, Vector2Int pos)
     {
         noteObject.transform.SetParent(mapScrollViewContent.transform);
         if (Input.touchCount == 0)
@@ -115,7 +113,7 @@ public class MapEditManager : MonoBehaviour
 
     public bool StartHoldNote(MapEditorNote noteObject)
     {
-        return StartHoldNote(noteObject, Vector2.zero);
+        return StartHoldNote(noteObject, Vector2Int.zero);
     }
 
     public int debug;
@@ -136,15 +134,21 @@ public class MapEditManager : MonoBehaviour
         if (input.GetTouchCount() > 0)
         {
             float x = input.GetTouchPoints()[0].position.x;
-            for (int i = 0; i < LineContourCount - 1; i++)
+            return XposToCloseVerticalLineIndex(x);
+        }
+        return 0;
+    }
+
+    public int XposToCloseVerticalLineIndex(float x)
+    {
+        for (int i = 0; i < LineContourCount - 1; i++)
+        {
+            if (GetVerticalXPos(i) > x)
             {
-                if (GetVerticalXPos(i) > x)
-                {
-                    return i;
-                }
+                return i;
             }
         }
-        return LineContourCount - 2;
+        return LineContourCount - 1;
     }
 }
 
