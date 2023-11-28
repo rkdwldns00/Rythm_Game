@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MapEditorNote : MonoBehaviour
 {
+    int xLine;
     int xSize = 3;
 
     RectTransform rectTransform;
@@ -21,19 +22,20 @@ public class MapEditorNote : MonoBehaviour
         float y = MapEditManager.Instance.notePosCalculator.BeatToYpos(beat);
         rectTransform.localPosition = new Vector3(transform.localPosition.x, y);
 
-        int inputLine = (MapEditManager.Instance.XposToCloseVerticalLineIndex(inputPos.x)+holdingSpaceLocalPosition.x);
+        xLine = (MapEditManager.Instance.XposToCloseVerticalLineIndex(inputPos.x)+holdingSpaceLocalPosition.x);
 
-        SetAnchor(inputLine + holdingSpaceLocalPosition.x, xSize);
+        int x = Mathf.Min(xLine + holdingSpaceLocalPosition.x, MapEditManager.LineContourCount - 2);
+        SetAnchor(x, Mathf.Min(xSize, MapEditManager.LineContourCount - 1 - x));
     }
 
-    public void OnStopHolding()
+    public void OnStopHolding(Vector2 inputPos, Vector2Int holdingSpaceLocalPosition)
     {
-        int inputLine = MapEditManager.Instance.GetInputVerticalLine();
-        if (xSize + inputLine > MapEditManager.LineContourCount - 1)
+        if (xSize + xLine > MapEditManager.LineContourCount - 1)
         {
-            xSize = Mathf.Min(xSize, MapEditManager.LineContourCount - 1 - inputLine);
+            xLine = Mathf.Min(xLine + holdingSpaceLocalPosition.x, MapEditManager.LineContourCount - 2);
+            xSize = Mathf.Min(xSize, MapEditManager.LineContourCount - 1 - xLine);
 
-            SetAnchor(inputLine, xSize);
+            SetAnchor(xLine, xSize);
         }
     }
 

@@ -82,7 +82,7 @@ public class MapEditManager : MonoBehaviour
 
             if (touches[0].mode == TouchMode.End)
             {
-                holdingNotes.ForEach(x => x.note.OnStopHolding());
+                holdingNotes.ForEach(x => x.note.OnStopHolding(touchPos, x.pos));
                 holdingNotes.Clear();
             }
             else
