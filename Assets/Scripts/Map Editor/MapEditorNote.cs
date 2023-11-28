@@ -22,7 +22,7 @@ public class MapEditorNote : MonoBehaviour
         float y = MapEditManager.Instance.notePosCalculator.BeatToYpos(beat);
         rectTransform.localPosition = new Vector3(transform.localPosition.x, y);
 
-        xLine = (MapEditManager.Instance.XposToCloseVerticalLineIndex(inputPos.x)+holdingSpaceLocalPosition.x);
+        xLine = MapEditManager.Instance.XposToCloseVerticalLineIndex(inputPos.x) + holdingSpaceLocalPosition.x;
 
         int x = Mathf.Min(xLine + holdingSpaceLocalPosition.x, MapEditManager.LineContourCount - 2);
         SetAnchor(x, Mathf.Min(xSize, MapEditManager.LineContourCount - 1 - x));
@@ -32,7 +32,7 @@ public class MapEditorNote : MonoBehaviour
     {
         if (xSize + xLine > MapEditManager.LineContourCount - 1)
         {
-            xLine = Mathf.Min(xLine + holdingSpaceLocalPosition.x, MapEditManager.LineContourCount - 2);
+            xLine = Mathf.Min(MapEditManager.Instance.XposToCloseVerticalLineIndex(inputPos.x) + holdingSpaceLocalPosition.x + holdingSpaceLocalPosition.x, MapEditManager.LineContourCount - 2);
             xSize = Mathf.Min(xSize, MapEditManager.LineContourCount - 1 - xLine);
 
             SetAnchor(xLine, xSize);
