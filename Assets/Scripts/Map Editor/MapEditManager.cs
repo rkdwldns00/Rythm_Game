@@ -15,6 +15,7 @@ public class MapEditManager : MonoBehaviour
 
     [Header("스크롤 관리용 참조")]
     [SerializeField] Transform mapScrollViewContent;
+    public float mapScrollViewContentYPos => mapScrollViewContent.localPosition.y;
     [SerializeField] Transform mapScrollInLine;
     [Header("마디선 프리펩")]
     [SerializeField] GameObject beatLinePrefab;
@@ -56,19 +57,19 @@ public class MapEditManager : MonoBehaviour
         Screen.orientation = ScreenOrientation.Portrait;
         input = GetComponent<MapEditorInputManager>();
 
-        notePosCalculator = new NotePosCalculator(spacing, EditingMap);
+        notePosCalculator = new MapEditorNotePosCalculator(spacing, EditingMap, this);
 
         for (int i = 0; i < notePosCalculator.BeatOfBar(100); i++)
         {
             GameObject bar = Instantiate(beatLinePrefab, mapScrollInLine);
             RectTransform t = bar.GetComponent<RectTransform>();
-            t.localPosition = new Vector3(t.localPosition.x, firstBarLineYPos + notePosCalculator.BeatToYpos(i), 0);
+            t.localPosition = new Vector3(t.localPosition.x, notePosCalculator.BeatToYpos(i), 0);
         }
         for (int i = 0; i < 100; i++)
         {
             GameObject bar = Instantiate(barLinePrefab, mapScrollInLine);
             bar.GetComponentInChildren<Text>().text = (i + 1).ToString();
-            bar.transform.localPosition = new Vector3(bar.transform.localPosition.x, firstBarLineYPos + notePosCalculator.BeatToYpos(notePosCalculator.BeatOfBar(i)), 0);
+            bar.transform.localPosition = new Vector3(bar.transform.localPosition.x, notePosCalculator.BeatToYpos(notePosCalculator.BeatOfBar(i)), 0);
         }
     }
 
@@ -95,14 +96,15 @@ public class MapEditManager : MonoBehaviour
 
     public void OnScrollMapScrollView()
     {
-        if (mapScrollViewContent.transform.localPosition.y >= 0)
+        if (mapScrollViewContentYPos >= 0)
         {
             mapScrollViewContent.transform.localPosition = Vector3.zero;
         }
     }
-
+    
     public bool StartHoldNote(MapEditorNote noteObject, Vector2 pos)
     {
+        noteObject.transform.SetParent(mapScrollViewContent.transform);
         if (Input.touchCount == 0)
         {
             holdingNotes.Add((noteObject, pos));
@@ -111,10 +113,9 @@ public class MapEditManager : MonoBehaviour
         return false;
     }
 
-    public void StartHoldNote(MapEditorNote noteObject)
+    public bool StartHoldNote(MapEditorNote noteObject)
     {
-        StartHoldNote(noteObject, Vector2.zero);
-        noteObject.transform.parent = mapScrollViewContent.transform;
+        return StartHoldNote(noteObject, Vector2.zero);
     }
 
     public int debug;
@@ -144,5 +145,25 @@ public class MapEditManager : MonoBehaviour
             }
         }
         return LineContourCount - 2;
+    }
+}
+
+class MapEditorNotePosCalculator : NotePosCalculator
+{
+    MapEditManager mapEditManager;
+
+    public MapEditorNotePosCalculator(float spacing, SavedMapData map, MapEditManager manager) : base(spacing, map)
+    {
+        mapEditManager = manager;
+    }
+
+    public override float BeatToYpos(float beat)
+    {
+        return BeatToSec(beat) * spacing + mapEditManager.firstBarLineYPos;
+    }
+
+    public override int YposCloseToBeat(float y)
+    {
+        return base.YposCloseToBeat(y - 2400 - mapEditManager.mapScrollViewContentYPos);
     }
 }

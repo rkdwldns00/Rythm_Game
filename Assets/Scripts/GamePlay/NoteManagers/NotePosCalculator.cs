@@ -15,7 +15,7 @@ public class NotePosCalculator
         this.map = map;
     }
 
-    public float BeatToSec(float beat)
+    public virtual float BeatToSec(float beat)
     {
         float curruntBpm = map.startBpm;
 
@@ -44,7 +44,7 @@ public class NotePosCalculator
         return sumTime;
     }
 
-    public int BeatOfBar(int barIndex)
+    public virtual int BeatOfBar(int barIndex)
     {
         if (barIndex == 0) { return 0; }
 
@@ -62,7 +62,6 @@ public class NotePosCalculator
             meters.Add(new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, beatLengthRate = 1, whenSummonBeat = 0 });
         }
 
-        int checkingBeat = 0;
         int bar = 0;
         for (int i = 0; i < meters.Count - 1; i++)
         {
@@ -114,7 +113,7 @@ public class NotePosCalculator
         return curruntBeatPerBarLength;
     }
 
-    public float BeatToYpos(float beat)
+    public virtual float BeatToYpos(float beat)
     {
         float curruntSpeed = 1f;
         List<SavedSpeedChangerNoteData> speedChangers = new List<SavedSpeedChangerNoteData>();
@@ -157,18 +156,15 @@ public class NotePosCalculator
         }
     }
 
-    public (float beat, float yPos) YposCloseToBeat(float y)
+    public virtual int YposCloseToBeat(float y)
     {
-        float h = 0;
-        float h2 = 0;
+        float h;
 
         int index = 0;
         do
         {
-            h = h2;
-            h2 = BeatToYpos(index++);
-        } while (h2 < y);
-
-        return (index - 1, h);
+            h = BeatToYpos(index++ + 0.5f);
+        } while (h < y);
+        return index - 1;
     }
 }
