@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class MapEditorNote : MonoBehaviour
 {
-    int xLine;
-    int xSize = 3;
+    public int startX;
+    public int xSize = 3;
+    public float beat;
 
     RectTransform rectTransform;
 
@@ -14,28 +15,26 @@ public class MapEditorNote : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
     }
 
-
-    public float beat;
     public void OnHolding(Vector2 inputPos, Vector2Int holdingSpaceLocalPosition)
     {
         beat = MapEditManager.Instance.notePosCalculator.YposCloseToBeat(inputPos.y) + holdingSpaceLocalPosition.y;
         float y = MapEditManager.Instance.notePosCalculator.BeatToYpos(beat);
         rectTransform.localPosition = new Vector3(transform.localPosition.x, y);
 
-        xLine = MapEditManager.Instance.XposToCloseVerticalLineIndex(inputPos.x) + holdingSpaceLocalPosition.x;
+        startX = MapEditManager.Instance.XposToCloseVerticalLineIndex(inputPos.x) + holdingSpaceLocalPosition.x;
 
-        int x = Mathf.Min(xLine + holdingSpaceLocalPosition.x, MapEditManager.LineContourCount - 2);
+        int x = Mathf.Min(startX + holdingSpaceLocalPosition.x, MapEditManager.LineContourCount - 2);
         SetAnchor(x, Mathf.Min(xSize, MapEditManager.LineContourCount - 1 - x));
     }
 
     public void OnStopHolding(Vector2 inputPos, Vector2Int holdingSpaceLocalPosition)
     {
-        if (xSize + xLine > MapEditManager.LineContourCount - 1)
+        if (xSize + startX > MapEditManager.LineContourCount - 1)
         {
-            xLine = Mathf.Min(MapEditManager.Instance.XposToCloseVerticalLineIndex(inputPos.x) + holdingSpaceLocalPosition.x + holdingSpaceLocalPosition.x, MapEditManager.LineContourCount - 2);
-            xSize = Mathf.Min(xSize, MapEditManager.LineContourCount - 1 - xLine);
+            startX = Mathf.Min(MapEditManager.Instance.XposToCloseVerticalLineIndex(inputPos.x) + holdingSpaceLocalPosition.x + holdingSpaceLocalPosition.x, MapEditManager.LineContourCount - 2);
+            xSize = Mathf.Min(xSize, MapEditManager.LineContourCount - 1 - startX);
 
-            SetAnchor(xLine, xSize);
+            SetAnchor(startX, xSize);
         }
     }
 
