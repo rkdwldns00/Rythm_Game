@@ -44,7 +44,7 @@ public class MapInfoSettingUI : MonoBehaviour
 
     private void SaveMap()
     {
-        MapFileUtil.SaveMapResource(MapEditManager.EditingMap);
+        MapEditManager.Instance.SaveEditingMap();
     }
 
     private void LoadMap()

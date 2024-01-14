@@ -150,6 +150,17 @@ public class MapEditManager : MonoBehaviour
         }
         return LineContourCount - 1;
     }
+
+    public void SaveEditingMap()
+    {
+        CachingEditingNotes();
+        MapFileUtil.SaveMapResource(EditingMap);
+    }
+
+    public void CachingEditingNotes()
+    {
+
+    }
 }
 
 class MapEditorNotePosCalculator : NotePosCalculator
