@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MapEditorHaveXposNote : MapEditorNote
+public abstract class MapEditorHaveXposNote : MapEditorNote
 {
     public override void OnHolding(Vector2 inputPos, Vector2Int holdingSpaceLocalPosition)
     {

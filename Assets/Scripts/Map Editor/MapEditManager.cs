@@ -166,17 +166,18 @@ public class MapEditManager : MonoBehaviour
 
     public void CachingEditingNotes()
     {
-        mapEditorNotes.Sort((a, b) => {
-            if(a.beat == b.beat)
+        mapEditorNotes.Sort((a, b) =>
+        {
+            if (a.beat == b.beat)
             {
                 return a.startX - b.startX;
             }
             return (int)Mathf.Sign(a.beat - b.beat);
         });
         SavedNoteData[] noteDatas = new SavedNoteData[mapEditorNotes.Count];
-        for(int i=0;i<mapEditorNotes.Count; i++)
+        for (int i = 0; i < mapEditorNotes.Count; i++)
         {
-            
+            noteDatas[i] = mapEditorNotes[i].GetNoteData();
         }
     }
 }

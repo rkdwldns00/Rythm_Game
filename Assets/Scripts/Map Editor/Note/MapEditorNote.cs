@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class MapEditorNote : MonoBehaviour
+public abstract class MapEditorNote : MonoBehaviour
 {
     public int startX = 1;
     public int xSize = 3;
-    public float beat;
+    public int beat;
 
     protected RectTransform rectTransform;
 
@@ -45,4 +45,6 @@ public class MapEditorNote : MonoBehaviour
     {
         MapEditManager.Instance.StartHoldNote(this);
     }
+
+    public abstract SavedNoteData GetNoteData();
 }
