@@ -9,6 +9,8 @@ public class PaletteButton : MonoBehaviour
     public void OnClick()
     {
         GameObject g = Instantiate(notePrefab);
-        MapEditManager.Instance.StartHoldNote(g.GetComponent<MapEditorNote>());
+        MapEditorNote note = g.GetComponent<MapEditorNote>();
+        MapEditManager.Instance.StartHoldNote(note);
+        MapEditManager.Instance.RegistEditorNote(note);
     }
 }

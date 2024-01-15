@@ -26,6 +26,8 @@ public class MapEditManager : MonoBehaviour
     public RectTransform[] verticalLine;
 
     public NotePosCalculator notePosCalculator;
+
+    List<MapEditorNote> mapEditorNotes = new();
     List<(MapEditorNote note, Vector2Int pos)> holdingNotes = new();
 
     MapEditorInputManager input;
@@ -151,6 +153,11 @@ public class MapEditManager : MonoBehaviour
         return LineContourCount - 1;
     }
 
+    public void RegistEditorNote(MapEditorNote note)
+    {
+        mapEditorNotes.Add(note);
+    }
+
     public void SaveEditingMap()
     {
         CachingEditingNotes();
@@ -159,7 +166,18 @@ public class MapEditManager : MonoBehaviour
 
     public void CachingEditingNotes()
     {
-
+        mapEditorNotes.Sort((a, b) => {
+            if(a.beat == b.beat)
+            {
+                return a.startX - b.startX;
+            }
+            return (int)Mathf.Sign(a.beat - b.beat);
+        });
+        SavedNoteData[] noteDatas = new SavedNoteData[mapEditorNotes.Count];
+        for(int i=0;i<mapEditorNotes.Count; i++)
+        {
+            
+        }
     }
 }
 
