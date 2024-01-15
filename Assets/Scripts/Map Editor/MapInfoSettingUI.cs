@@ -27,7 +27,6 @@ public class MapInfoSettingUI : MonoBehaviour
     private void Awake()
     {
         saveButton.onClick.AddListener(SaveMap);
-        loadButton.onClick.AddListener(LoadMap);
         mapNameInput.onValueChanged.AddListener(SetMapName);
         mapArtistNameInput.onValueChanged.AddListener(SetArtistName);
         mapDesignerNameInput.onValueChanged.AddListener(SetDesignerName);
@@ -41,16 +40,26 @@ public class MapInfoSettingUI : MonoBehaviour
     public void SetUIEnable(bool enable)
     {
         uiLayer.SetActive(enable);
+        if (enable)
+        {
+            RefreshUI();
+        }
+    }
+
+    private void RefreshUI()
+    {
+        mapNameInput.text = MapEditManager.EditingMap.title;
+        mapArtistNameInput.text = MapEditManager.EditingMap.artistName;
+        mapDesignerNameInput.text = MapEditManager.EditingMap.designerName;
+        bgmOffsetSlider.value = MapEditManager.EditingMap.startOffset;
+        bgmOffsetText.text = MapEditManager.EditingMap.startOffset.ToString();
+        startBpmSlider.value = MapEditManager.EditingMap.startBpm;
+        startBpmText.text = MapEditManager.EditingMap.startBpm.ToString();
     }
 
     private void SaveMap()
     {
         MapEditManager.Instance.SaveEditingMap();
-    }
-
-    private void LoadMap()
-    {
-        //юс╫ц
     }
 
     private void SetMapName(string name)

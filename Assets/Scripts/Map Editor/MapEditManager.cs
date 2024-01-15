@@ -25,6 +25,7 @@ public class MapEditManager : MonoBehaviour
     public float spacing;
     public float firstBarLineYPos = -1800;
     public RectTransform[] verticalLine;
+    private Sprite mapStandardSprite;
 
     public NotePosCalculator notePosCalculator;
 
@@ -181,6 +182,26 @@ public class MapEditManager : MonoBehaviour
             noteDatas[i] = mapEditorNotes[i].GetNoteData();
         }
         EditingMap.notes = noteDatas;
+    }
+
+    public void ClearEditingMap()
+    {
+        foreach(var note in mapEditorNotes)
+        {
+            Destroy(note.gameObject);
+        }
+        mapEditorNotes.Clear();
+        EditingMap = new()
+        {
+            title = "»õ·Î¿î ¸Ê",
+            artistName = "Unknown",
+            designerName = MenuManager.NickName,
+            bgm = null,
+            startBpm = 120,
+            startOffset = 0,
+            thumnail = mapStandardSprite,
+            notes = new SavedNoteData[] {}
+        };
     }
 }
 
