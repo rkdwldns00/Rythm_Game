@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class MapInfoSettingUI : MonoBehaviour
 {
+    [SerializeField] private GameObject uiLayer;
     [Header("파일 설정 버튼")]
     [SerializeField] private Button saveButton;
     [SerializeField] private Button loadButton;
@@ -39,7 +40,7 @@ public class MapInfoSettingUI : MonoBehaviour
 
     public void SetUIEnable(bool enable)
     {
-        gameObject.SetActive(enable);
+        uiLayer.SetActive(enable);
     }
 
     private void SaveMap()
