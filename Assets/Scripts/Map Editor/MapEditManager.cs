@@ -112,11 +112,8 @@ public class MapEditManager : MonoBehaviour
         StartHoldNote(noteObject, Vector2Int.zero);
     }
 
-    public int debug;
-
     public float GetVerticalAnchorX(int index)
     {
-        debug = index;
         return verticalLine[Mathf.Min(index, verticalLine.Length - 1)].anchorMax.x;
     }
 
