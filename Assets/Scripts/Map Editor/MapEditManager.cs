@@ -101,20 +101,15 @@ public class MapEditManager : MonoBehaviour
         }
     }
 
-    public bool StartHoldNote(MapEditorNote noteObject, Vector2Int pos)
+    public void StartHoldNote(MapEditorNote noteObject, Vector2Int pos)
     {
         noteObject.transform.SetParent(mapScrollViewContent.transform);
-        if (Input.touchCount == 0)
-        {
             holdingNotes.Add((noteObject, pos));
-            return true;
-        }
-        return false;
     }
 
-    public bool StartHoldNote(MapEditorNote noteObject)
+    public void StartHoldNote(MapEditorNote noteObject)
     {
-        return StartHoldNote(noteObject, Vector2Int.zero);
+        StartHoldNote(noteObject, Vector2Int.zero);
     }
 
     public int debug;
