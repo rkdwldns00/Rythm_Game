@@ -40,9 +40,25 @@ public static class MapFileUtil
         }
         return null;
     }
+    
+    public static void MakeMapListFile()
+    {
+        if (!File.Exists(MAP_LIST_PATH))
+        {
+            File.WriteAllText(MAP_LIST_PATH, "");
+        }
+    }
+
+    public static void MakeMapDatasFolder()
+    {
+        if (!Directory.Exists(MAP_DATA_PATH))
+        {
+            Directory.CreateDirectory(MAP_DATA_PATH);
+        }
+    }
 
     public static SavedMapData[] LoadAllMapResource()
-    {
+    {   
         string[] mapTitles = File.ReadAllText(MAP_LIST_PATH).Split(MAP_LIST_PARSING_TEXT);
 
         List<SavedMapData> result = new List<SavedMapData>();
