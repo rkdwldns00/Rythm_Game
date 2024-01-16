@@ -32,6 +32,11 @@ public class MapEditManager : MonoBehaviour
 
     MapEditorInputManager input;
 
+    public static void StartMapEditScene()
+    {
+        StartMapEditScene(null);
+    }
+
     public static void StartMapEditScene(SavedMapData mapData)
     {
         SceneManager.LoadScene("MapEditor");
@@ -43,18 +48,12 @@ public class MapEditManager : MonoBehaviour
         Instance = this;
         if (EditingMap == null)
         {
-            EditingMap = new()
-            {
-                artistName = "디버거",
-                designerName = "디버거",
-                title = "디버그",
-                startBpm = 80,
-                startOffset = 0,
-                notes = new SavedNoteData[]{
-                    new SavedBasicNoteData(){startX = 0,endX = 1,whenSummonBeat=1}
-                }
-            };
+            ClearEditingMap();
             Debug.LogWarning("편집할 맵이 존재하지 않습니다!");
+        }
+        else
+        {
+            
         }
         Screen.orientation = ScreenOrientation.Portrait;
         input = GetComponent<MapEditorInputManager>();

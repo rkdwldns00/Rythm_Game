@@ -47,4 +47,9 @@ public class SelectMapMenuManager : MonoBehaviour
             shower.SetMapData(map);
         }
     }
+
+    public void MakeNewMap()
+    {
+        MapEditManager.StartMapEditScene();
+    }
 }
