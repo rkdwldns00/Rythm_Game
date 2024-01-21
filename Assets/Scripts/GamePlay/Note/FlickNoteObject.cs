@@ -74,6 +74,8 @@ public class FlickNoteObject : Note, IHitableNoteObject
 
 public class SavedFlickNoteData : SavedNoteData, IGamePlaySummonable
 {
+    public override string serializedDataTitleName => "FN";
+
     public virtual GameObject GamePlayNotePrefab
     {
         get

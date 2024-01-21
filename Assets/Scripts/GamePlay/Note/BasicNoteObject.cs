@@ -67,6 +67,8 @@ public class BasicNoteObject : Note, IHitableNoteObject
 
 public class SavedBasicNoteData : SavedNoteData, IGamePlaySummonable
 {
+    public override string serializedDataTitleName => "BN";
+
     public virtual GameObject GamePlayNotePrefab
     {
         get
@@ -105,6 +107,8 @@ public class SavedBasicNoteData : SavedNoteData, IGamePlaySummonable
 
 public class SavedHoldEndNoteData : SavedBasicNoteData
 {
+    public override string serializedDataTitleName => "EN";
+
     public override GameObject GamePlayNotePrefab
     {
         get

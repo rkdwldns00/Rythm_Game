@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SavedMeterChangerNoteData : SavedNoteData
 {
+    public override string serializedDataTitleName => "MD";
+
     public int beatPerBar;
     public float beatLengthRate;
 

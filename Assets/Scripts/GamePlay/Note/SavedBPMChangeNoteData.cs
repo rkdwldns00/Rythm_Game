@@ -4,6 +4,8 @@ using UnityEngine;
 
 public sealed class SavedBPMChangeNoteData : SavedNoteData
 {
+    public override string serializedDataTitleName => "BD";
+
     public float bpm;
 
     public override Note SummonGamePlayNote(NoteSummoner summoner)

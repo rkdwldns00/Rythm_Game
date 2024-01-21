@@ -180,7 +180,7 @@ public static class MapFileUtil
 
     static string NoteToTXT(SavedNoteData noteData)
     {
-        return noteTypeKey[noteData.GetType()] + JsonUtility.ToJson(noteData);
+        return noteData.serializedDataTitleName + JsonUtility.ToJson(noteData);
     }
 
     public static void DeleteMapResource(string mapTitle)

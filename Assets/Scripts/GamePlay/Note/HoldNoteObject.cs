@@ -222,6 +222,8 @@ public class HoldNoteObject : Note
 
 public class SavedHoldNoteData : SavedNoteData, IGamePlaySummonable
 {
+    public override string serializedDataTitleName => "HN";
+
     public virtual GameObject GamePlayNotePrefab
     {
         get

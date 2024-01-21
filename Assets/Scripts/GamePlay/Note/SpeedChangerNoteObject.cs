@@ -19,6 +19,8 @@ public class SpeedChangerNoteObject : Note
 
 class SavedSpeedChangerNoteData : SavedNoteData, IGamePlaySummonable
 {
+    public override string serializedDataTitleName => "SD";
+
     public GameObject GamePlayNotePrefab => NoteManager.instance.speedChangerPrefab;
     public float noteDownSpeedRate = 1f;
 
