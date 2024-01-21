@@ -6,7 +6,7 @@ public sealed class SavedBPMChangeNoteData : SavedNoteData
 {
     public float bpm;
 
-    public override Note Summon(NoteSummoner summoner, SavedNoteData data)
+    public override Note SummonGamePlayNote(NoteSummoner summoner)
     {
         return null;
     }

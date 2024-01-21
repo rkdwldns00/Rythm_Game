@@ -65,9 +65,9 @@ public class BasicNoteObject : Note, IHitableNoteObject
     }
 }
 
-public class SavedBasicNoteData : SavedNoteData, ISummonable
+public class SavedBasicNoteData : SavedNoteData, IGamePlaySummonable
 {
-    public virtual GameObject NotePrefab
+    public virtual GameObject GamePlayNotePrefab
     {
         get
         {
@@ -91,17 +91,13 @@ public class SavedBasicNoteData : SavedNoteData, ISummonable
     public bool isHoldStartNote = false;
     public bool isCriticalNote = false;
 
-    public override Note Summon(NoteSummoner summoner, SavedNoteData data)
+    public override Note SummonGamePlayNote(NoteSummoner summoner)
     {
         BasicNoteObject n = null;
 
-        SavedBasicNoteData basic = data as SavedBasicNoteData;
-        if (basic != null)
-        {
-            GameObject g = summoner.InstantiateNote(((ISummonable)data).NotePrefab, (basic.startX + basic.endX) / 2f, summoner.BeatToYpos(basic.whenSummonBeat));
-            n = g.GetComponent<BasicNoteObject>();
-            n?.SetData(data);
-        }
+        GameObject g = summoner.InstantiateNote(GamePlayNotePrefab, (startX + endX) / 2f, summoner.BeatToYpos(whenSummonBeat));
+        n = g.GetComponent<BasicNoteObject>();
+        n?.SetData(this);
 
         return n;
     }
@@ -109,7 +105,7 @@ public class SavedBasicNoteData : SavedNoteData, ISummonable
 
 public class SavedHoldEndNoteData : SavedBasicNoteData
 {
-    public override GameObject NotePrefab
+    public override GameObject GamePlayNotePrefab
     {
         get
         {

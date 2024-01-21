@@ -38,7 +38,7 @@ public class FlickNoteObject : Note, IHitableNoteObject
 
     public void Hit()
     {
-        if(keySound != null) SoundManager.PlaySound(keySound);
+        if (keySound != null) SoundManager.PlaySound(keySound);
 
         float t = Mathf.Abs(DistanceToHittingChecker);
         if (t <= perfectTiming)
@@ -72,9 +72,9 @@ public class FlickNoteObject : Note, IHitableNoteObject
     }
 }
 
-public class SavedFlickNoteData : SavedNoteData, ISummonable
+public class SavedFlickNoteData : SavedNoteData, IGamePlaySummonable
 {
-    public virtual GameObject NotePrefab
+    public virtual GameObject GamePlayNotePrefab
     {
         get
         {
@@ -97,17 +97,13 @@ public class SavedFlickNoteData : SavedNoteData, ISummonable
 
     public bool isCriticalNote = false;
 
-    public override Note Summon(NoteSummoner summoner, SavedNoteData data)
+    public override Note SummonGamePlayNote(NoteSummoner summoner)
     {
         FlickNoteObject n = null;
 
-        SavedFlickNoteData flick = data as SavedFlickNoteData;
-        if (flick != null)
-        {
-            GameObject g = summoner.InstantiateNote(((ISummonable)data).NotePrefab, (flick.startX + flick.endX) / 2f, summoner.BeatToYpos(flick.whenSummonBeat));
-            n = g.GetComponent<FlickNoteObject>();
-            n?.SetData(flick);
-        }
+        GameObject g = summoner.InstantiateNote(GamePlayNotePrefab, (this.startX + this.endX) / 2f, summoner.BeatToYpos(this.whenSummonBeat));
+        n = g.GetComponent<FlickNoteObject>();
+        n?.SetData(this);
 
         return n;
     }

@@ -7,7 +7,7 @@ public class SavedMeterChangerNoteData : SavedNoteData
     public int beatPerBar;
     public float beatLengthRate;
 
-    public override Note Summon(NoteSummoner summoner, SavedNoteData data)
+    public override Note SummonGamePlayNote(NoteSummoner summoner)
     {
         return null;
     }

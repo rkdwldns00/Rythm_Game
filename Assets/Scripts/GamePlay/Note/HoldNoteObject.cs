@@ -220,9 +220,9 @@ public class HoldNoteObject : Note
     }
 }
 
-public class SavedHoldNoteData : SavedNoteData, ISummonable
+public class SavedHoldNoteData : SavedNoteData, IGamePlaySummonable
 {
-    public virtual GameObject NotePrefab
+    public virtual GameObject GamePlayNotePrefab
     {
         get
         {
@@ -240,26 +240,25 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
     public float[] tickBeatData;
     public bool isCriticalNote = false;
 
-    public override Note Summon(NoteSummoner summoner, SavedNoteData data)
+    public override Note SummonGamePlayNote(NoteSummoner summoner)
     {
         HoldNoteObject noteObject = null;
 
-        SavedHoldNoteData hold = data as SavedHoldNoteData;
-        if (hold != null && hold.curveData.Length > 1)
+        if (curveData.Length > 1)
         {
-            float startY = summoner.BeatToYpos(hold.whenSummonBeat);
-            GameObject newHoldNote = summoner.InstantiateNote(((ISummonable)data).NotePrefab, 0, startY);
+            float startY = summoner.BeatToYpos(whenSummonBeat);
+            GameObject newHoldNote = summoner.InstantiateNote(GamePlayNotePrefab, 0, startY);
             HoldNoteObject n = newHoldNote.GetComponent<HoldNoteObject>();
             noteObject = n;
 
             List<RuntimeHoldNoteCurve> curves = new List<RuntimeHoldNoteCurve>();
-            for (int i = 0; i < hold.curveData.Length; i++)
+            for (int i = 0; i < curveData.Length; i++)
             {
                 RuntimeHoldNoteCurve newCurve = new RuntimeHoldNoteCurve(
-                    hold.curveData[i].startX,
-                    hold.curveData[i].endX,
-                    summoner.BeatToYpos((float)whenSummonBeat + hold.curveData[i].spawnBeat) - summoner.BeatToYpos(whenSummonBeat),
-                    hold.curveData[i].curveType);
+                    curveData[i].startX,
+                    curveData[i].endX,
+                    summoner.BeatToYpos((float)whenSummonBeat + curveData[i].spawnBeat) - summoner.BeatToYpos(whenSummonBeat),
+                    curveData[i].curveType);
 
                 curves.Add(newCurve);
             }
@@ -268,12 +267,12 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
             n.Draw();
 
             List<float> hitCheckTiming = new List<float>();
-            int length = (int)(hold.curveData[hold.curveData.Length - 1].spawnBeat);
+            int length = (int)(curveData[curveData.Length - 1].spawnBeat);
             if (length > 2)
             {
                 for (int i = 1; i < length - 1; i++)
                 {
-                    hitCheckTiming.Add(summoner.BeatToSec(hold.whenSummonBeat + i) - summoner.BeatToSec(hold.whenSummonBeat));
+                    hitCheckTiming.Add(summoner.BeatToSec(whenSummonBeat + i) - summoner.BeatToSec(whenSummonBeat));
                 }
 
             }
@@ -282,10 +281,10 @@ public class SavedHoldNoteData : SavedNoteData, ISummonable
                 for (int i = 0; i < tickBeatData.Length; i++)
                 {
                     GameObject newTick = UnityEngine.Object.Instantiate(n.holdNoteTickPrefab, n.transform);
-                    float yPos = summoner.BeatToYpos(hold.whenSummonBeat + tickBeatData[i]) - summoner.BeatToYpos(hold.whenSummonBeat);
+                    float yPos = summoner.BeatToYpos(whenSummonBeat + tickBeatData[i]) - summoner.BeatToYpos(whenSummonBeat);
                     (float startX, float endX) = n.FindCanHitArea(yPos);
                     newTick.transform.localPosition = new Vector3((startX + endX) / 2, yPos, -0.02f);
-                    float sec = summoner.BeatToSec(hold.whenSummonBeat + tickBeatData[i]) - summoner.BeatToSec(hold.whenSummonBeat);
+                    float sec = summoner.BeatToSec(whenSummonBeat + tickBeatData[i]) - summoner.BeatToSec(whenSummonBeat);
                     n.tickObjects.Add(sec, newTick);
                     hitCheckTiming.Add(sec);
                 }

@@ -26,5 +26,5 @@ public abstract class SavedNoteData
 {
     public int whenSummonBeat;
 
-    public abstract Note Summon(NoteSummoner summoner, SavedNoteData data);
+    public abstract Note SummonGamePlayNote(NoteSummoner summoner);
 }
