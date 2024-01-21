@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -131,10 +131,10 @@ public class SUSConveter
             {
                 if (mapDataLines[readingLineIndex].bar != lastAddedBarInBeatPerBar)
                 {
-                    /*if ((nomalizedBarLength % 2 == 0 || nomalizedBarLength == 1) && nomalizedBarLength < 16)
+                    *//*if ((nomalizedBarLength % 2 == 0 || nomalizedBarLength == 1) && nomalizedBarLength < 16)
                     {
                         nomalizedBarLength = 16;
-                    }*/
+                    }*//*
                     beatPerBarDatas.Add(new BeatPerBar(mapDataLines[readingLineIndex].bar, nomalizedBarLength, originBarLength));
                     lastAddedBarInBeatPerBar = mapDataLines[readingLineIndex].bar;
                 }
@@ -625,3 +625,4 @@ public class SUSConveter
         }
     }
 }
+*/

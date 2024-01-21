@@ -337,7 +337,7 @@ public struct RuntimeHoldNoteCurve
     }
 }
 
-public class SavedCurveTypeRgsister : SavedNoteData
+/*public class SavedCurveTypeRgsister : SavedNoteData
 {
     public SavedHoldNoteCurveType curveType = SavedHoldNoteCurveType.Basic;
     public float startX;
@@ -349,9 +349,9 @@ public class SavedCurveTypeRgsister : SavedNoteData
         Debug.LogWarning(GetType().Name + "가 생성되었지만 사용되지 않았습니다.");
         return null;
     }
-}
+}*/
 
-public class SavedIgnoreXTickRegister : SavedNoteData
+/*public class SavedIgnoreXTickRegister : SavedNoteData
 {
     public float startX;
     public float endX;
@@ -361,7 +361,7 @@ public class SavedIgnoreXTickRegister : SavedNoteData
         Debug.LogWarning(GetType().Name + "가 생성되었지만 사용되지 않았습니다.");
         return null;
     }
-}
+}*/
 
 public enum SavedHoldNoteCurveType
 {
