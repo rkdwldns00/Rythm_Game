@@ -19,6 +19,7 @@ public abstract class MapEditorNote : MonoBehaviour
     protected virtual void Start()
     {
         SetAnchor(startX,xSize);
+        MapEditManager.Instance.RegistEditorNote(this);
     }
 
     public virtual void OnHolding(Vector2 inputPos, Vector2Int holdingSpaceLocalPosition)
