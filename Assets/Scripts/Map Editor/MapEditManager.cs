@@ -12,6 +12,9 @@ public class MapEditManager : MonoBehaviour
 
     public static int LineContourCount => Instance.verticalLine.Length;
 
+    [Header("노트 프리팹")]
+    public GameObject basicNotePrefab;
+    public GameObject meterChangerNotePrefab;
     [Header("스크롤 관리용 참조")]
     [SerializeField] Transform mapScrollViewContent;
     public float mapScrollViewContentYPos => mapScrollViewContent.localPosition.y;
@@ -43,22 +46,28 @@ public class MapEditManager : MonoBehaviour
         EditingMap = mapData;
     }
 
-    private void Start()
+    private void Awake()
     {
         Instance = this;
+
         if (EditingMap == null)
         {
             ClearEditingMap();
             Debug.LogWarning("편집할 맵이 존재하지 않습니다!");
         }
-        else
-        {
-            
-        }
+
+        notePosCalculator = new MapEditorNotePosCalculator(spacing, EditingMap, this);
+    }
+
+    private void Start()
+    {
         Screen.orientation = ScreenOrientation.Portrait;
         input = GetComponent<MapEditorInputManager>();
 
-        notePosCalculator = new MapEditorNotePosCalculator(spacing, EditingMap, this);
+        foreach (var note in EditingMap.notes)
+        {
+            note.SummonMapEditorNote();
+        }
 
         for (int i = 0; i < notePosCalculator.BeatOfBar(100); i++)
         {
@@ -104,7 +113,7 @@ public class MapEditManager : MonoBehaviour
     public void StartHoldNote(MapEditorNote noteObject, Vector2Int pos)
     {
         noteObject.transform.SetParent(mapScrollViewContent.transform);
-            holdingNotes.Add((noteObject, pos));
+        holdingNotes.Add((noteObject, pos));
     }
 
     public void StartHoldNote(MapEditorNote noteObject)
@@ -161,7 +170,14 @@ public class MapEditManager : MonoBehaviour
         {
             if (a.beat == b.beat)
             {
-                return a.startX - b.startX;
+                if (a is MapEditorHaveXposNote ax && b is MapEditorHaveXposNote bx)
+                {
+                    return ax.startX - bx.startX;
+                }
+                else
+                {
+                    return 0;
+                }
             }
             return (int)Mathf.Sign(a.beat - b.beat);
         });
@@ -175,7 +191,7 @@ public class MapEditManager : MonoBehaviour
 
     public void ClearEditingMap()
     {
-        foreach(var note in mapEditorNotes)
+        foreach (var note in mapEditorNotes)
         {
             Destroy(note.gameObject);
         }
@@ -189,8 +205,13 @@ public class MapEditManager : MonoBehaviour
             startBpm = 120,
             startOffset = 0,
             thumnail = mapStandardSprite,
-            notes = new SavedNoteData[] {}
+            notes = new SavedNoteData[] { new SavedMeterChangerNoteData() { whenSummonBeat = 0, beatPerBar = 4, beatLengthRate = 1 } }
         };
+    }
+
+    public GameObject SummonNote(GameObject notePrefeab)
+    {
+        return Instantiate(notePrefeab, mapScrollViewContent);
     }
 }
 

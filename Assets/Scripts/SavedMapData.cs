@@ -25,6 +25,8 @@ public class SavedMapData
 public abstract class SavedNoteData
 {
     public int whenSummonBeat;
+    public abstract string serializedDataTitleName { get; }
 
-    public abstract Note Summon(NoteSummoner summoner, SavedNoteData data);
+    public abstract Note SummonGamePlayNote(NoteSummoner summoner);
+    public abstract MapEditorNote SummonMapEditorNote();
 }

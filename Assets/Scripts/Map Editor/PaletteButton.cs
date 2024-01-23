@@ -11,6 +11,5 @@ public class PaletteButton : MonoBehaviour
         GameObject g = Instantiate(notePrefab);
         MapEditorNote note = g.GetComponent<MapEditorNote>();
         MapEditManager.Instance.StartHoldNote(note);
-        MapEditManager.Instance.RegistEditorNote(note);
     }
 }

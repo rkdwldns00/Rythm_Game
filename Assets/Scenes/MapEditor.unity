@@ -1165,6 +1165,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f83f3dfa7c47ce489d77a1d5fc1f531, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  basicNotePrefab: {fileID: 980207650856122209, guid: c2c4e271e760b0d41ba5f27068cb9182, type: 3}
+  meterChangerNotePrefab: {fileID: 4010927110049809342, guid: 9d28b31c0eb6706468968d8646889bf9, type: 3}
   mapScrollViewContent: {fileID: 1948573134}
   mapScrollInLine: {fileID: 1675392208}
   beatLinePrefab: {fileID: 4089383824615909112, guid: 491f5faba59d81d459c0c9cbe74fa669, type: 3}
@@ -1185,7 +1187,6 @@ MonoBehaviour:
   - {fileID: 1385109768}
   - {fileID: 1875669765}
   - {fileID: 948416105}
-  debug: 0
 --- !u!4 &304843954
 Transform:
   m_ObjectHideFlags: 0

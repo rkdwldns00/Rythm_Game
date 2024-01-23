@@ -5,8 +5,6 @@ using UnityEngine;
 [DisallowMultipleComponent]
 public abstract class MapEditorNote : MonoBehaviour
 {
-    public int startX = 1;
-    public int xSize = 3;
     public int beat;
 
     protected RectTransform rectTransform;
@@ -18,14 +16,13 @@ public abstract class MapEditorNote : MonoBehaviour
 
     protected virtual void Start()
     {
-        SetAnchor(startX,xSize);
+        MapEditManager.Instance.RegistEditorNote(this);
     }
 
     public virtual void OnHolding(Vector2 inputPos, Vector2Int holdingSpaceLocalPosition)
     {
         beat = MapEditManager.Instance.notePosCalculator.YposCloseToBeat(inputPos.y) + holdingSpaceLocalPosition.y;
-        float y = MapEditManager.Instance.notePosCalculator.BeatToYpos(beat);
-        rectTransform.localPosition = new Vector3(transform.localPosition.x, y);
+        RefreshPosition();
     }
 
     public virtual void OnStopHolding(Vector2 inputPos, Vector2Int holdingSpaceLocalPosition)
@@ -33,12 +30,10 @@ public abstract class MapEditorNote : MonoBehaviour
 
     }
 
-    protected void SetAnchor(int xLine, int xSize)
+    public virtual void RefreshPosition()
     {
-        rectTransform.anchorMin = new Vector2(MapEditManager.Instance.GetVerticalAnchorX(Mathf.Clamp(xLine, 0, MapEditManager.LineContourCount - 1)), 0);
-        rectTransform.anchorMax = new Vector2(MapEditManager.Instance.GetVerticalAnchorX(Mathf.Clamp(xLine + xSize, xLine + 1, MapEditManager.LineContourCount - 1)), 0);
-        rectTransform.offsetMin = new Vector2(0, rectTransform.offsetMin.y);
-        rectTransform.offsetMax = new Vector2(0, rectTransform.offsetMax.y);
+        float y = MapEditManager.Instance.notePosCalculator.BeatToYpos(beat);
+        rectTransform.localPosition = new Vector3(transform.localPosition.x, y);
     }
 
     public void OnClickNote()
