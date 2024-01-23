@@ -242,6 +242,11 @@ public class SavedHoldNoteData : SavedNoteData, IGamePlaySummonable
     public float[] tickBeatData;
     public bool isCriticalNote = false;
 
+    public override MapEditorNote SummonMapEditorNote()
+    {
+        throw new NotImplementedException();
+    }
+
     public override Note SummonGamePlayNote(NoteSummoner summoner)
     {
         HoldNoteObject noteObject = null;

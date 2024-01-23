@@ -24,6 +24,11 @@ class SavedSpeedChangerNoteData : SavedNoteData, IGamePlaySummonable
     public GameObject GamePlayNotePrefab => NoteManager.instance.speedChangerPrefab;
     public float noteDownSpeedRate = 1f;
 
+    public override MapEditorNote SummonMapEditorNote()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public override Note SummonGamePlayNote(NoteSummoner summoner)
     {
         SpeedChangerNoteObject note = summoner.InstantiateNote(GamePlayNotePrefab, 0, summoner.BeatToYpos(whenSummonBeat)).GetComponent<SpeedChangerNoteObject>();

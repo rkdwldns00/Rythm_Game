@@ -99,6 +99,11 @@ public class SavedFlickNoteData : SavedNoteData, IGamePlaySummonable
 
     public bool isCriticalNote = false;
 
+    public override MapEditorNote SummonMapEditorNote()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public override Note SummonGamePlayNote(NoteSummoner summoner)
     {
         FlickNoteObject n = null;

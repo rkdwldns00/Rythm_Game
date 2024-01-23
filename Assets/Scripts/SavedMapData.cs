@@ -28,4 +28,5 @@ public abstract class SavedNoteData
     public abstract string serializedDataTitleName { get; }
 
     public abstract Note SummonGamePlayNote(NoteSummoner summoner);
+    public abstract MapEditorNote SummonMapEditorNote();
 }

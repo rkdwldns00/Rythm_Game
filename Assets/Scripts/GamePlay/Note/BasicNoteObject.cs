@@ -88,20 +88,28 @@ public class SavedBasicNoteData : SavedNoteData, IGamePlaySummonable
         }
     }
 
-    public float startX;
-    public float endX;
+    public int startX;
+    public int endX;
     public bool isHoldStartNote = false;
     public bool isCriticalNote = false;
 
     public override Note SummonGamePlayNote(NoteSummoner summoner)
     {
-        BasicNoteObject n = null;
-
         GameObject g = summoner.InstantiateNote(GamePlayNotePrefab, (startX + endX) / 2f, summoner.BeatToYpos(whenSummonBeat));
-        n = g.GetComponent<BasicNoteObject>();
+        BasicNoteObject n = g.GetComponent<BasicNoteObject>();
         n?.SetData(this);
 
         return n;
+    }
+
+    public override MapEditorNote SummonMapEditorNote()
+    {
+        MapEditorBasicNote note = MapEditManager.Instance.SummonNote(MapEditManager.Instance.basicNotePrefab).GetComponent<MapEditorBasicNote>();
+        note.beat = whenSummonBeat;
+        note.startX = startX;
+        note.xSize = endX - startX;
+        note.RefreshPosition();
+        return note;
     }
 }
 
