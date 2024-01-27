@@ -24,11 +24,15 @@ public class MapEditManager : MonoBehaviour
     [Header("마디선 프리펩")]
     [SerializeField] GameObject beatLinePrefab;
     [SerializeField] GameObject barLinePrefab;
+    [Header("노트 정보 설정 UI")]
+    [SerializeField] GameObject[] noteInfoUIObjects;
     [Header("기타 설정")]
     public float spacing;
     public float firstBarLineYPos = -1800;
     public RectTransform[] verticalLine;
     private Sprite mapStandardSprite;
+
+    MapEditorNoteInfoUI[] noteInfoUI;
 
     public NotePosCalculator notePosCalculator;
 
@@ -82,6 +86,12 @@ public class MapEditManager : MonoBehaviour
             GameObject bar = Instantiate(barLinePrefab, mapScrollInLine);
             bar.GetComponentInChildren<Text>().text = (i + 1).ToString();
             bar.transform.localPosition = new Vector3(bar.transform.localPosition.x, notePosCalculator.BeatToYpos(notePosCalculator.BeatOfBar(i)), 0);
+        }
+
+        noteInfoUI = new MapEditorNoteInfoUI[noteInfoUIObjects.Length];
+        for(int i = 0; i < noteInfoUIObjects.Length; i++)
+        {
+            noteInfoUI[i] = noteInfoUIObjects[i].GetComponent<MapEditorNoteInfoUI>();
         }
     }
 
@@ -228,6 +238,14 @@ public class MapEditManager : MonoBehaviour
             },
             () => { },
             FileBrowser.PickMode.Files, false, null, null, "음악 파일 선택");
+    }
+
+    public void SelectMapEditorNote(MapEditorNote note)
+    {
+        for(int i = 0; i < noteInfoUI.Length; i++)
+        {
+            noteInfoUI[i].OnSelectNote(note);
+        }
     }
 }
 
