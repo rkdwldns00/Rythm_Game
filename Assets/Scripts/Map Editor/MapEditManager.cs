@@ -1,5 +1,7 @@
+using SimpleFileBrowser;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -212,6 +214,20 @@ public class MapEditManager : MonoBehaviour
     public GameObject SummonNote(GameObject notePrefeab)
     {
         return Instantiate(notePrefeab, mapScrollViewContent);
+    }
+
+    public void SelectMapBgm()
+    {
+        FileBrowser.ShowLoadDialog(
+            (paths) =>
+            {
+                if(paths.Length > 0)
+                {
+                    StartCoroutine(AudioClipUtil.Load(paths[0], (clip) => EditingMap.bgm = clip));
+                }
+            },
+            () => { },
+            FileBrowser.PickMode.Files, false, null, null, "음악 파일 선택");
     }
 }
 

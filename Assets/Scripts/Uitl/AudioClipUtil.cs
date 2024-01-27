@@ -121,7 +121,6 @@ public static class AudioClipUtil
 
     public static void LoadAudioClip(SavedMapData mapData)
     {
-        Debug.Log("¿€µø");
         foreach (var fileType in AUDIO_CLIP_FILE_TYPE)
         {
             if (File.Exists(MapFileUtil.MAP_DATA_PATH + mapData.title + fileType))
