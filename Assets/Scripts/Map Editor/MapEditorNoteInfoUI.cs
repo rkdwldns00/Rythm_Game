@@ -24,6 +24,8 @@ public abstract class MapEditorNoteInfoUI<T> : MonoBehaviour, MapEditorNoteInfoU
         }
     }
 
+    protected abstract void OnActive();
+
     public void OnUnselectNote()
     {
         gameObject.SetActive(false);
