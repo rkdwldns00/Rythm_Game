@@ -36,9 +36,15 @@ public abstract class MapEditorNote : MonoBehaviour
         rectTransform.localPosition = new Vector3(transform.localPosition.x, y);
     }
 
-    public void OnClickNote()
+    public void OnDragNote()
     {
         MapEditManager.Instance.StartHoldNote(this);
+        MapEditManager.Instance.SelectMapEditorNote(this);
+    }
+
+    public void OnClick()
+    {
+        MapEditManager.Instance.SelectMapEditorNote(this);
     }
 
     public abstract SavedNoteData GetNoteData();

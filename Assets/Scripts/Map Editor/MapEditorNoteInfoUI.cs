@@ -7,7 +7,7 @@ public interface MapEditorNoteInfoUI
     public void OnSelectNote(MapEditorNote note);
 }
 
-public abstract class MapEditorNoteInfoUI<T> : MonoBehaviour, MapEditorNoteInfoUI
+public abstract class MapEditorNoteInfoUI<T> : MonoBehaviour, MapEditorNoteInfoUI where T : MapEditorNote
 {
     protected T referencedNote { get; private set; }
 
