@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 [DisallowMultipleComponent]
 public abstract class MapEditorNote : MonoBehaviour
 {
+    public EventTrigger eventTrigger;
     public int beat;
 
     protected RectTransform rectTransform;
@@ -17,6 +19,16 @@ public abstract class MapEditorNote : MonoBehaviour
     protected virtual void Start()
     {
         MapEditManager.Instance.RegistEditorNote(this);
+
+        EventTrigger.Entry beginDragEntry = new EventTrigger.Entry();
+        beginDragEntry.eventID = EventTriggerType.BeginDrag;
+        beginDragEntry.callback.AddListener((_) => OnBeginDragNote());
+        eventTrigger.triggers.Add(beginDragEntry);
+
+        EventTrigger.Entry PointerDownEntry = new EventTrigger.Entry();
+        PointerDownEntry.eventID = EventTriggerType.PointerDown;
+        PointerDownEntry.callback.AddListener((_) => OnClick());
+        eventTrigger.triggers.Add(PointerDownEntry);
     }
 
     public virtual void OnHolding(Vector2 inputPos, Vector2Int holdingSpaceLocalPosition)
@@ -38,10 +50,9 @@ public abstract class MapEditorNote : MonoBehaviour
         rectTransform.offsetMax = new Vector2(0, rectTransform.offsetMax.y);
     }
 
-    public void OnDragNote()
+    public void OnBeginDragNote()
     {
         MapEditManager.Instance.StartHoldNote(this);
-        MapEditManager.Instance.SelectMapEditorNote(this);
     }
 
     public void OnClick()

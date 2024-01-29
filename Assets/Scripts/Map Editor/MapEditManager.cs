@@ -132,10 +132,13 @@ public class MapEditManager : MonoBehaviour
 
     public void StartHoldNote(MapEditorNote noteObject, Vector2Int pos)
     {
-        noteObject.transform.SetParent(mapScrollViewContent.transform);
-        holdingNotes.Add((noteObject, pos));
+        if (noteObject != null)
+        {
+            noteObject.transform.SetParent(mapScrollViewContent.transform);
+            holdingNotes.Add((noteObject, pos));
 
-        SelectMapEditorNote(noteObject);
+            SelectMapEditorNote(noteObject);
+        }
     }
 
     public void StartHoldNote(MapEditorNote noteObject)

@@ -63,6 +63,7 @@ public class MapEditorMeterChangerNote : MapEditorNote
     public override void OnStopHolding(Vector2 inputPos, Vector2Int holdingSpaceLocalPosition)
     {
         base.OnStopHolding(inputPos, holdingSpaceLocalPosition);
+        Debug.Log("1");
         MapEditManager.Instance.RefreshNotesPosition();
     }
 
