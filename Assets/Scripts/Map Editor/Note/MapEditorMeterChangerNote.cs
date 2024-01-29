@@ -47,4 +47,28 @@ public class MapEditorMeterChangerNote : MapEditorNote
             meter2 = _meter2
         };
     }
+
+    int beforeBeat = -1;
+
+    public override void OnHolding(Vector2 inputPos, Vector2Int holdingSpaceLocalPosition)
+    {
+        base.OnHolding(inputPos, holdingSpaceLocalPosition);
+        if (beat != beforeBeat)
+        {
+            beforeBeat = beat;
+            MapEditManager.Instance.RefreshNotesPosition();
+        }
+    }
+
+    public override void OnStopHolding(Vector2 inputPos, Vector2Int holdingSpaceLocalPosition)
+    {
+        base.OnStopHolding(inputPos, holdingSpaceLocalPosition);
+        MapEditManager.Instance.RefreshNotesPosition();
+    }
+
+    public override void DeleteNote()
+    {
+        base.DeleteNote();
+        MapEditManager.Instance.RefreshNotesPosition();
+    }
 }

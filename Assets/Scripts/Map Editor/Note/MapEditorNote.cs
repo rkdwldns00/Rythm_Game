@@ -34,6 +34,8 @@ public abstract class MapEditorNote : MonoBehaviour
     {
         float y = MapEditManager.Instance.notePosCalculator.BeatToYpos(beat);
         rectTransform.localPosition = new Vector3(transform.localPosition.x, y);
+        rectTransform.offsetMin = new Vector2(0, rectTransform.offsetMin.y);
+        rectTransform.offsetMax = new Vector2(0, rectTransform.offsetMax.y);
     }
 
     public void OnDragNote()
@@ -47,7 +49,7 @@ public abstract class MapEditorNote : MonoBehaviour
         MapEditManager.Instance.SelectMapEditorNote(this);
     }
 
-    public void DeleteNote()
+    public virtual void DeleteNote()
     {
         MapEditManager.Instance.UnRegistEditorNote(this);
         Destroy(gameObject);
