@@ -59,7 +59,7 @@ public class NotePosCalculator
         }
         if (meters.Count == 0 || meters[0].whenSummonBeat != 0)
         {
-            meters.Add(new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, beatLengthRate = 1, whenSummonBeat = 0 });
+            meters.Add(new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, meter2 = STARTING_BEAT_PER_BAR, whenSummonBeat = 0 });
         }
 
         int bar = 0;
@@ -107,7 +107,7 @@ public class NotePosCalculator
 
             if (lastMeterChangerIndex >= 0)
             {
-                curruntBeatPerBarLength = meters[lastMeterChangerIndex].beatLengthRate / meters[lastMeterChangerIndex].beatPerBar;
+                curruntBeatPerBarLength = 1f / meters[lastMeterChangerIndex].meter2;
             }
         }
         return curruntBeatPerBarLength;
