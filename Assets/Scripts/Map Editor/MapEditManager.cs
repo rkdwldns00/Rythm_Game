@@ -39,6 +39,9 @@ public class MapEditManager : MonoBehaviour
     List<MapEditorNote> mapEditorNotes = new();
     List<(MapEditorNote note, Vector2Int pos)> holdingNotes = new();
 
+    GameObject[] beatLines;
+    GameObject[] barLines;
+
     MapEditorInputManager input;
 
     public static void StartMapEditScene()
@@ -75,21 +78,26 @@ public class MapEditManager : MonoBehaviour
             note.SummonMapEditorNote();
         }
 
-        for (int i = 0; i < notePosCalculator.BeatOfBar(100); i++)
+        beatLines = new GameObject[notePosCalculator.BeatOfBar(100)];
+        for (int i = 0; i < beatLines.Length; i++)
         {
-            GameObject bar = Instantiate(beatLinePrefab, mapScrollInLine);
-            RectTransform t = bar.GetComponent<RectTransform>();
-            t.localPosition = new Vector3(t.localPosition.x, notePosCalculator.BeatToYpos(i), 0);
+            GameObject line = Instantiate(beatLinePrefab, mapScrollInLine);
+            RectTransform t = line.GetComponent<RectTransform>();
+            beatLines[i] = line;
+            //t.localPosition = new Vector3(t.localPosition.x, notePosCalculator.BeatToYpos(i), 0);
         }
-        for (int i = 0; i < 100; i++)
+        barLines = new GameObject[100];
+        for (int i = 0; i < barLines.Length; i++)
         {
-            GameObject bar = Instantiate(barLinePrefab, mapScrollInLine);
-            bar.GetComponentInChildren<Text>().text = (i + 1).ToString();
-            bar.transform.localPosition = new Vector3(bar.transform.localPosition.x, notePosCalculator.BeatToYpos(notePosCalculator.BeatOfBar(i)), 0);
+            GameObject line = Instantiate(barLinePrefab, mapScrollInLine);
+            line.GetComponentInChildren<Text>().text = (i + 1).ToString();
+            barLines[i] = line;
+            //line.transform.localPosition = new Vector3(line.transform.localPosition.x, notePosCalculator.BeatToYpos(notePosCalculator.BeatOfBar(i)), 0);
         }
+        RefreshNotesPosition();
 
         noteInfoUI = new MapEditorNoteInfoUI[noteInfoUIObjects.Length];
-        for(int i = 0; i < noteInfoUIObjects.Length; i++)
+        for (int i = 0; i < noteInfoUIObjects.Length; i++)
         {
             noteInfoUI[i] = noteInfoUIObjects[i].GetComponent<MapEditorNoteInfoUI>();
         }
@@ -233,7 +241,7 @@ public class MapEditManager : MonoBehaviour
         FileBrowser.ShowLoadDialog(
             (paths) =>
             {
-                if(paths.Length > 0)
+                if (paths.Length > 0)
                 {
                     StartCoroutine(AudioClipUtil.Load(paths[0], (clip) => EditingMap.bgm = clip));
                 }
@@ -244,9 +252,25 @@ public class MapEditManager : MonoBehaviour
 
     public void SelectMapEditorNote(MapEditorNote note)
     {
-        for(int i = 0; i < noteInfoUI.Length; i++)
+        for (int i = 0; i < noteInfoUI.Length; i++)
         {
             noteInfoUI[i].OnSelectNote(note);
+        }
+    }
+
+    public void RefreshNotesPosition()
+    {
+        for (int i = 0; i < mapEditorNotes.Count; i++)
+        {
+            mapEditorNotes[i].RefreshPosition();
+        }
+        for (int i = 0; i < beatLines.Length; i++)
+        {
+            beatLines[i].transform.localPosition = new Vector3(beatLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(i), 0);
+        }
+        for (int i = 0; i < barLines.Length; i++)
+        {
+            barLines[i].transform.localPosition = new Vector3(barLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(notePosCalculator.BeatOfBar(i)), 0);
         }
     }
 }

@@ -34,7 +34,7 @@ public class MapEditorMeterChangerNote : MapEditorNote
         set
         {
             _meter2 = value;
-            meter1Text.text = _meter2.ToString();
+            meter2Text.text = _meter2.ToString();
         }
     }
 

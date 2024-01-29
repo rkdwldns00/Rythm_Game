@@ -22,6 +22,7 @@ public class MeterInputUI : MonoBehaviour
     {
         referencedNote.Meter1 = int.Parse(meter1.text);
         referencedNote.Meter2 = int.Parse(meter2.text);
+        MapEditManager.Instance.RefreshNotesPosition();
         gameObject.SetActive(false);
     }
 }
