@@ -180,6 +180,11 @@ public class MapEditManager : MonoBehaviour
         mapEditorNotes.Add(note);
     }
 
+    public void UnRegistEditorNote(MapEditorNote note)
+    {
+        mapEditorNotes.Remove(note);
+    }
+
     public void SaveEditingMap()
     {
         CachingEditingNotes();

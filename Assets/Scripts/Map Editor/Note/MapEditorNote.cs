@@ -47,5 +47,11 @@ public abstract class MapEditorNote : MonoBehaviour
         MapEditManager.Instance.SelectMapEditorNote(this);
     }
 
+    public void DeleteNote()
+    {
+        MapEditManager.Instance.UnRegistEditorNote(this);
+        Destroy(gameObject);
+    }
+
     public abstract SavedNoteData GetNoteData();
 }
