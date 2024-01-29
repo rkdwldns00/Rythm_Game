@@ -269,6 +269,7 @@ public class MapEditManager : MonoBehaviour
     public void RefreshNotesPosition()
     {
         CachingEditingNotes();
+        EditingMap.Sort();
         for (int i = 0; i < mapEditorNotes.Count; i++)
         {
             mapEditorNotes[i].RefreshPosition();

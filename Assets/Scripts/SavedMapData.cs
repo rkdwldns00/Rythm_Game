@@ -4,6 +4,7 @@ using UnityEngine;
 using System.IO;
 using System;
 using UnityEngine.UI;
+using System.Linq;
 
 [Serializable]
 public class SavedMapData
@@ -19,6 +20,13 @@ public class SavedMapData
     public float startOffset;
     public float startBpm;
     public SavedNoteData[] notes;
+
+    public void Sort()
+    {
+        List<SavedNoteData> list = notes.ToList();
+        list.Sort((a, b) => (a.whenSummonBeat - b.whenSummonBeat));
+        notes = list.ToArray();
+    }
 }
 
 [Serializable]
