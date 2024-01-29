@@ -260,6 +260,14 @@ public class MapEditManager : MonoBehaviour
 
     public void RefreshNotesPosition()
     {
+        CachingEditingNotes();
+        for (int i = 0; i < EditingMap.notes.Length; i++)
+        {
+            if (EditingMap.notes[i] is SavedMeterChangerNoteData m)
+            {
+                Debug.Log("beatPerBar : " + m.beatPerBar + ", rate : " + m.beatLengthRate);
+            }
+        }
         for (int i = 0; i < mapEditorNotes.Count; i++)
         {
             mapEditorNotes[i].RefreshPosition();

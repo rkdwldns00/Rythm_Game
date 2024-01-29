@@ -44,7 +44,7 @@ public class MapEditorMeterChangerNote : MapEditorNote
         {
             whenSummonBeat = beat,
             beatPerBar = _meter1,
-            beatLengthRate = _meter1 / _meter2
+            beatLengthRate = (float)_meter1 / _meter2
         };
     }
 }

@@ -57,7 +57,7 @@ public class NotePosCalculator
                 meters.Add(meter);
             }
         }
-        if (meters.Count == 0 || meters[0].whenSummonBeat == 0)
+        if (meters.Count == 0 || meters[0].whenSummonBeat != 0)
         {
             meters.Add(new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, beatLengthRate = 1, whenSummonBeat = 0 });
         }
