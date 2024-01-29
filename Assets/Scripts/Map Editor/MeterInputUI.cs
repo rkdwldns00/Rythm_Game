@@ -20,8 +20,40 @@ public class MeterInputUI : MonoBehaviour
 
     public void CloseUI()
     {
-        referencedNote.Meter1 = int.Parse(meter1.text);
-        referencedNote.Meter2 = int.Parse(meter2.text);
+        if (string.IsNullOrEmpty(meter1.text))
+        {
+            referencedNote.Meter1 = 4;
+        }
+        else
+        {
+            int a = int.Parse(meter1.text);
+            if (a > 0)
+            {
+                referencedNote.Meter1 = a;
+            }
+            else
+            {
+                referencedNote.Meter1 = 4;
+            }
+        }
+
+        if (string.IsNullOrEmpty(meter2.text))
+        {
+            referencedNote.Meter2 = 4;
+        }
+        else
+        {
+            int b = int.Parse(meter2.text);
+            if (b > 0)
+            {
+                referencedNote.Meter2 = b;
+            }
+            else
+            {
+                referencedNote.Meter2 = 4;
+            }
+        }
+
         MapEditManager.Instance.RefreshNotesPosition();
         gameObject.SetActive(false);
     }
