@@ -31,7 +31,7 @@ public class MapInfoSettingUI : MonoBehaviour
         mapArtistNameInput.onValueChanged.AddListener(SetArtistName);
         mapDesignerNameInput.onValueChanged.AddListener(SetDesignerName);
         bgmOffsetSlider.onValueChanged.AddListener(SetBgmOffset);
-        startBpmSlider.onValueChanged.AddListener(SetBgmOffset);
+        startBpmSlider.onValueChanged.AddListener(SetBPM);
         openInfoSettingMenuButton.onClick.AddListener(() => SetUIEnable(true));
         toMenuButton.onClick.AddListener(GotoMenu);
         backToEditButton.onClick.AddListener(() => SetUIEnable(false));
@@ -85,8 +85,8 @@ public class MapInfoSettingUI : MonoBehaviour
 
     private void SetBPM(float bpm)
     {
-        MapEditManager.EditingMap.startBpm = bpm;
-        startBpmText.text = bpm.ToString();
+        MapEditManager.EditingMap.startBpm = (int)bpm;
+        startBpmText.text = MapEditManager.EditingMap.startBpm.ToString();
     }
 
     private void GotoMenu()
