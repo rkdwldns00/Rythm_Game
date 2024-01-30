@@ -17,8 +17,7 @@ public class MapInfoSettingUI : MonoBehaviour
     [Header("")]
     [SerializeField] private Slider bgmOffsetSlider;
     [SerializeField] private Text bgmOffsetText;
-    [SerializeField] private Slider startBpmSlider;
-    [SerializeField] private Text startBpmText;
+    [SerializeField] private InputField startBpmInput;
     [Header("메뉴 전환 버튼")]
     [SerializeField] private Button openInfoSettingMenuButton;
     [SerializeField] private Button toMenuButton;
@@ -31,7 +30,7 @@ public class MapInfoSettingUI : MonoBehaviour
         mapArtistNameInput.onValueChanged.AddListener(SetArtistName);
         mapDesignerNameInput.onValueChanged.AddListener(SetDesignerName);
         bgmOffsetSlider.onValueChanged.AddListener(SetBgmOffset);
-        startBpmSlider.onValueChanged.AddListener(SetBgmOffset);
+        startBpmInput.onValueChanged.AddListener((t) => SetBPM(int.Parse(t)));
         openInfoSettingMenuButton.onClick.AddListener(() => SetUIEnable(true));
         toMenuButton.onClick.AddListener(GotoMenu);
         backToEditButton.onClick.AddListener(() => SetUIEnable(false));
@@ -53,8 +52,7 @@ public class MapInfoSettingUI : MonoBehaviour
         mapDesignerNameInput.text = MapEditManager.EditingMap.designerName;
         bgmOffsetSlider.value = MapEditManager.EditingMap.startOffset;
         bgmOffsetText.text = MapEditManager.EditingMap.startOffset.ToString();
-        startBpmSlider.value = MapEditManager.EditingMap.startBpm;
-        startBpmText.text = MapEditManager.EditingMap.startBpm.ToString();
+        startBpmInput.text = MapEditManager.EditingMap.startBpm.ToString();
     }
 
     private void SaveMap()
@@ -83,10 +81,10 @@ public class MapInfoSettingUI : MonoBehaviour
         bgmOffsetText.text = offset.ToString();
     }
 
-    private void SetBPM(float bpm)
+    private void SetBPM(int bpm)
     {
         MapEditManager.EditingMap.startBpm = bpm;
-        startBpmText.text = bpm.ToString();
+        startBpmInput.text = MapEditManager.EditingMap.startBpm.ToString();
     }
 
     private void GotoMenu()

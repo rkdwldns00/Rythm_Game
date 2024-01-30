@@ -5,6 +5,7 @@ using UnityEngine;
 public class NotePosCalculator
 {
     const int STARTING_BEAT_PER_BAR = 4;
+    const int STARTING_METER2 = 4;
 
     public readonly float spacing;
     public readonly SavedMapData map;
@@ -38,9 +39,9 @@ public class NotePosCalculator
                 curruntBpm = bpmChangers[0].bpm;
                 bpmChangers.RemoveAt(0);
             }
-            sumTime += 60f * BeatPerBarLengthRate(i) * 4 / curruntBpm;
+            sumTime += 60f * BeatPerBarLengthRate(i) / curruntBpm;
         }
-        sumTime += 60f * BeatPerBarLengthRate(i) * 4 / curruntBpm * (beat - i);
+        sumTime += 60f * BeatPerBarLengthRate(i) / curruntBpm * (beat - i);
         return sumTime;
     }
 
@@ -59,7 +60,7 @@ public class NotePosCalculator
         }
         if (meters.Count == 0 || meters[0].whenSummonBeat != 0)
         {
-            meters.Insert(0, new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, meter2 = STARTING_BEAT_PER_BAR, whenSummonBeat = 0 });
+            meters.Insert(0, new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, meter2 = STARTING_METER2, whenSummonBeat = 0 });
         }
 
         int bar = 0;
@@ -80,7 +81,7 @@ public class NotePosCalculator
 
     float BeatPerBarLengthRate(float beat)
     {
-        float curruntBeatPerBarLength = 1f / 4f;
+        float curruntBeatPerBarLength = 1f / STARTING_METER2 * STARTING_BEAT_PER_BAR;
         List<SavedMeterChangerNoteData> meters = new List<SavedMeterChangerNoteData>();
         foreach (SavedNoteData note in map.notes)
         {
@@ -106,7 +107,7 @@ public class NotePosCalculator
 
             if (lastMeterChangerIndex >= 0)
             {
-                curruntBeatPerBarLength = 1f / meters[lastMeterChangerIndex].meter2;
+                curruntBeatPerBarLength = 1f / meters[lastMeterChangerIndex].meter2 * meters[lastMeterChangerIndex].beatPerBar;
             }
         }
         return curruntBeatPerBarLength;
