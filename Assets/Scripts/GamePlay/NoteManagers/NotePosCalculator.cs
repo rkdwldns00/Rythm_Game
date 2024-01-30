@@ -59,24 +59,23 @@ public class NotePosCalculator
         }
         if (meters.Count == 0 || meters[0].whenSummonBeat != 0)
         {
-            meters.Add(new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, meter2 = STARTING_BEAT_PER_BAR, whenSummonBeat = 0 });
+            meters.Insert(0, new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, meter2 = STARTING_BEAT_PER_BAR, whenSummonBeat = 0 });
         }
 
         int bar = 0;
         for (int i = 0; i < meters.Count - 1; i++)
         {
-            int meterRangeLength = meters[i + 1].whenSummonBeat - meters[i].whenSummonBeat;
-            for (int j = meters[i].whenSummonBeat; j < meterRangeLength; j = Mathf.Min(j + meters[i].beatPerBar, meters[i + 1].whenSummonBeat))
+            for (int j = meters[i].whenSummonBeat; j < meters[i + 1].whenSummonBeat; j = Mathf.Min(j + meters[i].beatPerBar, meters[i + 1].whenSummonBeat))
             {
-                bar++;
                 if (bar == barIndex)
                 {
-                    return meters[i].whenSummonBeat + j;
+                    return j;
                 }
+                bar++;
             }
         }
 
-        return bar + meters[meters.Count - 1].whenSummonBeat + meters[meters.Count - 1].beatPerBar * (barIndex - bar);
+        return meters[meters.Count - 1].whenSummonBeat + meters[meters.Count - 1].beatPerBar * (barIndex - bar);
     }
 
     float BeatPerBarLengthRate(float beat)
