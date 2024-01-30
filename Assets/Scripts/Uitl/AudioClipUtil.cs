@@ -125,17 +125,17 @@ public static class AudioClipUtil
         {
             if (File.Exists(MapFileUtil.MAP_DATA_PATH + mapData.title + fileType))
             {
-                UnityEngine.Object.FindObjectOfType<MonoBehaviour>().StartCoroutine(Load(MapFileUtil.MAP_DATA_PATH + mapData.title + fileType, mapData));
+                UnityEngine.Object.FindObjectOfType<MonoBehaviour>().StartCoroutine(Load(MapFileUtil.MAP_DATA_PATH + mapData.title + fileType, (clip) => { mapData.bgm = clip; }));
                 break;
             }
         }
     }
 
-    static IEnumerator Load(string path, SavedMapData mapData)
+    public static IEnumerator Load(string path, Action<AudioClip> callBack)
     {
         WWW www = new WWW(path);
         yield return www;
-        mapData.bgm = www.GetAudioClip();
+        callBack?.Invoke(www.GetAudioClip());
     }
 }
 

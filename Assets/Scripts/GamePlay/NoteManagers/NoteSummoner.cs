@@ -15,7 +15,7 @@ public class NoteSummoner : NotePosCalculator
     {
         foreach (SavedNoteData note in map.notes)
         {
-            Note noteObject = note.Summon(this, note);
+            Note noteObject = note.SummonGamePlayNote(this);
 
             if (noteObject != null)
             {

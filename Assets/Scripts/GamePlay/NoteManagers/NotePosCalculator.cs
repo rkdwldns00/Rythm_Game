@@ -15,7 +15,7 @@ public class NotePosCalculator
         this.map = map;
     }
 
-    public float BeatToSec(float beat)
+    public virtual float BeatToSec(float beat)
     {
         float curruntBpm = map.startBpm;
 
@@ -44,7 +44,7 @@ public class NotePosCalculator
         return sumTime;
     }
 
-    public int BeatOfBar(int barIndex)
+    public virtual int BeatOfBar(int barIndex)
     {
         if (barIndex == 0) { return 0; }
 
@@ -57,27 +57,25 @@ public class NotePosCalculator
                 meters.Add(meter);
             }
         }
-        if (meters.Count == 0 || meters[0].whenSummonBeat == 0)
+        if (meters.Count == 0 || meters[0].whenSummonBeat != 0)
         {
-            meters.Add(new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, beatLengthRate = 1, whenSummonBeat = 0 });
+            meters.Insert(0, new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, meter2 = STARTING_BEAT_PER_BAR, whenSummonBeat = 0 });
         }
 
-        int checkingBeat = 0;
         int bar = 0;
         for (int i = 0; i < meters.Count - 1; i++)
         {
-            int meterRangeLength = meters[i + 1].whenSummonBeat - meters[i].whenSummonBeat;
-            for (int j = meters[i].whenSummonBeat; j < meterRangeLength; j = Mathf.Min(j + meters[i].beatPerBar, meters[i + 1].whenSummonBeat))
+            for (int j = meters[i].whenSummonBeat; j < meters[i + 1].whenSummonBeat; j = Mathf.Min(j + meters[i].beatPerBar, meters[i + 1].whenSummonBeat))
             {
-                bar++;
                 if (bar == barIndex)
                 {
-                    return meters[i].whenSummonBeat + j;
+                    return j;
                 }
+                bar++;
             }
         }
 
-        return bar + meters[meters.Count - 1].whenSummonBeat + meters[meters.Count - 1].beatPerBar * (barIndex - bar);
+        return meters[meters.Count - 1].whenSummonBeat + meters[meters.Count - 1].beatPerBar * (barIndex - bar);
     }
 
     float BeatPerBarLengthRate(float beat)
@@ -108,13 +106,13 @@ public class NotePosCalculator
 
             if (lastMeterChangerIndex >= 0)
             {
-                curruntBeatPerBarLength = meters[lastMeterChangerIndex].beatLengthRate / meters[lastMeterChangerIndex].beatPerBar;
+                curruntBeatPerBarLength = 1f / meters[lastMeterChangerIndex].meter2;
             }
         }
         return curruntBeatPerBarLength;
     }
 
-    public float BeatToYpos(float beat)
+    public virtual float BeatToYpos(float beat)
     {
         float curruntSpeed = 1f;
         List<SavedSpeedChangerNoteData> speedChangers = new List<SavedSpeedChangerNoteData>();
@@ -155,5 +153,17 @@ public class NotePosCalculator
         {
             return BeatToSec(beat) * curruntSpeed * spacing;
         }
+    }
+
+    public virtual int YposCloseToBeat(float y)
+    {
+        float h;
+
+        int index = 0;
+        do
+        {
+            h = BeatToYpos(index++ + 0.5f);
+        } while (h < y);
+        return index - 1;
     }
 }

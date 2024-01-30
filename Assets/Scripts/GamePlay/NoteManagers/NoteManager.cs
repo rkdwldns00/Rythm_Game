@@ -143,9 +143,9 @@ public interface IHitableNoteObject
     public void Hit();
 }
 
-public interface ISummonable
+public interface IGamePlaySummonable
 {
-    public GameObject NotePrefab { get; }
+    public GameObject GamePlayNotePrefab { get; }
 
     //public Note Summon(NoteSummoner summoner, SavedNoteData data);
 }

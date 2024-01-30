@@ -1,14 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class SavedMeterChangerNoteData : SavedNoteData
 {
-    public int beatPerBar;
-    public float beatLengthRate;
+    public override string serializedDataTitleName => "MD";
 
-    public override Note Summon(NoteSummoner summoner, SavedNoteData data)
+    public int beatPerBar;
+    public int meter2;
+
+    public override Note SummonGamePlayNote(NoteSummoner summoner)
     {
         return null;
+    }
+
+    public override MapEditorNote SummonMapEditorNote()
+    {
+        MapEditorMeterChangerNote note = MapEditManager.Instance.SummonNote(MapEditManager.Instance.meterChangerNotePrefab).GetComponent<MapEditorMeterChangerNote>();
+        note.Meter1 = beatPerBar;
+        note.Meter2 = meter2;
+        note.RefreshPosition();
+        return note;
     }
 }
