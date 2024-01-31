@@ -113,6 +113,39 @@ public class NotePosCalculator
         return curruntBeatPerBarLength;
     }
 
+    public SavedMeterChangerNoteData FindLastMeterChanger(float beat)
+    {
+        List<SavedMeterChangerNoteData> meters = new List<SavedMeterChangerNoteData>();
+        foreach (SavedNoteData note in map.notes)
+        {
+            SavedMeterChangerNoteData meter = note as SavedMeterChangerNoteData;
+            if (meter is not null)
+            {
+                meters.Add(meter);
+            }
+        }
+
+        if (meters.Count > 0)
+        {
+            meters.Sort((x, y) => { return x.whenSummonBeat - y.whenSummonBeat; });
+
+            int lastMeterChangerIndex = -1;
+            for (int i = 0; i < meters.Count; i++)
+            {
+                if (meters[i].whenSummonBeat <= beat)
+                {
+                    lastMeterChangerIndex = i;
+                }
+            }
+
+            if (lastMeterChangerIndex >= 0)
+            {
+                return meters[lastMeterChangerIndex];
+            }
+        }
+        return null;
+    }
+
     public virtual float BeatToYpos(float beat)
     {
         float curruntSpeed = 1f;

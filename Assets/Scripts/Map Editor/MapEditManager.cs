@@ -22,6 +22,7 @@ public class MapEditManager : MonoBehaviour
     public float mapScrollViewContentYPos => mapScrollViewContent.localPosition.y;
     [SerializeField] Transform mapScrollInLine;
     [Header("마디선 프리펩")]
+    [SerializeField] GameObject noteLinePrefab;
     [SerializeField] GameObject beatLinePrefab;
     [SerializeField] GameObject barLinePrefab;
     [Header("노트 정보 설정 UI")]
@@ -39,6 +40,7 @@ public class MapEditManager : MonoBehaviour
     List<MapEditorNote> mapEditorNotes = new();
     List<(MapEditorNote note, Vector2Int pos)> holdingNotes = new();
 
+    LineObjects noteLines;
     GameObject[] beatLines;
     GameObject[] barLines;
 
@@ -46,7 +48,8 @@ public class MapEditManager : MonoBehaviour
 
     //노트 설치시 기준음표
     int noteValue = 4;
-    public int NoteValue {
+    public int NoteValue
+    {
         get => noteValue;
         set
         {
@@ -77,6 +80,7 @@ public class MapEditManager : MonoBehaviour
         }
 
         notePosCalculator = new MapEditorNotePosCalculator(spacing, EditingMap, this);
+        noteLines = new LineObjects(noteLinePrefab, mapScrollInLine);
     }
 
     private void Start()
@@ -93,9 +97,7 @@ public class MapEditManager : MonoBehaviour
         for (int i = 0; i < beatLines.Length; i++)
         {
             GameObject line = Instantiate(beatLinePrefab, mapScrollInLine);
-            RectTransform t = line.GetComponent<RectTransform>();
             beatLines[i] = line;
-            //t.localPosition = new Vector3(t.localPosition.x, notePosCalculator.BeatToYpos(i), 0);
         }
         barLines = new GameObject[100];
         for (int i = 0; i < barLines.Length; i++)
@@ -103,8 +105,8 @@ public class MapEditManager : MonoBehaviour
             GameObject line = Instantiate(barLinePrefab, mapScrollInLine);
             line.GetComponentInChildren<Text>().text = (i + 1).ToString();
             barLines[i] = line;
-            //line.transform.localPosition = new Vector3(line.transform.localPosition.x, notePosCalculator.BeatToYpos(notePosCalculator.BeatOfBar(i)), 0);
         }
+
         RefreshNotesPosition();
 
         noteInfoUI = new MapEditorNoteInfoUI[noteInfoUIObjects.Length];
@@ -289,9 +291,22 @@ public class MapEditManager : MonoBehaviour
         {
             beatLines[i].transform.localPosition = new Vector3(beatLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(i), 0);
         }
+        int index = 0;
         for (int i = 0; i < barLines.Length; i++)
         {
-            barLines[i].transform.localPosition = new Vector3(barLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(notePosCalculator.BeatOfBar(i)), 0);
+            int barIndex = notePosCalculator.BeatOfBar(i);
+            barLines[i].transform.localPosition = new Vector3(barLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(barIndex), 0);
+            SavedMeterChangerNoteData meter = notePosCalculator.FindLastMeterChanger(i);
+            for (int j = 0; j < meter.beatPerBar * NoteValue; j++)
+            {
+                noteLines[index].transform.localPosition = new Vector3(noteLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(barIndex + ((float)j / (meter.beatPerBar * NoteValue / 4)) * 4), 0);
+                noteLines[index].SetActive(true);
+                index++;
+            }
+        }
+        for (int i = noteLines.Count - 1; i >= index; i--)
+        {
+            noteLines[i].SetActive(false);
         }
     }
 }
@@ -313,5 +328,34 @@ class MapEditorNotePosCalculator : NotePosCalculator
     public override int YposCloseToBeat(float y)
     {
         return base.YposCloseToBeat(y - 2400 - mapEditManager.mapScrollViewContentYPos);
+    }
+}
+
+class LineObjects
+{
+    List<GameObject> lines = new();
+
+    GameObject prefab;
+    Transform parentTransform;
+
+    public int Count => lines.Count;
+
+    public LineObjects(GameObject prefab, Transform parentTransform)
+    {
+        this.prefab = prefab;
+        this.parentTransform = parentTransform;
+    }
+
+    public GameObject this[int i]
+    {
+        get
+        {
+            while (lines.Count <= i)
+            {
+                GameObject line = Object.Instantiate(prefab, parentTransform);
+                lines.Add(line);
+            }
+            return lines[i];
+        }
     }
 }
