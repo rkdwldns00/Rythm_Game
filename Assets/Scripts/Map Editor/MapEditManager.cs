@@ -41,7 +41,7 @@ public class MapEditManager : MonoBehaviour
     List<(MapEditorNote note, Vector2Int pos)> holdingNotes = new();
 
     LineObjects noteLines;
-    GameObject[] beatLines;
+    LineObjects beatLines;
     GameObject[] barLines;
 
     MapEditorInputManager input;
@@ -81,6 +81,7 @@ public class MapEditManager : MonoBehaviour
 
         notePosCalculator = new MapEditorNotePosCalculator(spacing, EditingMap, this);
         noteLines = new LineObjects(noteLinePrefab, mapScrollInLine);
+        beatLines = new LineObjects(beatLinePrefab, mapScrollInLine);
     }
 
     private void Start()
@@ -93,12 +94,6 @@ public class MapEditManager : MonoBehaviour
             note.SummonMapEditorNote();
         }
 
-        beatLines = new GameObject[notePosCalculator.BeatOfBar(100)];
-        for (int i = 0; i < beatLines.Length; i++)
-        {
-            GameObject line = Instantiate(beatLinePrefab, mapScrollInLine);
-            beatLines[i] = line;
-        }
         barLines = new GameObject[100];
         for (int i = 0; i < barLines.Length; i++)
         {
@@ -287,9 +282,15 @@ public class MapEditManager : MonoBehaviour
         {
             mapEditorNotes[i].RefreshPosition();
         }
-        for (int i = 0; i < beatLines.Length; i++)
+        int beatOf100Bar = notePosCalculator.BeatOfBar(100);
+        for (int i = 0; i < beatOf100Bar; i++)
         {
             beatLines[i].transform.localPosition = new Vector3(beatLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(i), 0);
+            beatLines[i].SetActive(true);
+        }
+        for(int i = beatOf100Bar + 1; i < beatLines.Count; i++)
+        {
+            beatLines[i].SetActive(false);
         }
         int index = 0;
         for (int i = 0; i < barLines.Length; i++)
