@@ -46,11 +46,11 @@ public class HoldNoteObject : Note
 
             if (isTouch)
             {
-                HitResultShower.ShowHitResult(HitResult.Perfect);
+                ComboManager.ProcessHitResult(HitResult.Perfect);
             }
             else
             {
-                HitResultShower.ShowHitResult(HitResult.Miss);
+                ComboManager.ProcessHitResult(HitResult.Miss);
             }
 
             if (tickObjects.Count > 0 && tickObjects.ContainsKey(hitCheckTiming[checkIndex]))
