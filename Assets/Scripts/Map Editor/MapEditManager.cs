@@ -297,7 +297,7 @@ public class MapEditManager : MonoBehaviour
             int barIndex = notePosCalculator.BeatOfBar(i);
             barLines[i].transform.localPosition = new Vector3(barLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(barIndex), 0);
             SavedMeterChangerNoteData meter = notePosCalculator.FindLastMeterChanger(i);
-            for (int j = 0; j < meter.beatPerBar * NoteValue; j++)
+            for (int j = 0; j < NoteValue / 4 * meter.beatPerBar; j++)
             {
                 noteLines[index].transform.localPosition = new Vector3(noteLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(barIndex + ((float)j / (meter.beatPerBar * NoteValue / 4)) * 4), 0);
                 noteLines[index].SetActive(true);
