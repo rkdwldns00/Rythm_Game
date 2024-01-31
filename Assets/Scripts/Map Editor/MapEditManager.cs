@@ -44,6 +44,17 @@ public class MapEditManager : MonoBehaviour
 
     MapEditorInputManager input;
 
+    //노트 설치시 기준음표
+    int noteValue = 4;
+    public int NoteValue {
+        get => noteValue;
+        set
+        {
+            noteValue = value;
+            RefreshNotesPosition();
+        }
+    }
+
     public static void StartMapEditScene()
     {
         StartMapEditScene(null);
