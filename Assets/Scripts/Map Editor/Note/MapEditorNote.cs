@@ -14,12 +14,11 @@ public abstract class MapEditorNote : MonoBehaviour
     protected virtual void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
+        MapEditManager.Instance.RegistEditorNote(this);
     }
 
     protected virtual void Start()
     {
-        MapEditManager.Instance.RegistEditorNote(this);
-
         EventTrigger.Entry beginDragEntry = new EventTrigger.Entry();
         beginDragEntry.eventID = EventTriggerType.BeginDrag;
         beginDragEntry.callback.AddListener((_) => OnBeginDragNote());
