@@ -31,7 +31,7 @@ class SavedSpeedChangerNoteData : SavedNoteData, IGamePlaySummonable
 
     public override Note SummonGamePlayNote(NoteSummoner summoner)
     {
-        SpeedChangerNoteObject note = summoner.InstantiateNote(GamePlayNotePrefab, 0, summoner.BeatToYpos(whenSummonBeat)).GetComponent<SpeedChangerNoteObject>();
+        SpeedChangerNoteObject note = summoner.InstantiateNote(GamePlayNotePrefab, 0, summoner.BeatToYpos(Beat)).GetComponent<SpeedChangerNoteObject>();
         note.noteDownSpeedRate = noteDownSpeedRate;
         return note;
     }

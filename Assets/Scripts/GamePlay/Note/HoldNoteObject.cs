@@ -253,7 +253,7 @@ public class SavedHoldNoteData : SavedNoteData, IGamePlaySummonable
 
         if (curveData.Length > 1)
         {
-            float startY = summoner.BeatToYpos(whenSummonBeat);
+            float startY = summoner.BeatToYpos(Beat);
             GameObject newHoldNote = summoner.InstantiateNote(GamePlayNotePrefab, 0, startY);
             HoldNoteObject n = newHoldNote.GetComponent<HoldNoteObject>();
             noteObject = n;
@@ -264,7 +264,7 @@ public class SavedHoldNoteData : SavedNoteData, IGamePlaySummonable
                 RuntimeHoldNoteCurve newCurve = new RuntimeHoldNoteCurve(
                     curveData[i].startX,
                     curveData[i].endX,
-                    summoner.BeatToYpos((float)whenSummonBeat + curveData[i].spawnBeat) - summoner.BeatToYpos(whenSummonBeat),
+                    summoner.BeatToYpos((float)Beat + curveData[i].spawnBeat) - summoner.BeatToYpos(Beat),
                     curveData[i].curveType);
 
                 curves.Add(newCurve);
@@ -279,7 +279,7 @@ public class SavedHoldNoteData : SavedNoteData, IGamePlaySummonable
             {
                 for (int i = 1; i < length - 1; i++)
                 {
-                    hitCheckTiming.Add(summoner.BeatToSec(whenSummonBeat + i) - summoner.BeatToSec(whenSummonBeat));
+                    hitCheckTiming.Add(summoner.BeatToSec(Beat + i) - summoner.BeatToSec(Beat));
                 }
 
             }
@@ -288,10 +288,10 @@ public class SavedHoldNoteData : SavedNoteData, IGamePlaySummonable
                 for (int i = 0; i < tickBeatData.Length; i++)
                 {
                     GameObject newTick = UnityEngine.Object.Instantiate(n.holdNoteTickPrefab, n.transform);
-                    float yPos = summoner.BeatToYpos(whenSummonBeat + tickBeatData[i]) - summoner.BeatToYpos(whenSummonBeat);
+                    float yPos = summoner.BeatToYpos(Beat + tickBeatData[i]) - summoner.BeatToYpos(Beat);
                     (float startX, float endX) = n.FindCanHitArea(yPos);
                     newTick.transform.localPosition = new Vector3((startX + endX) / 2, yPos, -0.02f);
-                    float sec = summoner.BeatToSec(whenSummonBeat + tickBeatData[i]) - summoner.BeatToSec(whenSummonBeat);
+                    float sec = summoner.BeatToSec(Beat + tickBeatData[i]) - summoner.BeatToSec(Beat);
                     n.tickObjects.Add(sec, newTick);
                     hitCheckTiming.Add(sec);
                 }

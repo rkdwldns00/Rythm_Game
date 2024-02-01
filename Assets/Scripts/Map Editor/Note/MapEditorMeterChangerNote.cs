@@ -42,7 +42,7 @@ public class MapEditorMeterChangerNote : MapEditorNote
     {
         return new SavedMeterChangerNoteData()
         {
-            whenSummonBeat = beat,
+            Beat = beat,
             beatPerBar = _meter1,
             meter2 = _meter2
         };

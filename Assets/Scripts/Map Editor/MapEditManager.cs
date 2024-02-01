@@ -22,6 +22,7 @@ public class MapEditManager : MonoBehaviour
     public float mapScrollViewContentYPos => mapScrollViewContent.localPosition.y;
     [SerializeField] Transform mapScrollInLine;
     [Header("마디선 프리펩")]
+    [SerializeField] GameObject noteLinePrefab;
     [SerializeField] GameObject beatLinePrefab;
     [SerializeField] GameObject barLinePrefab;
     [Header("노트 정보 설정 UI")]
@@ -39,10 +40,23 @@ public class MapEditManager : MonoBehaviour
     List<MapEditorNote> mapEditorNotes = new();
     List<(MapEditorNote note, Vector2Int pos)> holdingNotes = new();
 
-    GameObject[] beatLines;
+    LineObjects noteLines;
+    LineObjects beatLines;
     GameObject[] barLines;
 
     MapEditorInputManager input;
+
+    //노트 설치시 기준음표
+    int noteValue = 4;
+    public int NoteValue
+    {
+        get => noteValue;
+        set
+        {
+            noteValue = value;
+            RefreshNotesPosition();
+        }
+    }
 
     public static void StartMapEditScene()
     {
@@ -66,6 +80,8 @@ public class MapEditManager : MonoBehaviour
         }
 
         notePosCalculator = new MapEditorNotePosCalculator(spacing, EditingMap, this);
+        noteLines = new LineObjects(noteLinePrefab, mapScrollInLine);
+        beatLines = new LineObjects(beatLinePrefab, mapScrollInLine);
     }
 
     private void Start()
@@ -78,22 +94,14 @@ public class MapEditManager : MonoBehaviour
             note.SummonMapEditorNote();
         }
 
-        beatLines = new GameObject[notePosCalculator.BeatOfBar(100)];
-        for (int i = 0; i < beatLines.Length; i++)
-        {
-            GameObject line = Instantiate(beatLinePrefab, mapScrollInLine);
-            RectTransform t = line.GetComponent<RectTransform>();
-            beatLines[i] = line;
-            //t.localPosition = new Vector3(t.localPosition.x, notePosCalculator.BeatToYpos(i), 0);
-        }
         barLines = new GameObject[100];
         for (int i = 0; i < barLines.Length; i++)
         {
             GameObject line = Instantiate(barLinePrefab, mapScrollInLine);
             line.GetComponentInChildren<Text>().text = (i + 1).ToString();
             barLines[i] = line;
-            //line.transform.localPosition = new Vector3(line.transform.localPosition.x, notePosCalculator.BeatToYpos(notePosCalculator.BeatOfBar(i)), 0);
         }
+
         RefreshNotesPosition();
 
         noteInfoUI = new MapEditorNoteInfoUI[noteInfoUIObjects.Length];
@@ -235,7 +243,7 @@ public class MapEditManager : MonoBehaviour
             startBpm = 120,
             startOffset = 0,
             thumnail = mapStandardSprite,
-            notes = new SavedNoteData[] { new SavedMeterChangerNoteData() { whenSummonBeat = 0, beatPerBar = 4, meter2 = 4 } }
+            notes = new SavedNoteData[] { new SavedMeterChangerNoteData() { Beat = 0, beatPerBar = 4, meter2 = 4 } }
         };
     }
 
@@ -274,13 +282,32 @@ public class MapEditManager : MonoBehaviour
         {
             mapEditorNotes[i].RefreshPosition();
         }
-        for (int i = 0; i < beatLines.Length; i++)
+        int beatOf100Bar = notePosCalculator.BeatOfBar(100);
+        for (int i = 0; i < beatOf100Bar; i++)
         {
             beatLines[i].transform.localPosition = new Vector3(beatLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(i), 0);
+            beatLines[i].SetActive(true);
         }
+        for (int i = beatOf100Bar + 1; i < beatLines.Count; i++)
+        {
+            beatLines[i].SetActive(false);
+        }
+        int index = 0;
         for (int i = 0; i < barLines.Length; i++)
         {
-            barLines[i].transform.localPosition = new Vector3(barLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(notePosCalculator.BeatOfBar(i)), 0);
+            int barIndex = notePosCalculator.BeatOfBar(i);
+            barLines[i].transform.localPosition = new Vector3(barLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(barIndex), 0);
+            SavedMeterChangerNoteData meter = notePosCalculator.FindLastMeterChanger(i);
+            for (int j = 0; j < NoteValue / 4 * meter.beatPerBar; j++)
+            {
+                noteLines[index].transform.localPosition = new Vector3(noteLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(barIndex + ((float)j / ((float)NoteValue / 4f))), 0);
+                noteLines[index].SetActive(true);
+                index++;
+            }
+        }
+        for (int i = noteLines.Count - 1; i >= index; i--)
+        {
+            noteLines[i].SetActive(false);
         }
     }
 }
@@ -299,8 +326,42 @@ class MapEditorNotePosCalculator : NotePosCalculator
         return BeatToSec(beat) * spacing + mapEditManager.firstBarLineYPos;
     }
 
-    public override int YposCloseToBeat(float y)
+    public new int YposCloseToBeat(float y)
     {
         return base.YposCloseToBeat(y - 2400 - mapEditManager.mapScrollViewContentYPos);
+    }
+
+    public override (int beat, int indexInBeat) YposCloseToBeatWithNoteValue(float y, int standardNoteValue)
+    {
+        return base.YposCloseToBeatWithNoteValue(y - 2400 - mapEditManager.mapScrollViewContentYPos, standardNoteValue);
+    }
+}
+
+class LineObjects
+{
+    List<GameObject> lines = new();
+
+    GameObject prefab;
+    Transform parentTransform;
+
+    public int Count => lines.Count;
+
+    public LineObjects(GameObject prefab, Transform parentTransform)
+    {
+        this.prefab = prefab;
+        this.parentTransform = parentTransform;
+    }
+
+    public GameObject this[int i]
+    {
+        get
+        {
+            while (lines.Count <= i)
+            {
+                GameObject line = Object.Instantiate(prefab, parentTransform);
+                lines.Add(line);
+            }
+            return lines[i];
+        }
     }
 }

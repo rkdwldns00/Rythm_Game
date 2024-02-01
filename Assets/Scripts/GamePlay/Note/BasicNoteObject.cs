@@ -95,7 +95,7 @@ public class SavedBasicNoteData : SavedNoteData, IGamePlaySummonable
 
     public override Note SummonGamePlayNote(NoteSummoner summoner)
     {
-        GameObject g = summoner.InstantiateNote(GamePlayNotePrefab, (startX + endX) / 2f, summoner.BeatToYpos(whenSummonBeat));
+        GameObject g = summoner.InstantiateNote(GamePlayNotePrefab, (startX + endX) / 2f, summoner.BeatToYpos(Beat));
         BasicNoteObject n = g.GetComponent<BasicNoteObject>();
         n?.SetData(this);
 
@@ -105,7 +105,9 @@ public class SavedBasicNoteData : SavedNoteData, IGamePlaySummonable
     public override MapEditorNote SummonMapEditorNote()
     {
         MapEditorBasicNote note = MapEditManager.Instance.SummonNote(MapEditManager.Instance.basicNotePrefab).GetComponent<MapEditorBasicNote>();
-        note.beat = whenSummonBeat;
+        note.beat = _beat;
+        note.standardNoteValue = standardNoteValue;
+        note.indexInBeat = indexInBeat;
         note.startX = startX;
         note.xSize = endX - startX;
         note.RefreshPosition();

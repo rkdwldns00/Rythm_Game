@@ -19,7 +19,7 @@ public class NoteSummoner : NotePosCalculator
 
             if (noteObject != null)
             {
-                noteObject.whenExecuteTime = BeatToSec(note.whenSummonBeat);
+                noteObject.whenExecuteTime = BeatToSec(note.Beat);
             }
 
         }
