@@ -10,7 +10,7 @@ public class MapEditorBasicNote : MapEditorHaveXposNote
         {
             startX = startX,
             endX = startX + xSize,
-            whenSummonBeat = beat,
+            Beat = beat,
             isCriticalNote = false
         };
     }

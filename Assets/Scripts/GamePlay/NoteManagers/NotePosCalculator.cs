@@ -34,7 +34,7 @@ public class NotePosCalculator
         int i;
         for (i = 0; i < beat; i++)
         {
-            if (bpmChangers.Count > 0 && bpmChangers[0].whenSummonBeat <= i)
+            if (bpmChangers.Count > 0 && bpmChangers[0].Beat <= i)
             {
                 curruntBpm = bpmChangers[0].bpm;
                 bpmChangers.RemoveAt(0);
@@ -58,15 +58,15 @@ public class NotePosCalculator
                 meters.Add(meter);
             }
         }
-        if (meters.Count == 0 || meters[0].whenSummonBeat != 0)
+        if (meters.Count == 0 || meters[0].Beat != 0)
         {
-            meters.Insert(0, new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, meter2 = STARTING_METER2, whenSummonBeat = 0 });
+            meters.Insert(0, new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, meter2 = STARTING_METER2, Beat = 0 });
         }
 
         int bar = 0;
         for (int i = 0; i < meters.Count - 1; i++)
         {
-            for (int j = meters[i].whenSummonBeat; j < meters[i + 1].whenSummonBeat; j = Mathf.Min(j + meters[i].beatPerBar, meters[i + 1].whenSummonBeat))
+            for (int j = meters[i]._beat; j < meters[i + 1].Beat; j = Mathf.Min(j + meters[i].beatPerBar, meters[i + 1]._beat))
             {
                 if (bar == barIndex)
                 {
@@ -76,7 +76,7 @@ public class NotePosCalculator
             }
         }
 
-        return meters[meters.Count - 1].whenSummonBeat + meters[meters.Count - 1].beatPerBar * (barIndex - bar);
+        return meters[meters.Count - 1]._beat + meters[meters.Count - 1].beatPerBar * (barIndex - bar);
     }
 
     float BeatPerBarLengthRate(float beat)
@@ -94,12 +94,12 @@ public class NotePosCalculator
 
         if (meters.Count > 0)
         {
-            meters.Sort((x, y) => { return x.whenSummonBeat - y.whenSummonBeat; });
+            meters.Sort((x, y) => (int)Mathf.Sign(x.Beat - y.Beat));
 
             int lastMeterChangerIndex = -1;
             for (int i = 0; i < meters.Count; i++)
             {
-                if (meters[i].whenSummonBeat <= beat)
+                if (meters[i].Beat <= beat)
                 {
                     lastMeterChangerIndex = i;
                 }
@@ -127,12 +127,12 @@ public class NotePosCalculator
 
         if (meters.Count > 0)
         {
-            meters.Sort((x, y) => { return x.whenSummonBeat - y.whenSummonBeat; });
+            meters.Sort((x, y) => (int)Mathf.Sign(x.Beat - y.Beat));
 
             int lastMeterChangerIndex = -1;
             for (int i = 0; i < meters.Count; i++)
             {
-                if (meters[i].whenSummonBeat <= beat)
+                if (meters[i].Beat <= beat)
                 {
                     lastMeterChangerIndex = i;
                 }
@@ -161,12 +161,12 @@ public class NotePosCalculator
 
         if (speedChangers.Count > 0)
         {
-            speedChangers.Sort((x, y) => { return x.whenSummonBeat - y.whenSummonBeat; });
+            speedChangers.Sort((x, y) => { return (int)Mathf.Sign(x.Beat - y.Beat); });
 
             int lastBpmChangerIndex = -1;
             for (int i = 0; i < speedChangers.Count; i++)
             {
-                if (speedChangers[i].whenSummonBeat <= beat)
+                if (speedChangers[i].Beat <= beat)
                 {
                     lastBpmChangerIndex = i;
                 }
@@ -176,8 +176,8 @@ public class NotePosCalculator
             float sumTime = 0;
             for (int i = 0; i < lastBpmChangerIndex + 1; i++)
             {
-                sumTime += (BeatToSec(speedChangers[i].whenSummonBeat) - BeatToSec(beatHis)) * curruntSpeed * spacing;
-                beatHis = speedChangers[i].whenSummonBeat;
+                sumTime += (BeatToSec(speedChangers[i].Beat) - BeatToSec(beatHis)) * curruntSpeed * spacing;
+                beatHis = speedChangers[i].Beat;
                 curruntSpeed = speedChangers[i].noteDownSpeedRate;
             }
             sumTime += (BeatToSec(beat) - BeatToSec(beatHis)) * curruntSpeed * spacing;

@@ -243,7 +243,7 @@ public class MapEditManager : MonoBehaviour
             startBpm = 120,
             startOffset = 0,
             thumnail = mapStandardSprite,
-            notes = new SavedNoteData[] { new SavedMeterChangerNoteData() { whenSummonBeat = 0, beatPerBar = 4, meter2 = 4 } }
+            notes = new SavedNoteData[] { new SavedMeterChangerNoteData() { Beat = 0, beatPerBar = 4, meter2 = 4 } }
         };
     }
 

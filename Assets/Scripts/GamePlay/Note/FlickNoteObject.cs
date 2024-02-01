@@ -108,7 +108,7 @@ public class SavedFlickNoteData : SavedNoteData, IGamePlaySummonable
     {
         FlickNoteObject n = null;
 
-        GameObject g = summoner.InstantiateNote(GamePlayNotePrefab, (this.startX + this.endX) / 2f, summoner.BeatToYpos(this.whenSummonBeat));
+        GameObject g = summoner.InstantiateNote(GamePlayNotePrefab, (this.startX + this.endX) / 2f, summoner.BeatToYpos(this.Beat));
         n = g.GetComponent<FlickNoteObject>();
         n?.SetData(this);
 

@@ -24,7 +24,7 @@ public class SavedMapData
     public void Sort()
     {
         List<SavedNoteData> list = notes.ToList();
-        list.Sort((a, b) => (a.whenSummonBeat - b.whenSummonBeat));
+        list.Sort((a, b) => (int)Mathf.Sign(a.Beat - b.Beat));
         notes = list.ToArray();
     }
 }
@@ -32,7 +32,23 @@ public class SavedMapData
 [Serializable]
 public abstract class SavedNoteData
 {
-    public int whenSummonBeat;
+    //JSON¶§¹®¿¡ public
+    public int _beat = 0;
+    public float Beat
+    {
+        get
+        {
+            return _beat + ((float)indexInBeat / ((float)standardNoteValue / 4f));
+        }
+        set
+        {
+            _beat = (int)value;
+        }
+    }
+
+    public int standardNoteValue = 1;
+    public int indexInBeat = 0;
+
     public abstract string serializedDataTitleName { get; }
 
     public abstract Note SummonGamePlayNote(NoteSummoner summoner);
