@@ -288,7 +288,7 @@ public class MapEditManager : MonoBehaviour
             beatLines[i].transform.localPosition = new Vector3(beatLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(i), 0);
             beatLines[i].SetActive(true);
         }
-        for(int i = beatOf100Bar + 1; i < beatLines.Count; i++)
+        for (int i = beatOf100Bar + 1; i < beatLines.Count; i++)
         {
             beatLines[i].SetActive(false);
         }
@@ -300,7 +300,7 @@ public class MapEditManager : MonoBehaviour
             SavedMeterChangerNoteData meter = notePosCalculator.FindLastMeterChanger(i);
             for (int j = 0; j < NoteValue / 4 * meter.beatPerBar; j++)
             {
-                noteLines[index].transform.localPosition = new Vector3(noteLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(barIndex + ((float)j / (meter.beatPerBar * NoteValue / 4)) * 4), 0);
+                noteLines[index].transform.localPosition = new Vector3(noteLines[i].transform.localPosition.x, notePosCalculator.BeatToYpos(barIndex + ((float)j / ((float)NoteValue / 4f))), 0);
                 noteLines[index].SetActive(true);
                 index++;
             }
