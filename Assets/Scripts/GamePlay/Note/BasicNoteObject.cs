@@ -37,19 +37,19 @@ public class BasicNoteObject : Note, IHitableNoteObject
         float t = Mathf.Abs(DistanceToHittingChecker);
         if (t <= perfectTiming)
         {
-            HitResultShower.ShowHitResult(HitResult.Perfect);
+            ComboManager.ProcessHitResult(HitResult.Perfect);
         }
         else if (t <= greatTiming)
         {
-            HitResultShower.ShowHitResult(HitResult.Great);
+            ComboManager.ProcessHitResult(HitResult.Great);
         }
         else if (t <= goodTiming)
         {
-            HitResultShower.ShowHitResult(HitResult.Good);
+            ComboManager.ProcessHitResult(HitResult.Good);
         }
         else
         {
-            HitResultShower.ShowHitResult(HitResult.Bad);
+            ComboManager.ProcessHitResult(HitResult.Bad);
         }
         Destroy(gameObject);
     }
