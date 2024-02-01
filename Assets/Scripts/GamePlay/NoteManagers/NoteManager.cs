@@ -37,6 +37,8 @@ public class NoteManager : MonoBehaviour
     }
     public static SavedMapData selectedMap;
 
+    public float mapStartDelayTime;
+
     public Transform field;
     public AudioSource audioSource;
 
@@ -77,11 +79,14 @@ public class NoteManager : MonoBehaviour
         yield return new WaitForSeconds(2);
         mapStartTime = Time.time;
 
-        if(selectedMap.bgm != null)
+        NoteSummoner noteSummoner = new NoteSummoner(selectedMap, field, cachedUserSettingNoteDownSpeed, -8);
+        noteSummoner.SummmonMap();
+        
+        yield return new WaitForSeconds(noteSummoner.BeatToSec(1) * 8);
+        if (selectedMap.bgm != null)
         {
             audioSource.PlayOneShot(selectedMap.bgm);
         }
-        new NoteSummoner(selectedMap, field, cachedUserSettingNoteDownSpeed).SummmonMap();
     }
 
     void Update()
