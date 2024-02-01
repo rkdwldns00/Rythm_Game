@@ -9,9 +9,6 @@ public abstract class MapEditorNote : MonoBehaviour
     public EventTrigger eventTrigger;
     public int beat;
 
-    public int standardNoteValue = 1;
-    public int indexInBeat = 0;
-
     protected RectTransform rectTransform;
 
     protected virtual void Awake()

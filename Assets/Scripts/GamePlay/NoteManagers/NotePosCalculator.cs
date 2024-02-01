@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 public class NotePosCalculator
@@ -196,8 +197,23 @@ public class NotePosCalculator
         int index = 0;
         do
         {
-            h = BeatToYpos(index++ + 0.5f);
+            h = BeatToYpos(index++);
         } while (h < y);
-        return index - 1;
+        return Mathf.Max(index - 2, 0);
+    }
+
+    public virtual (int beat, int indexInBeat) YposCloseToBeatWithNoteValue(float y, int standardNoteValue)
+    {
+        int beat = YposCloseToBeat(y);
+
+        float h;
+        int index = 0;
+        do
+        {
+            h = BeatToYpos((float)beat + (float)index / ((float)standardNoteValue / 4f));
+            index++;
+        } while (h < y);
+
+        return (beat, index - 1);
     }
 }
