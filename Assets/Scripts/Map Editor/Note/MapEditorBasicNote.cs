@@ -16,10 +16,4 @@ public class MapEditorBasicNote : MapEditorHaveXposNote
             isCriticalNote = false
         };
     }
-
-    public override void OnStopHolding(Vector2 inputPos, Vector2Int holdingSpaceLocalPosition)
-    {
-        base.OnStopHolding(inputPos, holdingSpaceLocalPosition);
-        Debug.Log(indexInBeat + "/" + standardNoteValue);
-    }
 }
