@@ -144,7 +144,7 @@ public class NotePosCalculator
                 return meters[lastMeterChangerIndex];
             }
         }
-        return null;
+        return new SavedMeterChangerNoteData() { beatPerBar = STARTING_BEAT_PER_BAR, meter2 = STARTING_METER2, Beat = 0 };
     }
 
     public virtual float BeatToYpos(float beat)
@@ -204,16 +204,23 @@ public class NotePosCalculator
 
     public virtual (int beat, int indexInBeat) YposCloseToBeatWithNoteValue(float y, int standardNoteValue)
     {
-        int beat = YposCloseToBeat(y);
-
         float h;
+
         int index = 0;
         do
         {
-            h = BeatToYpos((float)beat + (float)index / ((float)standardNoteValue / 4f));
-            index++;
+            h = BeatToYpos(index++);
         } while (h < y);
+        int beat = Mathf.Max(index - 2, 0);
 
-        return (beat, index - 1);
+        float h2;
+        int index2 = 0;
+        do
+        {
+            h2 = BeatToYpos((float)beat + (float)index2 / ((float)standardNoteValue / 4f));
+            index2++;
+        } while (h2 < y);
+
+        return (beat, index2 - 1);
     }
 }

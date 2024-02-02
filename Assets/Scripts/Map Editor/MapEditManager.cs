@@ -326,7 +326,7 @@ class MapEditorNotePosCalculator : NotePosCalculator
         return BeatToSec(beat) * spacing + mapEditManager.firstBarLineYPos;
     }
 
-    public new int YposCloseToBeat(float y)
+    public override int YposCloseToBeat(float y)
     {
         return base.YposCloseToBeat(y - 2400 - mapEditManager.mapScrollViewContentYPos);
     }
