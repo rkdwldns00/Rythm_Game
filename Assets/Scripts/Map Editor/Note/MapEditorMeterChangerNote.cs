@@ -56,7 +56,7 @@ public class MapEditorMeterChangerNote : MapEditorNote
         if (beat != beforeBeat)
         {
             beforeBeat = beat;
-            MapEditManager.Instance.RefreshNotesPosition();
+            //MapEditManager.Instance.RefreshNotesPosition();
         }
     }
 
