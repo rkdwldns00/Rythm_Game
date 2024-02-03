@@ -56,7 +56,8 @@ public class NoteManager : MonoBehaviour
     public GameObject speedChangerPrefab;
 
     public float mapTimer => Time.time - mapStartTime;
-    public float mapEndTime = 100;
+    public float mapEndTime;
+    bool isMapStarted = false;
     bool isMapEnd = false;
 
     float mapStartTime;
@@ -80,33 +81,56 @@ public class NoteManager : MonoBehaviour
     IEnumerator StartMap()
     {
         yield return new WaitForSeconds(2);
-        mapStartTime = Time.time;
-
 
         NoteSummoner noteSummoner = new NoteSummoner(selectedMap, field, cachedUserSettingNoteDownSpeed, -8);
-        noteSummoner.SummmonMap();
 
-        mapEndTime = noteSummoner.BeatToSec(noteSummoner.map.notes[selectedMap.notes.Length - 1].Beat) + noteSummoner.mapStartBeatSec + 2;
-
-        yield return new WaitForSeconds(noteSummoner.BeatToSec(1) * 8);
-        if (selectedMap.bgm != null)
+        float delayTime = noteSummoner.BeatToSec(1) * 8 + UserSettingOffset / 100f;
+        if (delayTime > 0)
         {
-            audioSource.PlayOneShot(selectedMap.bgm);
+            SummonNote();
+            yield return new WaitForSeconds(delayTime);
+            PlayBGM();
+        }
+        else
+        {
+            PlayBGM();
+            yield return new WaitForSeconds(-delayTime);
+            SummonNote();
+        }
+
+        void SummonNote()
+        {
+            mapStartTime = Time.time;
+            noteSummoner.SummmonMap();
+
+            mapEndTime = noteSummoner.BeatToSec(noteSummoner.map.notes[selectedMap.notes.Length - 1].Beat) + noteSummoner.mapStartBeatSec + 2;
+            
+            isMapStarted = true;
+        }
+        void PlayBGM()
+        {
+            if (selectedMap.bgm != null)
+            {
+                audioSource.PlayOneShot(selectedMap.bgm);
+            }
         }
     }
 
     void Update()
     {
-        noteListeners.RemoveAll((x) => x == null);
-        foreach (Transform t in noteListeners)
+        if (isMapStarted)
         {
-            t.localPosition += Time.deltaTime * noteDownSpeedRate * cachedUserSettingNoteDownSpeed * Vector3.down;
-        }
+            noteListeners.RemoveAll((x) => x == null);
+            foreach (Transform t in noteListeners)
+            {
+                t.localPosition += Time.deltaTime * noteDownSpeedRate * cachedUserSettingNoteDownSpeed * Vector3.down;
+            }
 
-        if (mapTimer > mapEndTime && !isMapEnd)
-        {
-            isMapEnd = true;
-            GameOver();
+            if (mapTimer > mapEndTime && !isMapEnd)
+            {
+                isMapEnd = true;
+                GameOver();
+            }
         }
     }
 
