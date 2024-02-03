@@ -9,7 +9,7 @@ public class MapInfoSettingUI : MonoBehaviour
     [SerializeField] private GameObject uiLayer;
     [Header("파일 설정 버튼")]
     [SerializeField] private Button saveButton;
-    [SerializeField] private Button loadButton;
+    [SerializeField] private Button bgmLoadButton;
     [Header("맵 정보 설정")]
     [SerializeField] private InputField mapNameInput;
     [SerializeField] private InputField mapArtistNameInput;
@@ -26,6 +26,7 @@ public class MapInfoSettingUI : MonoBehaviour
     private void Awake()
     {
         saveButton.onClick.AddListener(SaveMap);
+        bgmLoadButton.onClick.AddListener(LoadBgm);
         mapNameInput.onValueChanged.AddListener(SetMapName);
         mapArtistNameInput.onValueChanged.AddListener(SetArtistName);
         mapDesignerNameInput.onValueChanged.AddListener(SetDesignerName);
@@ -58,6 +59,11 @@ public class MapInfoSettingUI : MonoBehaviour
     private void SaveMap()
     {
         MapEditManager.Instance.SaveEditingMap();
+    }
+
+    private void LoadBgm()
+    {
+        MapEditManager.Instance.SelectMapBgm();
     }
 
     private void SetMapName(string name)
