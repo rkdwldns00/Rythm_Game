@@ -9,19 +9,19 @@ public class PauseMenu : MonoBehaviour
 
     public void OpenUI()
     {
-        Time.timeScale = 0;
+        NoteManager.instance.SetPause(true);
         Layer.SetActive(true);
     }
 
     public void CloseUI()
     {
-        Time.timeScale = 1;
+        NoteManager.instance.SetPause(false);
         Layer.SetActive(false);
     }
 
     public void Exit()
     {
-        Time.timeScale = 1;
+        NoteManager.instance.SetPause(false);
         NoteManager.instance.GameOver();
     }
 }

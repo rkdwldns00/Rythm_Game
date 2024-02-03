@@ -112,7 +112,8 @@ public class NoteManager : MonoBehaviour
         {
             if (selectedMap.bgm != null)
             {
-                audioSource.PlayOneShot(selectedMap.bgm);
+                audioSource.clip = selectedMap.bgm;
+                audioSource.Play();
             }
         }
     }
@@ -165,6 +166,20 @@ public class NoteManager : MonoBehaviour
         }
 
         hittedHitableNote?.Hit();
+    }
+
+    public void SetPause(bool isPause)
+    {
+        if(isPause)
+        {
+            Time.timeScale = 0;
+            audioSource.Pause();
+        }
+        else
+        {
+            Time.timeScale = 1;
+            audioSource.Play();
+        }
     }
 
     public void GameOver()
