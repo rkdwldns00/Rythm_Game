@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class NoteManager : MonoBehaviour
 {
@@ -55,6 +56,8 @@ public class NoteManager : MonoBehaviour
     public GameObject speedChangerPrefab;
 
     public float mapTimer => Time.time - mapStartTime;
+    public float mapEndTime = 100;
+    bool isMapEnd = false;
 
     float mapStartTime;
     float cachedUserSettingNoteDownSpeed;
@@ -79,9 +82,12 @@ public class NoteManager : MonoBehaviour
         yield return new WaitForSeconds(2);
         mapStartTime = Time.time;
 
+
         NoteSummoner noteSummoner = new NoteSummoner(selectedMap, field, cachedUserSettingNoteDownSpeed, -8);
         noteSummoner.SummmonMap();
-        
+
+        mapEndTime = noteSummoner.BeatToSec(noteSummoner.map.notes[selectedMap.notes.Length - 1].Beat) + noteSummoner.mapStartBeatSec + 2;
+
         yield return new WaitForSeconds(noteSummoner.BeatToSec(1) * 8);
         if (selectedMap.bgm != null)
         {
@@ -95,6 +101,12 @@ public class NoteManager : MonoBehaviour
         foreach (Transform t in noteListeners)
         {
             t.localPosition += Time.deltaTime * noteDownSpeedRate * cachedUserSettingNoteDownSpeed * Vector3.down;
+        }
+
+        if (mapTimer > mapEndTime && !isMapEnd)
+        {
+            isMapEnd = true;
+            GameOver();
         }
     }
 
@@ -128,6 +140,11 @@ public class NoteManager : MonoBehaviour
         }
 
         hittedHitableNote?.Hit();
+    }
+
+    public void GameOver()
+    {
+        SceneManager.LoadScene("StartScene");
     }
 }
 

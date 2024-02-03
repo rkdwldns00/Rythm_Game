@@ -7,7 +7,7 @@ public class NoteSummoner : NotePosCalculator
     readonly Transform field;
 
     float addedYpos;
-    float addedSec;
+    public float mapStartBeatSec;
     int startBeat;
 
     public NoteSummoner(SavedMapData map, Transform field, float noteDownSpeed,int startBeat) : base(noteDownSpeed, map)
@@ -15,7 +15,7 @@ public class NoteSummoner : NotePosCalculator
         this.field = field;
         this.startBeat = startBeat;
         addedYpos = BeatToYpos(1) * -startBeat;
-        addedSec = BeatToSec(1) * -startBeat;
+        mapStartBeatSec = BeatToSec(1) * -startBeat;
     }
 
     public void SummmonMap()
@@ -26,7 +26,7 @@ public class NoteSummoner : NotePosCalculator
 
             if (noteObject != null)
             {
-                noteObject.whenExecuteTime = BeatToSec(note.Beat) + addedSec;
+                noteObject.whenExecuteTime = BeatToSec(note.Beat) + mapStartBeatSec;
             }
 
         }

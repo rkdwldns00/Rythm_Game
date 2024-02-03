@@ -22,6 +22,6 @@ public class PauseMenu : MonoBehaviour
     public void Exit()
     {
         Time.timeScale = 1;
-        SceneManager.LoadScene("StartScene");
+        NoteManager.instance.GameOver();
     }
 }
