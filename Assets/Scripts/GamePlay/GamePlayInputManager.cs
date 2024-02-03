@@ -7,11 +7,14 @@ public class GamePlayInputManager : InputManager
 {
     void Update()
     {
-//#if UNITY_EDITOR
-//        PcInput();
-//#else
-MobileInput();
-//#endif
+        if(!NoteManager.instance.isPaused)
+        {
+            //#if UNITY_EDITOR
+            //        PcInput();
+            //#else
+            MobileInput();
+            //#endif
+        }
     }
 
     void MobileInput()

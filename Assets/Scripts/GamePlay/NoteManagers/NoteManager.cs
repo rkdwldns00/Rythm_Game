@@ -55,6 +55,7 @@ public class NoteManager : MonoBehaviour
     public GameObject criticalFlickNotePrefab;
     public GameObject speedChangerPrefab;
 
+    public bool isPaused => Time.timeScale == 0f;
     public float mapTimer => Time.time - mapStartTime;
     public float mapEndTime;
     bool isMapStarted = false;
@@ -118,7 +119,7 @@ public class NoteManager : MonoBehaviour
 
     void Update()
     {
-        if (isMapStarted)
+        if (isMapStarted && !isPaused)
         {
             noteListeners.RemoveAll((x) => x == null);
             foreach (Transform t in noteListeners)
