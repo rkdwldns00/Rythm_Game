@@ -19,7 +19,11 @@ public class MapEditManager : MonoBehaviour
     public GameObject meterChangerNotePrefab;
     [Header("스크롤 관리용 참조")]
     [SerializeField] Transform mapScrollViewContent;
-    public float mapScrollViewContentYPos => mapScrollViewContent.localPosition.y;
+    public float mapScrollViewContentYPos
+    {
+        get => mapScrollViewContent.localPosition.y;
+        set => mapScrollViewContent.localPosition = new Vector3(mapScrollViewContent.localPosition.x, value, 0);
+    }
     [SerializeField] Transform mapScrollInLine;
     [Header("마디선 프리펩")]
     [SerializeField] GameObject noteLinePrefab;
@@ -318,7 +322,10 @@ public class MapEditManager : MonoBehaviour
 
     public void SetSpacing(float spacing)
     {
+        Debug.Log(mapScrollViewContentYPos);
+        float rate = mapScrollViewContentYPos / notePosCalculator.spacing;
         notePosCalculator.spacing = spacing;
+        mapScrollViewContentYPos = rate * spacing;
         RefreshNotesPosition();
     }
 }
