@@ -310,6 +310,12 @@ public class MapEditManager : MonoBehaviour
             noteLines[i].SetActive(false);
         }
     }
+
+    public void SetSpacing(float spacing)
+    {
+        notePosCalculator.spacing = spacing;
+        RefreshNotesPosition();
+    }
 }
 
 class MapEditorNotePosCalculator : NotePosCalculator

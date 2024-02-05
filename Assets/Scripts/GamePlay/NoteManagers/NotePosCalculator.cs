@@ -8,7 +8,7 @@ public class NotePosCalculator
     const int STARTING_BEAT_PER_BAR = 4;
     const int STARTING_METER2 = 4;
 
-    public readonly float spacing;
+    public float spacing;
     public readonly SavedMapData map;
 
     public NotePosCalculator(float spacing, SavedMapData map)
