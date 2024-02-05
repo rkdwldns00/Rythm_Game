@@ -26,7 +26,7 @@ public abstract class MapEditorHaveXposNote : MapEditorNote
         RefreshPosition(startX, newXSize);
     }
 
-    public void RefreshPosition(int startX,int xSize)
+    public void RefreshPosition(int startX, int xSize)
     {
         base.RefreshPosition();
         SetAnchor(startX, xSize);
@@ -69,22 +69,22 @@ public abstract class MapEditorHaveXposNote : MapEditorNote
 
     private void SetSidePos(int startX, int xSize)
     {
-        this.startX = Mathf.Clamp(startX, 0, Mathf.Min(this.startX + this.xSize - 1, MapEditManager.LineContourCount - 2));
-        this.xSize = Mathf.Clamp(xSize, 1, MapEditManager.LineContourCount - 1 - this.startX);
+        this.startX = Mathf.Clamp(startX, 1, Mathf.Min(this.startX + this.xSize - 1, MapEditManager.LineContourCount - 3));
+        this.xSize = Mathf.Clamp(xSize, 1, MapEditManager.LineContourCount - 2 - this.startX);
 
         SetAnchor(this.startX, this.xSize);
     }
 
     public void SetLeftSide()
     {
-        int x = MapEditManager.Instance.GetInputVerticalLine();
+        int x = Mathf.Clamp(MapEditManager.Instance.GetInputVerticalLine(), 1, MapEditManager.LineContourCount - 2);
         int xDelta = x - startX;
         SetSidePos(startX + xDelta, xSize - xDelta);
     }
 
     public void SetRightSide()
     {
-        int x = MapEditManager.Instance.GetInputVerticalLine();
+        int x = Mathf.Clamp(MapEditManager.Instance.GetInputVerticalLine(), 1, MapEditManager.LineContourCount - 2);
         int xDelta = x - (startX + xSize);
         SetSidePos(startX, xSize + xDelta);
     }
