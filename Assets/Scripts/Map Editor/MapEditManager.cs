@@ -274,6 +274,11 @@ public class MapEditManager : MonoBehaviour
         }
     }
 
+    public void UnSelectMapEditorNote()
+    {
+        SelectMapEditorNote(null);
+    }
+
     public void RefreshNotesPosition()
     {
         CachingEditingNotes();
