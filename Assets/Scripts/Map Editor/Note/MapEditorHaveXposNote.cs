@@ -15,16 +15,21 @@ public abstract class MapEditorHaveXposNote : MapEditorNote
 
     public override void OnHolding(Vector2 inputPos, Vector2Int holdingSpaceLocalPosition)
     {
-        startX = Mathf.Min(MapEditManager.Instance.XposToCloseVerticalLineIndex(inputPos.x) + holdingSpaceLocalPosition.x, MapEditManager.LineContourCount - 2);
-        int newXSize = Mathf.Min(xSize, MapEditManager.LineContourCount - 1 - startX);
-
-        SetAnchor(startX, newXSize);
+        startX = Mathf.Clamp(MapEditManager.Instance.XposToCloseVerticalLineIndex(inputPos.x) + holdingSpaceLocalPosition.x, 1, MapEditManager.LineContourCount - 3);
+        int newXSize = Mathf.Min(xSize, MapEditManager.LineContourCount - 2 - startX);
 
         standardNoteValue = MapEditManager.Instance.NoteValue;
         var a = MapEditManager.Instance.notePosCalculator.YposCloseToBeatWithNoteValue(inputPos.y, standardNoteValue);
         beat = a.beat + holdingSpaceLocalPosition.y;
         indexInBeat = a.indexInBeat;
-        RefreshPosition();
+
+        RefreshPosition(startX, newXSize);
+    }
+
+    public void RefreshPosition(int startX,int xSize)
+    {
+        base.RefreshPosition();
+        SetAnchor(startX, xSize);
     }
 
     public override void RefreshPosition()
