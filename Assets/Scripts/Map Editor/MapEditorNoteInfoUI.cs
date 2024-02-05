@@ -11,12 +11,13 @@ public abstract class MapEditorNoteInfoUI<T> : MonoBehaviour, MapEditorNoteInfoU
 {
     protected T referencedNote { get; private set; }
 
-    public void OnSelectNote(MapEditorNote note)
+    public virtual void OnSelectNote(MapEditorNote note)
     {
         if (note is T n)
         {
             referencedNote = n;
             gameObject.SetActive(true);
+            OnActive();
         }
         else
         {

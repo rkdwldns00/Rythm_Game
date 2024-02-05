@@ -30,13 +30,15 @@ public class MapEditManager : MonoBehaviour
     [SerializeField] GameObject beatLinePrefab;
     [SerializeField] GameObject barLinePrefab;
     [Header("노트 정보 설정 UI")]
+    [SerializeField] GameObject[] ifNoteIsNullInfoUIObject;
     [SerializeField] GameObject[] noteInfoUIObjects;
     [Header("기타 설정")]
-    public float spacing;
+    public float defaultSpacing;
     public float firstBarLineYPos = -1800;
     public RectTransform[] verticalLine;
     private Sprite mapStandardSprite;
 
+    MapEditorNoteInfoUI[] ifNoteIsNullInfoUI;
     MapEditorNoteInfoUI[] noteInfoUI;
 
     public NotePosCalculator notePosCalculator;
@@ -83,7 +85,7 @@ public class MapEditManager : MonoBehaviour
             Debug.LogWarning("편집할 맵이 존재하지 않습니다!");
         }
 
-        notePosCalculator = new MapEditorNotePosCalculator(spacing, EditingMap, this);
+        notePosCalculator = new MapEditorNotePosCalculator(defaultSpacing, EditingMap, this);
         noteLines = new LineObjects(noteLinePrefab, mapScrollInLine);
         beatLines = new LineObjects(beatLinePrefab, mapScrollInLine);
     }
@@ -112,6 +114,12 @@ public class MapEditManager : MonoBehaviour
         for (int i = 0; i < noteInfoUIObjects.Length; i++)
         {
             noteInfoUI[i] = noteInfoUIObjects[i].GetComponent<MapEditorNoteInfoUI>();
+        }
+
+        ifNoteIsNullInfoUI = new MapEditorNoteInfoUI[ifNoteIsNullInfoUIObject.Length];
+        for(int i = 0; i < ifNoteIsNullInfoUIObject.Length; i++)
+        {
+            ifNoteIsNullInfoUI[i] = ifNoteIsNullInfoUIObject[i].GetComponent<MapEditorNoteInfoUI>();
         }
     }
 
@@ -272,9 +280,19 @@ public class MapEditManager : MonoBehaviour
 
     public void SelectMapEditorNote(MapEditorNote note)
     {
-        for (int i = 0; i < noteInfoUI.Length; i++)
+        if (note == null)
         {
-            noteInfoUI[i].OnSelectNote(note);
+            for (int i = 0; i < ifNoteIsNullInfoUI.Length; i++)
+            {
+                ifNoteIsNullInfoUI[i].OnSelectNote(null);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < noteInfoUI.Length; i++)
+            {
+                noteInfoUI[i].OnSelectNote(note);
+            }
         }
     }
 
@@ -322,7 +340,6 @@ public class MapEditManager : MonoBehaviour
 
     public void SetSpacing(float spacing)
     {
-        Debug.Log(mapScrollViewContentYPos);
         float rate = mapScrollViewContentYPos / notePosCalculator.spacing;
         notePosCalculator.spacing = spacing;
         mapScrollViewContentYPos = rate * spacing;
