@@ -1398,9 +1398,9 @@ MonoBehaviour:
   noteLinePrefab: {fileID: 4089383824615909112, guid: 6a636bbf96e19f64bb017f3486f728fa, type: 3}
   beatLinePrefab: {fileID: 4089383824615909112, guid: 491f5faba59d81d459c0c9cbe74fa669, type: 3}
   barLinePrefab: {fileID: 4089383824615909112, guid: 1694a5643868baf49b99f9212a2c05b2, type: 3}
-  ifNoteIsNullInfoUIObject:
-  - {fileID: 282497065}
+  ifNoteIsNullInfoUIObject: []
   noteInfoUIObjects:
+  - {fileID: 282497065}
   - {fileID: 1423828286}
   - {fileID: 212968034}
   defaultSpacing: 500

@@ -30,7 +30,6 @@ public class MapEditManager : MonoBehaviour
     [SerializeField] GameObject beatLinePrefab;
     [SerializeField] GameObject barLinePrefab;
     [Header("노트 정보 설정 UI")]
-    [SerializeField] GameObject[] ifNoteIsNullInfoUIObject;
     [SerializeField] GameObject[] noteInfoUIObjects;
     [Header("기타 설정")]
     public float defaultSpacing;
@@ -38,7 +37,6 @@ public class MapEditManager : MonoBehaviour
     public RectTransform[] verticalLine;
     private Sprite mapStandardSprite;
 
-    MapEditorNoteInfoUI[] ifNoteIsNullInfoUI;
     MapEditorNoteInfoUI[] noteInfoUI;
 
     public NotePosCalculator notePosCalculator;
@@ -116,11 +114,7 @@ public class MapEditManager : MonoBehaviour
             noteInfoUI[i] = noteInfoUIObjects[i].GetComponent<MapEditorNoteInfoUI>();
         }
 
-        ifNoteIsNullInfoUI = new MapEditorNoteInfoUI[ifNoteIsNullInfoUIObject.Length];
-        for(int i = 0; i < ifNoteIsNullInfoUIObject.Length; i++)
-        {
-            ifNoteIsNullInfoUI[i] = ifNoteIsNullInfoUIObject[i].GetComponent<MapEditorNoteInfoUI>();
-        }
+        SelectMapEditorNote(null);
     }
 
     public void Update()
@@ -280,19 +274,9 @@ public class MapEditManager : MonoBehaviour
 
     public void SelectMapEditorNote(MapEditorNote note)
     {
-        if (note == null)
+        for (int i = 0; i < noteInfoUI.Length; i++)
         {
-            for (int i = 0; i < ifNoteIsNullInfoUI.Length; i++)
-            {
-                ifNoteIsNullInfoUI[i].OnSelectNote(null);
-            }
-        }
-        else
-        {
-            for (int i = 0; i < noteInfoUI.Length; i++)
-            {
-                noteInfoUI[i].OnSelectNote(note);
-            }
+            noteInfoUI[i].OnSelectNote(note);
         }
     }
 
