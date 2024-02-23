@@ -12,7 +12,7 @@ public class BasicNoteObject : Note, IHitableNoteObject
     [SerializeField] float badTiming = 0.13f;
     [SerializeField] AudioClip keySound;
 
-    int score;
+    public float score { get; set; }
     float startX;
     float endX;
 
@@ -33,7 +33,6 @@ public class BasicNoteObject : Note, IHitableNoteObject
 
     public void Hit()
     {
-        if (keySound != null) SoundManager.PlaySound(keySound);
 
         float t = Mathf.Abs(DistanceToHittingChecker);
         HitResult hitResult = HitResult.Miss;
@@ -49,9 +48,14 @@ public class BasicNoteObject : Note, IHitableNoteObject
         {
             hitResult = HitResult.Good;
         }
-        else
+        else if (t <= badTiming)
         {
             hitResult = HitResult.Bad;
+        }
+
+        if (hitResult != HitResult.Miss)
+        {
+            if (keySound != null) SoundManager.PlaySound(keySound);
         }
         ComboManager.ProcessHitResult(hitResult, score);
         Destroy(gameObject);
@@ -65,6 +69,7 @@ public class BasicNoteObject : Note, IHitableNoteObject
         rect?.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, NoteManager.NOTE_Y_SIZE / rect.localScale.y);
         startX = basic.startX;
         endX = basic.endX;
+        score = basic.totalScore;
     }
 }
 

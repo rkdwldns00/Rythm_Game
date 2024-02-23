@@ -12,8 +12,7 @@ public class ComboManager : MonoBehaviour
 
     static ComboManager instance;
     public int comboCount { get; private set; }
-    public float score { get; private set; }
-    float totalScore;
+    float scoreRate;
     float size = 1;
 
     private void Awake()
@@ -25,6 +24,11 @@ public class ComboManager : MonoBehaviour
     {
         comboText.gameObject.SetActive(false);
         hitResultText.gameObject.SetActive(false);
+
+        GameManager.Instance.score = 0;
+        GameManager.Instance.hitResultCounts = new int[5];
+        GameManager.Instance.showResultUI = true;
+        GameManager.Instance.maxCombo = 0;
     }
 
     private void Update()
@@ -46,17 +50,30 @@ public class ComboManager : MonoBehaviour
         {
             totalScore += note.totalScore;
         }
-        instance.totalScore = totalScore;
+        instance.scoreRate = MAX_SCORE / totalScore;
     }
 
     public static void ProcessHitResult(HitResult hitResult, float originScore)
     {
-        instance.ProcessCombo(hitResult >= HitResult.Great);
-        instance.ShowHitResult(hitResult);
+        instance.processHitResultLogic(hitResult, originScore);
+    }
 
-        float noteScore = MAX_SCORE / instance.totalScore * originScore;
-        float rate = (float)hitResult / 4f;
-        instance.score += noteScore * rate;
+    void processHitResultLogic(HitResult hitResult, float originScore)
+    {
+        ProcessCombo(hitResult >= HitResult.Great);
+        ShowHitResult(hitResult);
+
+        if (originScore != 0)
+        {
+            float noteScore = scoreRate * originScore;
+            if (hitResult != HitResult.Miss)
+            {
+                float rate = (float)hitResult / 4f;
+                GameManager.Instance.score += noteScore * rate;
+            }
+
+        }
+        GameManager.Instance.hitResultCounts[(int)hitResult] += 1;
     }
 
     private void ShowHitResult(HitResult hitResult)
@@ -94,6 +111,8 @@ public class ComboManager : MonoBehaviour
         if (isAddCombo)
         {
             comboCount++;
+            GameManager.Instance.maxCombo = Mathf.Max(comboCount, GameManager.Instance.maxCombo);
+
             comboText.text = comboCount.ToString();
             comboText.gameObject.SetActive(true);
         }

@@ -7,9 +7,10 @@ using UnityEngine.UI;
 public class MenuManager : MonoBehaviour
 {
     const string MAP_RESOURCE_PATH = "MapDatas/";
-    static GameObject currentMenu;
+    GameObject currentMenu = null;
 
     [SerializeField] GameObject startMenu;
+    [SerializeField] GameObject gameResultUI;
 
     public static string NickName
     {
@@ -25,11 +26,20 @@ public class MenuManager : MonoBehaviour
 
     private void Start()
     {
-        currentMenu = startMenu;
         Screen.orientation = ScreenOrientation.LandscapeRight;
+        currentMenu = startMenu;
 
         MapFileUtil.MakeMapListFile();
         MapFileUtil.MakeMapDatasFolder();
+
+        if(GameManager.Instance.showResultUI)
+        {
+            SetMenu(gameResultUI);
+        }
+        else
+        {
+            SetMenu(startMenu);
+        }
     }
 
     public void SetMenu(GameObject menu)
