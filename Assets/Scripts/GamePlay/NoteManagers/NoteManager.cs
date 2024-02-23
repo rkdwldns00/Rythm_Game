@@ -84,6 +84,7 @@ public class NoteManager : MonoBehaviour
         yield return new WaitForSeconds(2);
 
         NoteSummoner noteSummoner = new NoteSummoner(selectedMap, field, cachedUserSettingNoteDownSpeed, -8);
+        ComboManager.SetMapData(selectedMap);
 
         float delayTime = noteSummoner.BeatToSec(1) * 8 + UserSettingOffset / 100f;
         if (delayTime > 0)
@@ -105,7 +106,7 @@ public class NoteManager : MonoBehaviour
             noteSummoner.SummmonMap();
 
             mapEndTime = noteSummoner.BeatToSec(noteSummoner.map.notes[selectedMap.notes.Length - 1].Beat) + noteSummoner.mapStartBeatSec + 2;
-            
+
             isMapStarted = true;
         }
         void PlayBGM()
@@ -123,9 +124,15 @@ public class NoteManager : MonoBehaviour
         if (isMapStarted && !isPaused)
         {
             noteListeners.RemoveAll((x) => x == null);
-            foreach (Transform t in noteListeners)
+            for (int i = 0; i < noteListeners.Count; i++)
             {
-                t.localPosition += Time.deltaTime * noteDownSpeedRate * cachedUserSettingNoteDownSpeed * Vector3.down;
+                Note note = noteListeners[i].GetComponent<Note>();
+                if (note != null && note.DistanceToHittingChecker > 0.3f)
+                {
+                    (note as IHitableNoteObject)?.Hit();
+                }
+
+                noteListeners[i].localPosition += Time.deltaTime * noteDownSpeedRate * cachedUserSettingNoteDownSpeed * Vector3.down;
             }
 
             if (mapTimer > mapEndTime && !isMapEnd)
@@ -170,7 +177,7 @@ public class NoteManager : MonoBehaviour
 
     public void SetPause(bool isPause)
     {
-        if(isPause)
+        if (isPause)
         {
             Time.timeScale = 0;
             audioSource.Pause();

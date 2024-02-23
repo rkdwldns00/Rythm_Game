@@ -5,11 +5,14 @@ using UnityEngine.UI;
 
 public class ComboManager : MonoBehaviour
 {
+    const float MAX_SCORE = 1000000f;
+
     public Text comboText;
     public Text hitResultText;
 
     static ComboManager instance;
-    int comboCount;
+    public int comboCount { get; private set; }
+    float scoreRate;
     float size = 1;
 
     private void Awake()
@@ -21,6 +24,11 @@ public class ComboManager : MonoBehaviour
     {
         comboText.gameObject.SetActive(false);
         hitResultText.gameObject.SetActive(false);
+
+        GameManager.Instance.score = 0;
+        GameManager.Instance.hitResultCounts = new int[5];
+        GameManager.Instance.showResultUI = true;
+        GameManager.Instance.maxCombo = 0;
     }
 
     private void Update()
@@ -29,16 +37,43 @@ public class ComboManager : MonoBehaviour
         hitResultText.fontSize = (int)(80f * size);
         comboText.fontSize = (int)(80f * size);
 
-        if(size <= 1.01f)
+        if (size <= 1.01f)
         {
             hitResultText.gameObject.SetActive(false);
         }
     }
 
-    public static void ProcessHitResult(HitResult hitResult)
+    public static void SetMapData(SavedMapData mapData)
     {
-        instance.ProcessCombo(hitResult >= HitResult.Great);
-        instance.ShowHitResult(hitResult);
+        float totalScore = 0f;
+        foreach (SavedNoteData note in mapData.notes)
+        {
+            totalScore += note.totalScore;
+        }
+        instance.scoreRate = MAX_SCORE / totalScore;
+    }
+
+    public static void ProcessHitResult(HitResult hitResult, float originScore)
+    {
+        instance.processHitResultLogic(hitResult, originScore);
+    }
+
+    void processHitResultLogic(HitResult hitResult, float originScore)
+    {
+        ProcessCombo(hitResult >= HitResult.Great);
+        ShowHitResult(hitResult);
+
+        if (originScore != 0)
+        {
+            float noteScore = scoreRate * originScore;
+            if (hitResult != HitResult.Miss)
+            {
+                float rate = (float)hitResult / 4f;
+                GameManager.Instance.score += noteScore * rate;
+            }
+
+        }
+        GameManager.Instance.hitResultCounts[(int)hitResult] += 1;
     }
 
     private void ShowHitResult(HitResult hitResult)
@@ -76,6 +111,8 @@ public class ComboManager : MonoBehaviour
         if (isAddCombo)
         {
             comboCount++;
+            GameManager.Instance.maxCombo = Mathf.Max(comboCount, GameManager.Instance.maxCombo);
+
             comboText.text = comboCount.ToString();
             comboText.gameObject.SetActive(true);
         }

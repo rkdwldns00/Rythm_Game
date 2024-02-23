@@ -5,6 +5,7 @@ using UnityEngine;
 public sealed class SavedBPMChangeNoteData : SavedNoteData
 {
     public override string serializedDataTitleName => "BD";
+    public override float totalScore => 0;
 
     public float bpm;
 

@@ -12,6 +12,7 @@ public class FlickNoteObject : Note, IHitableNoteObject
 
     float startX;
     float endX;
+    float score;
 
     float rotation;
 
@@ -41,22 +42,24 @@ public class FlickNoteObject : Note, IHitableNoteObject
         if (keySound != null) SoundManager.PlaySound(keySound);
 
         float t = Mathf.Abs(DistanceToHittingChecker);
+        HitResult hitResult = HitResult.Miss;
         if (t <= perfectTiming)
         {
-            ComboManager.ProcessHitResult(HitResult.Perfect);
+            hitResult = HitResult.Perfect;
         }
         else if (t <= greatTiming)
         {
-            ComboManager.ProcessHitResult(HitResult.Great);
+            hitResult = HitResult.Great;
         }
         else if (t <= goodTiming)
         {
-            ComboManager.ProcessHitResult(HitResult.Good);
+            hitResult = HitResult.Good;
         }
         else
         {
-            ComboManager.ProcessHitResult(HitResult.Bad);
+            hitResult = HitResult.Bad;
         }
+        ComboManager.ProcessHitResult(hitResult, score);
         Destroy(gameObject);
     }
 
@@ -69,12 +72,14 @@ public class FlickNoteObject : Note, IHitableNoteObject
         endX = data.endX;
         rotation = data.rotation;
         needTochStart = data.needTouchStart;
+        score = data.totalScore;
     }
 }
 
 public class SavedFlickNoteData : SavedNoteData, IGamePlaySummonable
 {
     public override string serializedDataTitleName => "FN";
+    public override float totalScore => 0;
 
     public virtual GameObject GamePlayNotePrefab
     {

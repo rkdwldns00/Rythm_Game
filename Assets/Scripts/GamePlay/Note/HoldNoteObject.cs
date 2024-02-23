@@ -15,6 +15,7 @@ public class HoldNoteObject : Note
     float[] hitCheckTiming = new float[0];
     public Dictionary<float, GameObject> tickObjects { get; set; } = new Dictionary<float, GameObject>();
     int checkIndex = 0;
+    public float noteScore { get; set; }
 
     private void Start()
     {
@@ -46,11 +47,11 @@ public class HoldNoteObject : Note
 
             if (isTouch)
             {
-                ComboManager.ProcessHitResult(HitResult.Perfect);
+                ComboManager.ProcessHitResult(HitResult.Perfect, noteScore);
             }
             else
             {
-                ComboManager.ProcessHitResult(HitResult.Miss);
+                ComboManager.ProcessHitResult(HitResult.Miss, noteScore);
             }
 
             if (tickObjects.Count > 0 && tickObjects.ContainsKey(hitCheckTiming[checkIndex]))
@@ -223,6 +224,21 @@ public class HoldNoteObject : Note
 public class SavedHoldNoteData : SavedNoteData, IGamePlaySummonable
 {
     public override string serializedDataTitleName => "HN";
+    public override float totalScore
+    {
+        get
+        {
+            if (curveData.Length == 0)
+            {
+                return noteScore * 2;
+            }
+            else
+            {
+                return noteScore * (curveData[curveData.Length - 1].spawnBeat - curveData[0].spawnBeat + 2);
+            }
+        }
+    }
+    public float noteScore => 100;
 
     public virtual GameObject GamePlayNotePrefab
     {
@@ -299,6 +315,8 @@ public class SavedHoldNoteData : SavedNoteData, IGamePlaySummonable
 
             hitCheckTiming.Sort((a, b) => (int)Mathf.Sign(a - b));
             n.SetHitCheckTiming(hitCheckTiming.ToArray());
+
+            n.noteScore = noteScore;
         }
 
         return noteObject;

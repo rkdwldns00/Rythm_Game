@@ -50,6 +50,7 @@ public abstract class SavedNoteData
     public int indexInBeat = 0;
 
     public abstract string serializedDataTitleName { get; }
+    public abstract float totalScore { get; }
 
     public abstract Note SummonGamePlayNote(NoteSummoner summoner);
     public abstract MapEditorNote SummonMapEditorNote();
