@@ -5,11 +5,15 @@ using UnityEngine.UI;
 
 public class ComboManager : MonoBehaviour
 {
+    const float MAX_SCORE = 1000000f;
+
     public Text comboText;
     public Text hitResultText;
 
     static ComboManager instance;
-    int comboCount;
+    public int comboCount { get; private set; }
+    public float score { get; private set; }
+    float totalScore;
     float size = 1;
 
     private void Awake()
@@ -29,16 +33,30 @@ public class ComboManager : MonoBehaviour
         hitResultText.fontSize = (int)(80f * size);
         comboText.fontSize = (int)(80f * size);
 
-        if(size <= 1.01f)
+        if (size <= 1.01f)
         {
             hitResultText.gameObject.SetActive(false);
         }
     }
 
-    public static void ProcessHitResult(HitResult hitResult)
+    public static void SetMapData(SavedMapData mapData)
+    {
+        float totalScore = 0f;
+        foreach (SavedNoteData note in mapData.notes)
+        {
+            totalScore += note.totalScore;
+        }
+        instance.totalScore = totalScore;
+    }
+
+    public static void ProcessHitResult(HitResult hitResult, float originScore)
     {
         instance.ProcessCombo(hitResult >= HitResult.Great);
         instance.ShowHitResult(hitResult);
+
+        float noteScore = MAX_SCORE / instance.totalScore * originScore;
+        float rate = (float)hitResult / 4f;
+        instance.score += noteScore * rate;
     }
 
     private void ShowHitResult(HitResult hitResult)

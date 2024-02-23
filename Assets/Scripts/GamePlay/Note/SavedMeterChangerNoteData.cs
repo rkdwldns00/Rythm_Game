@@ -1,6 +1,7 @@
 public class SavedMeterChangerNoteData : SavedNoteData
 {
     public override string serializedDataTitleName => "MD";
+    public override float totalScore => 0;
 
     public int beatPerBar;
     public int meter2;

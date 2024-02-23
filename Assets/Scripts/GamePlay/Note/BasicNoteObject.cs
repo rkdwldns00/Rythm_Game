@@ -12,6 +12,7 @@ public class BasicNoteObject : Note, IHitableNoteObject
     [SerializeField] float badTiming = 0.13f;
     [SerializeField] AudioClip keySound;
 
+    int score;
     float startX;
     float endX;
 
@@ -35,22 +36,24 @@ public class BasicNoteObject : Note, IHitableNoteObject
         if (keySound != null) SoundManager.PlaySound(keySound);
 
         float t = Mathf.Abs(DistanceToHittingChecker);
+        HitResult hitResult = HitResult.Miss;
         if (t <= perfectTiming)
         {
-            ComboManager.ProcessHitResult(HitResult.Perfect);
+            hitResult = HitResult.Perfect;
         }
         else if (t <= greatTiming)
         {
-            ComboManager.ProcessHitResult(HitResult.Great);
+            hitResult = HitResult.Great;
         }
         else if (t <= goodTiming)
         {
-            ComboManager.ProcessHitResult(HitResult.Good);
+            hitResult = HitResult.Good;
         }
         else
         {
-            ComboManager.ProcessHitResult(HitResult.Bad);
+            hitResult = HitResult.Bad;
         }
+        ComboManager.ProcessHitResult(hitResult, score);
         Destroy(gameObject);
     }
 
@@ -68,6 +71,7 @@ public class BasicNoteObject : Note, IHitableNoteObject
 public class SavedBasicNoteData : SavedNoteData, IGamePlaySummonable
 {
     public override string serializedDataTitleName => "BN";
+    public override float totalScore => 100;
 
     public virtual GameObject GamePlayNotePrefab
     {
