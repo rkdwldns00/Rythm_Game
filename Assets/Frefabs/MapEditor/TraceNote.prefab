@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 980207650856122205}
   - component: {fileID: 980207650856122206}
   - component: {fileID: 5326846839781894358}
-  - component: {fileID: 5646349834393393432}
+  - component: {fileID: 8804902459197004643}
   m_Layer: 5
-  m_Name: BasicNote 1
+  m_Name: TraceNote
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -63,7 +63,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.64705884, g: 1, b: 0.64705884, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Delegates: []
---- !u!114 &5646349834393393432
+--- !u!114 &8804902459197004643
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -102,7 +102,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 980207650856122209}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 638749b5c068fcb43909e65df7db0de9, type: 3}
+  m_Script: {fileID: 11500000, guid: c235038fb0f938a4091dc07a15d92179, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   eventTrigger: {fileID: 5326846839781894358}
@@ -111,6 +111,8 @@ MonoBehaviour:
   rightSideSensor: {fileID: 3567286746525559861}
   startX: 1
   xSize: 3
+  standardNoteValue: 1
+  indexInBeat: 0
 --- !u!1 &4891536361933009487
 GameObject:
   m_ObjectHideFlags: 0
@@ -205,7 +207,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 5646349834393393432}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: MapEditorHaveXposNote, Assembly-CSharp
           m_MethodName: SetLeftSide
           m_Mode: 1
@@ -311,7 +313,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 5646349834393393432}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: MapEditorHaveXposNote, Assembly-CSharp
           m_MethodName: SetRightSide
           m_Mode: 1

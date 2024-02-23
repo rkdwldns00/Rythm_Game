@@ -17,6 +17,7 @@ public class MapEditManager : MonoBehaviour
     [Header("노트 프리팹")]
     public GameObject basicNotePrefab;
     public GameObject meterChangerNotePrefab;
+    public GameObject traceNotePrefab;
     [Header("스크롤 관리용 참조")]
     [SerializeField] Transform mapScrollViewContent;
     public float mapScrollViewContentYPos

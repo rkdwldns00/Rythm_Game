@@ -9,10 +9,11 @@ public class TraceNoteObject : Note
     public float score { get; set; }
     protected float startX;
     protected float endX;
+    private bool isDestroyed;
 
     private void Update()
     {
-        if (DistanceToHittingChecker < 0)
+        if (!isDestroyed && DistanceToHittingChecker > 0)
         {
             int startLine = Mathf.FloorToInt(startX);
             int endLine = Mathf.FloorToInt(endX);
@@ -30,11 +31,15 @@ public class TraceNoteObject : Note
             if (isTouch)
             {
                 ComboManager.ProcessHitResult(HitResult.Perfect, score);
+                Destroy(gameObject);
             }
             else
             {
                 ComboManager.ProcessHitResult(HitResult.Miss, score);
+                Destroy(gameObject, 1);
             }
+
+            isDestroyed = true;
         }
     }
 
@@ -68,7 +73,7 @@ public class SavedTraceNoteData : SavedBasicNoteData
 
     public override MapEditorNote SummonMapEditorNote()
     {
-        MapEditorTraceNote note = MapEditManager.Instance.SummonNote(MapEditManager.Instance.basicNotePrefab).GetComponent<MapEditorTraceNote>();
+        MapEditorTraceNote note = MapEditManager.Instance.SummonNote(MapEditManager.Instance.traceNotePrefab).GetComponent<MapEditorTraceNote>();
         note.beat = _beat;
         note.standardNoteValue = standardNoteValue;
         note.indexInBeat = indexInBeat;
