@@ -54,6 +54,7 @@ public class NoteManager : MonoBehaviour
     public GameObject flickNotePrefab;
     public GameObject criticalFlickNotePrefab;
     public GameObject speedChangerPrefab;
+    public GameObject traceNotePrefab;
 
     public bool isPaused => Time.timeScale == 0f;
     public float mapTimer => Time.time - mapStartTime;

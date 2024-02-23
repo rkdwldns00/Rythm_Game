@@ -17,10 +17,11 @@ public static class MapFileUtil
         {typeof(SavedBasicNoteData), "BN"},
         {typeof(SavedFlickNoteData), "FN"},
         {typeof(SavedHoldNoteData), "HN"},
-        {typeof (SavedHoldEndNoteData), "EN"},
+        {typeof(SavedHoldEndNoteData), "EN"},
         {typeof(SavedBPMChangeNoteData), "BD"},
         {typeof(SavedMeterChangerNoteData), "MD"},
-        {typeof(SavedSpeedChangerNoteData), "SD"}
+        {typeof(SavedSpeedChangerNoteData), "SD"},
+        {typeof(SavedTraceNoteData), "TN"}
     };
 
     public static string Export_Path
@@ -40,7 +41,7 @@ public static class MapFileUtil
         }
         return null;
     }
-    
+
     public static void MakeMapListFile()
     {
         if (!File.Exists(MAP_LIST_PATH))
@@ -58,7 +59,7 @@ public static class MapFileUtil
     }
 
     public static SavedMapData[] LoadAllMapResource()
-    {   
+    {
         string[] mapTitles = File.ReadAllText(MAP_LIST_PATH).Split(MAP_LIST_PARSING_TEXT);
 
         List<SavedMapData> result = new List<SavedMapData>();
@@ -142,6 +143,10 @@ public static class MapFileUtil
         else if (t == typeof(SavedSpeedChangerNoteData))
         {
             return JsonUtility.FromJson<SavedSpeedChangerNoteData>(noteJson);
+        }
+        else if (t == typeof(SavedTraceNoteData))
+        {
+            return JsonUtility.FromJson<SavedTraceNoteData>(noteJson);
         }
         return null;
     }

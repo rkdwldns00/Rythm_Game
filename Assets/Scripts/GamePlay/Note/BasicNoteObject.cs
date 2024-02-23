@@ -5,23 +5,18 @@ using UnityEngine;
 
 public class BasicNoteObject : Note, IHitableNoteObject
 {
-    [SerializeField] bool isDetectTouchEnd = false;
-    [SerializeField] float perfectTiming = 0.04f;
-    [SerializeField] float greatTiming = 0.08f;
-    [SerializeField] float goodTiming = 0.1f;
-    [SerializeField] float badTiming = 0.13f;
-    [SerializeField] AudioClip keySound;
+    [SerializeField] protected bool isDetectTouchEnd = false;
+    [SerializeField] protected float perfectTiming = 0.04f;
+    [SerializeField] protected float greatTiming = 0.08f;
+    [SerializeField] protected float goodTiming = 0.1f;
+    [SerializeField] protected float badTiming = 0.13f;
+    [SerializeField] protected AudioClip keySound;
 
     public float score { get; set; }
-    float startX;
-    float endX;
+    protected float startX;
+    protected float endX;
 
-    private void Start()
-    {
-
-    }
-
-    public bool CheckHit(int line)
+    public virtual bool CheckHit(int line)
     {
         TouchMode targetTouchMode = TouchMode.Start;
         if (isDetectTouchEnd) { targetTouchMode = TouchMode.End; }
@@ -31,7 +26,7 @@ public class BasicNoteObject : Note, IHitableNoteObject
             && HittingNoteChecker.instance.TouchDatas[line] == targetTouchMode;
     }
 
-    public void Hit()
+    public virtual void Hit()
     {
 
         float t = Mathf.Abs(DistanceToHittingChecker);
@@ -61,7 +56,7 @@ public class BasicNoteObject : Note, IHitableNoteObject
         Destroy(gameObject);
     }
 
-    public void SetData(SavedNoteData data)
+    public virtual void SetData(SavedNoteData data)
     {
         SavedBasicNoteData basic = (SavedBasicNoteData)data;
         RectTransform rect = GetComponent<RectTransform>();
