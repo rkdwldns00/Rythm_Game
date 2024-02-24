@@ -18,6 +18,7 @@ public class MapEditManager : MonoBehaviour
     public GameObject basicNotePrefab;
     public GameObject meterChangerNotePrefab;
     public GameObject traceNotePrefab;
+    public GameObject flickNotePrefab;
     [Header("胶农费 包府侩 曼炼")]
     [SerializeField] Transform mapScrollViewContent;
     public float mapScrollViewContentYPos

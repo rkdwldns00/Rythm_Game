@@ -55,7 +55,7 @@ public class FlickNoteObject : Note, IHitableNoteObject
         {
             hitResult = HitResult.Good;
         }
-        else
+        else if (t <= badTiming)
         {
             hitResult = HitResult.Bad;
         }
@@ -96,8 +96,8 @@ public class SavedFlickNoteData : SavedNoteData, IGamePlaySummonable
         }
     }
 
-    public float startX;
-    public float endX;
+    public int startX;
+    public int endX;
 
     public float rotation;
     public bool needTouchStart = true;
@@ -106,7 +106,14 @@ public class SavedFlickNoteData : SavedNoteData, IGamePlaySummonable
 
     public override MapEditorNote SummonMapEditorNote()
     {
-        throw new System.NotImplementedException();
+        MapEditorFlickNote note = MapEditManager.Instance.SummonNote(MapEditManager.Instance.flickNotePrefab).GetComponent<MapEditorFlickNote>();
+        note.beat = _beat;
+        note.standardNoteValue = standardNoteValue;
+        note.indexInBeat = indexInBeat;
+        note.startX = startX;
+        note.xSize = endX - startX;
+        note.RefreshPosition();
+        return note;
     }
 
     public override Note SummonGamePlayNote(NoteSummoner summoner)
