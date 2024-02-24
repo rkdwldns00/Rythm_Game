@@ -29,12 +29,12 @@ public class FlickNoteObject : Note, IHitableNoteObject
         }
 
         Vector2 flickPower = HittingNoteChecker.instance.GetFlickPower(line);
-        float flickPowerRotation = Mathf.Atan2(flickPower.y, flickPower.x) * Mathf.Rad2Deg;
+        float flickPowerRotation = Mathf.Atan2(flickPower.y, flickPower.x) * Mathf.Rad2Deg + 90;
         return
             isDetectedTouchStart
             && line + 1 >= startX && line - 1 <= endX - 1
             && HittingNoteChecker.instance.TouchDatas[line] == TouchMode.Hold
-            && flickPower.magnitude > 5 && Mathf.Abs(rotation - flickPowerRotation) <= 30f;
+            && flickPower.magnitude > 5 && Mathf.Abs(rotation - flickPowerRotation) <= 90f;
     }
 
     public void Hit()
@@ -79,7 +79,7 @@ public class FlickNoteObject : Note, IHitableNoteObject
 public class SavedFlickNoteData : SavedNoteData, IGamePlaySummonable
 {
     public override string serializedDataTitleName => "FN";
-    public override float totalScore => 0;
+    public override float totalScore => 150;
 
     public virtual GameObject GamePlayNotePrefab
     {
